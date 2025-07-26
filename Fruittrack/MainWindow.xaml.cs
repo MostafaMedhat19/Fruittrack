@@ -12,7 +12,7 @@ namespace Fruittrack
         public MainWindow()
         {
             InitializeComponent();
-       
+          // 
         }
     }
 }
