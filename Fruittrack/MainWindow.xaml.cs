@@ -13,9 +13,11 @@ namespace Fruittrack
 {
     public partial class MainWindow : NavigationWindow
     {
+
         public MainWindow()
         {
             InitializeComponent();
+
 
             // Test EF Core connection and add sample data
             try
@@ -64,7 +66,7 @@ namespace Fruittrack
                         context.SaveChanges();
                     }
                 }
-                MessageBox.Show("Database connection, validation, and sample data insertion succeeded!", "EF Core Test", MessageBoxButton.OK, MessageBoxImage.Information);
+              
             }
             catch (Exception ex)
             {

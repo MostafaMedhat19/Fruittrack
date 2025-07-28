@@ -47,8 +47,7 @@ namespace Fruittrack
             ServiceProvider = services.BuildServiceProvider();
 
             // Start the application
-            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+     
         }
 
         protected override void OnExit(ExitEventArgs e)

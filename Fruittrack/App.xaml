@@ -4,6 +4,178 @@
              xmlns:local="clr-namespace:Fruittrack"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <!-- Modern ComboBox Style -->
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="#003366"/>
+            <Setter Property="BorderBrush" Value="#205295"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <Grid>
+                                <ToggleButton x:Name="ToggleButton"  
+                                              Grid.Column="2" 
+                                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                              Background="Transparent"/>
+                                <ContentPresenter x:Name="ContentSite" 
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                  Margin="5,0,30,0"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left"/>
+                                <TextBox x:Name="PART_EditableTextBox" 
+                                         Visibility="Hidden"
+                                         Background="Transparent"
+                                         Foreground="{TemplateBinding Foreground}"
+                                         Padding="5,0,5,0"/>
+                                <Popup x:Name="Popup"
+                                       Placement="Bottom"
+                                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                                       AllowsTransparency="True"
+                                       Focusable="False"
+                                       PopupAnimation="Slide">
+                                    <Border x:Name="PopupBorder"
+                                            Background="#003366"
+                                            BorderBrush="#205295"
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                        <ScrollViewer>
+                                            <ItemsPresenter/>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#80FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#003366"/>
+            <Setter Property="BorderBrush" Value="#205295"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border 
+                    Background="{TemplateBinding Background}" 
+                    BorderBrush="{TemplateBinding BorderBrush}" 
+                    BorderThickness="{TemplateBinding BorderThickness}" 
+                    CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                  Margin="0"
+                                  VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#80FFFFFF"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#FFA500"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Accent Button Style -->
+        <Style x:Key="AccentButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#205295"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <ContentPresenter x:Name="contentPresenter" 
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            Content="{TemplateBinding Content}"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#144272"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#0A2647"/>
+                                <Setter TargetName="contentPresenter" Property="Margin" Value="1,1,0,0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Card Shadow Effect -->
+        <DropShadowEffect x:Key="CardShadow" BlurRadius="10" ShadowDepth="2" Color="#33000000"/>
+
+        <!-- Centered Header Style -->
+        <Style x:Key="CenteredHeader" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#003366"/>
+            <Setter Property="Foreground" Value="#80FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#205295"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Modern DatePicker Style -->
+     
+        <!-- Custom ScrollBar Style -->
+        <Style x:Key="CustomScrollBar" TargetType="ScrollBar">
+            <Setter Property="Background" Value="#003366"/>
+            <Setter Property="BorderBrush" Value="#205295"/>
+            <Setter Property="Foreground" Value="#80FFFFFF"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid>
+                            <Track x:Name="PART_Track" 
+                                   IsDirectionReversed="True">
+                                <Track.Thumb>
+                                    <Thumb Background="#205295" 
+                                           BorderBrush="#80FFFFFF"
+                                           BorderThickness="1"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>

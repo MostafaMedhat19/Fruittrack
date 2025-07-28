@@ -140,17 +140,15 @@ namespace Fruittrack
             var context = _context;
             ViewModel.Farms.Clear();
             foreach (var farm in context.Farms.ToList())
+            {
                 ViewModel.Farms.Add(farm);
-            cmbFarm.ItemsSource = ViewModel.Farms;
-            cmbFarm.DisplayMemberPath = "FarmName";
-            cmbFarm.SelectedValuePath = "FarmId";
+            }
 
             ViewModel.Factories.Clear();
             foreach (var factory in context.Factories.ToList())
+            {
                 ViewModel.Factories.Add(factory);
-            cmbFactory.ItemsSource = ViewModel.Factories;
-            cmbFactory.DisplayMemberPath = "FactoryName";
-            cmbFactory.SelectedValuePath = "FactoryId";
+            }
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
@@ -165,6 +163,31 @@ namespace Fruittrack
             try
             {
                 var context = _context;
+                string farmName = FarmName.Text?.Trim();
+                string factoryName = FactoryName.Text?.Trim();
+
+                var farm = context.Farms.FirstOrDefault(f => f.FarmName == farmName);
+                if (farm == null)
+                {
+                    farm = new Farm
+                    {
+                        FarmName = farmName
+                    };
+                    context.Farms.Add(farm);
+                    context.SaveChanges();
+                }
+
+                var factory = context.Factories.FirstOrDefault(f => f.FactoryName == factoryName);
+                if (factory == null)
+                {
+                    factory = new Factory
+                    {
+                        FactoryName = factoryName
+                    };
+                    context.Factories.Add(factory);
+                    context.SaveChanges();
+                }
+
                 // Truck: find or create
                 var truck = context.Trucks.FirstOrDefault(t => t.TruckNumber == ViewModel.TruckNumber);
                 if (truck == null)
@@ -173,23 +196,25 @@ namespace Fruittrack
                     context.Trucks.Add(truck);
                     context.SaveChanges();
                 }
-                // Create SupplyEntry
+
+                // Create SupplyEntry with proper null checks
                 var supplyEntry = new SupplyEntry
                 {
-                    EntryDate = ViewModel.Date ?? DateTime.Now,
+                    EntryDate = CalendarControl.SelectedDate ?? DateTime.Now,
                     TruckId = truck.TruckId,
-                    FarmId = ViewModel.FarmId.Value,
-                    FarmWeight = ViewModel.FarmWeight.Value,
-                    FarmDiscountRate = ViewModel.FarmDiscountPercentage.Value,
-                    FarmPricePerTon = ViewModel.FarmPricePerTon.Value,
-                    FactoryId = ViewModel.FactoryId.Value,
-                    FactoryWeight = ViewModel.FactoryWeight.Value,
-                    FactoryDiscountRate = ViewModel.FactoryDiscountPercentage.Value,
-                    FactoryPricePerTon = ViewModel.FactoryPricePerTon.Value,
-                    FreightCost = ViewModel.TransportPrice.Value,
-                    TransferFrom = context.Farms.First(f => f.FarmId == ViewModel.FarmId.Value).FarmName,
-                    TransferTo = context.Factories.First(f => f.FactoryId == ViewModel.FactoryId.Value).FactoryName
+                    FarmId = ViewModel.FarmId ?? throw new InvalidOperationException("FarmId is required"),
+                    FarmWeight = ViewModel.FarmWeight ?? throw new InvalidOperationException("FarmWeight is required"),
+                    FarmDiscountRate = ViewModel.FarmDiscountPercentage ?? throw new InvalidOperationException("FarmDiscountPercentage is required"),
+                    FarmPricePerTon = ViewModel.FarmPricePerTon ?? throw new InvalidOperationException("FarmPricePerTon is required"),
+                    FactoryId = ViewModel.FactoryId ?? throw new InvalidOperationException("FactoryId is required"),
+                    FactoryWeight = ViewModel.FactoryWeight ?? throw new InvalidOperationException("FactoryWeight is required"),
+                    FactoryDiscountRate = ViewModel.FactoryDiscountPercentage ?? throw new InvalidOperationException("FactoryDiscountPercentage is required"),
+                    FactoryPricePerTon = ViewModel.FactoryPricePerTon ?? throw new InvalidOperationException("FactoryPricePerTon is required"),
+                    FreightCost = ViewModel.TransportPrice ?? throw new InvalidOperationException("TransportPrice is required"),
+                    TransferFrom = farm.FarmName,
+                    TransferTo = factory.FactoryName,
                 };
+
                 context.SupplyEntries.Add(supplyEntry);
                 context.SaveChanges();
                 MessageBox.Show("تم حفظ بيانات التوريد بنجاح!", "نجاح", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -200,7 +225,6 @@ namespace Fruittrack
                 MessageBox.Show($"حدث خطأ أثناء الحفظ: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private void BtnClear_Click(object sender, RoutedEventArgs e) => ClearForm();
 
         private void ClearForm()
@@ -229,11 +253,13 @@ namespace Fruittrack
             var sb = new System.Text.StringBuilder();
             if (string.IsNullOrWhiteSpace(ViewModel.TruckNumber)) sb.AppendLine("يرجى إدخال رقم العربية.");
             if (!ViewModel.TransportPrice.HasValue) sb.AppendLine("يرجى إدخال سعر النقل.");
-            if (!ViewModel.FarmId.HasValue) sb.AppendLine("يرجى اختيار اسم المزرعة.");
+            if (string.IsNullOrWhiteSpace(FarmName.Text)) sb.AppendLine("يرجى اختيار اسم المزرعة.");
+            if (!ViewModel.FarmId.HasValue) sb.AppendLine("يرجى اختيار المزرعة.");
             if (!ViewModel.FarmWeight.HasValue) sb.AppendLine("يرجى إدخال الوزن عند المزرعة.");
             if (!ViewModel.FarmDiscountPercentage.HasValue) sb.AppendLine("يرجى إدخال نسبة الخصم للمزرعة.");
             if (!ViewModel.FarmPricePerTon.HasValue) sb.AppendLine("يرجى إدخال سعر الطن للمزرعة.");
-            if (!ViewModel.FactoryId.HasValue) sb.AppendLine("يرجى اختيار اسم المصنع.");
+            if (string.IsNullOrWhiteSpace(FactoryName.Text)) sb.AppendLine("يرجى اختيار اسم المصنع.");
+            if (!ViewModel.FactoryId.HasValue) sb.AppendLine("يرجى اختيار المصنع.");
             if (!ViewModel.FactoryWeight.HasValue) sb.AppendLine("يرجى إدخال الوزن عند المصنع.");
             if (!ViewModel.FactoryDiscountPercentage.HasValue) sb.AppendLine("يرجى إدخال نسبة الخصم للمصنع.");
             if (!ViewModel.FactoryPricePerTon.HasValue) sb.AppendLine("يرجى إدخال سعر الطن للمصنع.");
@@ -248,5 +274,7 @@ namespace Fruittrack
             else
                 Window.GetWindow(this)?.Close();
         }
+
+     
     }
 }

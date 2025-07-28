@@ -175,12 +175,13 @@
                     </Grid>
                 </Button>
 
-                <!-- Date/Time Display -->
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Friday, July 26, 2025" Foreground="#A0FFFFFF" FontSize="14"/>
-                    <TextBlock Text="02:45 PM" Foreground="White" FontSize="18" FontWeight="Bold" 
-                               Effect="{StaticResource TextGlow}"/>
-                </StackPanel>
+                        <!-- Date/Time Display -->
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock x:Name="DateTextBlock" Foreground="#A0FFFFFF" FontSize="14"/>
+            <TextBlock x:Name="TimeTextBlock" Foreground="White" FontSize="18" FontWeight="Bold" 
+                       Effect="{StaticResource TextGlow}"/>
+        </StackPanel>
+
 
                 <!-- Window Controls - Now aligned in a single line -->
 
@@ -273,7 +274,7 @@
                     </Button>
 
                     <!-- Inventory Button -->
-                    <Button Style="{StaticResource MenuButtonStyle}">
+                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_1">
                         <StackPanel Orientation="Horizontal">
                             <Path Data="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4l16-.02V7z" 
                                   Style="{StaticResource MenuIconStyle}"/>
