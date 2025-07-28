@@ -4,6 +4,7 @@ using Fruittrack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fruittrack.Migrations
 {
     [DbContext(typeof(FruitTrackDbContext))]
-    partial class FruitTrackDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250728203327_MakeFieldsOptional")]
+    partial class MakeFieldsOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,7 +39,7 @@ namespace Fruittrack.Migrations
 
                     b.HasKey("FactoryId");
 
-                    b.ToTable("Factories", (string)null);
+                    b.ToTable("Factories");
                 });
 
             modelBuilder.Entity("Fruittrack.Models.Farm", b =>
@@ -53,7 +56,7 @@ namespace Fruittrack.Migrations
 
                     b.HasKey("FarmId");
 
-                    b.ToTable("Farms", (string)null);
+                    b.ToTable("Farms");
                 });
 
             modelBuilder.Entity("Fruittrack.Models.FinancialSettlement", b =>
@@ -78,7 +81,7 @@ namespace Fruittrack.Migrations
                     b.HasIndex("SupplyEntryId")
                         .IsUnique();
 
-                    b.ToTable("FinancialSettlements", (string)null);
+                    b.ToTable("FinancialSettlements");
                 });
 
             modelBuilder.Entity("Fruittrack.Models.SupplyEntry", b =>
@@ -93,39 +96,45 @@ namespace Fruittrack.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("FactoryDiscountRate")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("FactoryId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("FactoryPricePerTon")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("FactoryWeight")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("FarmDiscountRate")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("FarmId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("FarmPricePerTon")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("FarmWeight")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("FreightCost")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("TransferFrom")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TransferTo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TruckId")
@@ -139,7 +148,7 @@ namespace Fruittrack.Migrations
 
                     b.HasIndex("TruckId");
 
-                    b.ToTable("SupplyEntries", (string)null);
+                    b.ToTable("SupplyEntries");
                 });
 
             modelBuilder.Entity("Fruittrack.Models.Truck", b =>
@@ -156,7 +165,7 @@ namespace Fruittrack.Migrations
 
                     b.HasKey("TruckId");
 
-                    b.ToTable("Trucks", (string)null);
+                    b.ToTable("Trucks");
                 });
 
             modelBuilder.Entity("Fruittrack.Models.FinancialSettlement", b =>

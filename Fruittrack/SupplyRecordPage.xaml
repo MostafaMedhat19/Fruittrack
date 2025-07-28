@@ -86,6 +86,43 @@
             </Setter>
         </Style>
 
+        <Style TargetType="TextBox" x:Key="ErrorTextBox" BasedOn="{StaticResource ModernTextBox}">
+            <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                </Trigger>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Error message style -->
+        <Style x:Key="ErrorMessageStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource DangerBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,-8,0,8"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+
+        <!-- Simple Working DatePicker like in the image -->
+        <Style x:Key="WorkingDatePicker" TargetType="DatePicker">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="Padding" Value="8"/>
+        </Style>
+
         <Style TargetType="ComboBox">
             <Setter Property="Margin" Value="0,0,0,12"/>
             <Setter Property="Padding" Value="12,10"/>
@@ -220,71 +257,9 @@
             </Setter>
         </Style>
 
-        <Style TargetType="DatePicker">
-            <Setter Property="Margin" Value="0,0,0,12"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="DatePicker">
-                        <Border x:Name="border" 
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
-                                SnapsToDevicePixels="True">
-                            <Grid>
-                                <DatePickerTextBox x:Name="PART_TextBox" 
-                                                   VerticalContentAlignment="Center"
-                                                   Padding="12,10"
-                                                   HorizontalContentAlignment="Right"
-                                                   BorderThickness="0"/>
-                                <Button x:Name="PART_Button" 
-                                        Width="20"
-                                        HorizontalAlignment="Right"
-                                        Margin="0,0,10,0"
-                                       />
-                                <Border x:Name="hoverEffect" 
-                                        Background="{StaticResource PrimaryBrush}" 
-                                        Opacity="0"
-                                        CornerRadius="6"/>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource SecondaryBrush}"/>
-                                <Setter TargetName="hoverEffect" Property="Opacity" Value="0.05"/>
-                            </Trigger>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource SecondaryBrush}"/>
-                                <Setter TargetName="border" Property="BorderThickness" Value="1.5"/>
-                                <Setter TargetName="hoverEffect" Property="Opacity" Value="0.1"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
-        <ControlTemplate x:Key="CalendarButtonTemplate" TargetType="Button">
-            <Grid>
-                <Path x:Name="calendarIcon"
-                      Fill="{StaticResource TextSecondary}"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Center"
-                      Data="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-            </Grid>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter TargetName="calendarIcon" Property="Fill" Value="{StaticResource PrimaryBrush}"/>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
+
+
 
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="0,0,0,20"/>
@@ -412,45 +387,58 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Date Section -->
                         <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                            <!-- عنوان التاريخ -->
-                            <TextBlock Text="التاريخ"
-                               FontSize="18"
-                               FontWeight="Bold"
-                               Foreground="#333"
-                               Margin="0,0,0,8"/>       
-
-                            <!-- إطار يحتوي على الـ Calendar -->
-                            <Border Background="White"
-                                CornerRadius="12"
-                                BorderBrush="#CCCCCC"
-                                BorderThickness="1.5"
-                                Padding="12"
-                                        >       
-                                <Grid>
-                                    <Calendar x:Name="CalendarControl"
+                            <TextBlock Text="التاريخ" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <DatePicker x:Name="CalendarControl"
                                       SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      BorderThickness="0"
-                                      Background="White"
-                                      DisplayDateStart="{x:Static sys:DateTime.Today}"
-                                      Margin="0"
-                                      />    
-                                </Grid>
-                            </Border>
+                                       Style="{StaticResource WorkingDatePicker}"
+                                       IsTodayHighlighted="True"
+                                       SelectedDateFormat="Short"
+                                       SelectedDateChanged="CalendarControl_SelectedDateChanged"
+                                       Text="Select a date"/>
                         </StackPanel>
-
-
 
                         <!-- Truck Number -->
                         <StackPanel Grid.Column="1" Margin="0,0,20,0">
                             <TextBlock Text="رقم العربية"/>
-                            <TextBox x:Name="txtTruckNumber" Text="{Binding TruckNumber}" Style="{StaticResource ModernTextBox}"/>
+                            <TextBox x:Name="txtTruckNumber" 
+                                     Text="{Binding TruckNumber, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasTruckNumberError}" Value="True">
+                                                <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                <Setter Property="BorderThickness" Value="1.5"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <TextBlock Text="{Binding TruckNumberError}" 
+                                       Style="{StaticResource ErrorMessageStyle}"
+                                       Visibility="{Binding HasTruckNumberError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                         </StackPanel>
 
                         <!-- Transport Price -->
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="سعر النقل النولون"/>
-                            <TextBox x:Name="txtTransportPrice" Text="{Binding TransportPrice}" Style="{StaticResource ModernTextBox}"/>
+                            <TextBox x:Name="txtTransportPrice" 
+                                     Text="{Binding TransportPrice, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasTransportPriceError}" Value="True">
+                                                <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                <Setter Property="BorderThickness" Value="1.5"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <TextBlock Text="{Binding TransportPriceError}" 
+                                       Style="{StaticResource ErrorMessageStyle}"
+                                       Visibility="{Binding HasTransportPriceError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                         </StackPanel>
                     </Grid>
                 </GroupBox>
@@ -476,23 +464,75 @@
                             <!-- Farm Name -->
                             <StackPanel Grid.Row="0">
                                 <TextBlock Text="اسم المزرعة"/>
-                                <TextBox x:Name="FarmName" Text="{Binding Text}" Style="{StaticResource ModernTextBox}" />
+                                <ComboBox x:Name="FarmName" 
+                                         ItemsSource="{Binding Farms}"
+                                         SelectedItem="{Binding SelectedFarm, Mode=TwoWay}"
+                                         DisplayMemberPath="FarmName"
+                                         IsEditable="True"
+                                         Text="{Binding SelectedFarm.FarmName, Mode=TwoWay}">
+                                    <ComboBox.Style>
+                                        <Style TargetType="ComboBox">
+                                            <Setter Property="Margin" Value="0,0,0,12"/>
+                                            <Setter Property="Padding" Value="12,10"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Background" Value="White"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                            <Setter Property="FontSize" Value="14"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasFarmNameError}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ComboBox.Style>
+                                </ComboBox>
+                                <TextBlock Text="{Binding FarmNameError}" 
+                                           Style="{StaticResource ErrorMessageStyle}"
+                                           Visibility="{Binding HasFarmNameError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
 
                             <!-- Farm Weight -->
                             <StackPanel Grid.Row="1">
                                 <TextBlock Text="الوزن عند المزرعة "/>
                                 <TextBox x:Name="txtFarmWeight" 
-                                         Text="{Binding FarmWeight, UpdateSourceTrigger=PropertyChanged}" 
-                                         Style="{StaticResource ModernTextBox}"/>
+                                         Text="{Binding FarmWeight, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasFarmWeightError}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <TextBlock Text="{Binding FarmWeightError}" 
+                                           Style="{StaticResource ErrorMessageStyle}"
+                                           Visibility="{Binding HasFarmWeightError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
 
                             <!-- Farm Discount -->
                             <StackPanel Grid.Row="2">
                                 <TextBlock Text="نسبة الخصم (%)"/>
                                 <TextBox x:Name="txtFarmDiscount" 
-                                         Text="{Binding FarmDiscountPercentage, UpdateSourceTrigger=PropertyChanged}" 
-                                         Style="{StaticResource ModernTextBox}"/>
+                                         Text="{Binding FarmDiscountPercentage, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasFarmDiscountError}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <TextBlock Text="{Binding FarmDiscountError}" 
+                                           Style="{StaticResource ErrorMessageStyle}"
+                                           Visibility="{Binding HasFarmDiscountError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
 
                             <!-- Farm Allowed Weight -->
@@ -507,8 +547,21 @@
                             <StackPanel Grid.Row="4">
                                 <TextBlock Text="السعر لكل كيلو"/>
                                 <TextBox x:Name="txtFarmPrice" 
-                                         Text="{Binding FarmPricePerTon, UpdateSourceTrigger=PropertyChanged}" 
-                                         Style="{StaticResource ModernTextBox}"/>
+                                         Text="{Binding FarmPricePerTon, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasFarmPriceError}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <TextBlock Text="{Binding FarmPriceError}" 
+                                           Style="{StaticResource ErrorMessageStyle}"
+                                           Visibility="{Binding HasFarmPriceError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
                         </Grid>
                     </GroupBox>
@@ -527,23 +580,75 @@
                             <!-- Factory Name -->
                             <StackPanel Grid.Row="0">
                                 <TextBlock Text="اسم المصنع"/>
-                                <TextBox x:Name="FactoryName" Text="{Binding Text}" Style="{StaticResource ModernTextBox}"/>
+                                <ComboBox x:Name="FactoryName" 
+                                         ItemsSource="{Binding Factories}"
+                                         SelectedItem="{Binding SelectedFactory, Mode=TwoWay}"
+                                         DisplayMemberPath="FactoryName"
+                                         IsEditable="True"
+                                         Text="{Binding SelectedFactory.FactoryName, Mode=TwoWay}">
+                                     <ComboBox.Style>
+                                         <Style TargetType="ComboBox">
+                                             <Setter Property="Margin" Value="0,0,0,12"/>
+                                             <Setter Property="Padding" Value="12,10"/>
+                                             <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                             <Setter Property="Background" Value="White"/>
+                                             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                                             <Setter Property="BorderThickness" Value="1"/>
+                                             <Setter Property="FontSize" Value="14"/>
+                                             <Style.Triggers>
+                                                 <DataTrigger Binding="{Binding HasFactoryNameError}" Value="True">
+                                                     <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                     <Setter Property="BorderThickness" Value="1.5"/>
+                                                 </DataTrigger>
+                                             </Style.Triggers>
+                                         </Style>
+                                     </ComboBox.Style>
+                                </ComboBox>
+                                <TextBlock Text="{Binding FactoryNameError}" 
+                                           Style="{StaticResource ErrorMessageStyle}"
+                                           Visibility="{Binding HasFactoryNameError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
 
                             <!-- Factory Weight -->
                             <StackPanel Grid.Row="1">
                                 <TextBlock Text="الوزن عند المصنع"/>
                                 <TextBox x:Name="txtFactoryWeight" 
-                                         Text="{Binding FactoryWeight, UpdateSourceTrigger=PropertyChanged}" 
-                                         Style="{StaticResource ModernTextBox}"/>
+                                         Text="{Binding FactoryWeight, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasFactoryWeightError}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <TextBlock Text="{Binding FactoryWeightError}" 
+                                           Style="{StaticResource ErrorMessageStyle}"
+                                           Visibility="{Binding HasFactoryWeightError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
 
                             <!-- Factory Discount -->
                             <StackPanel Grid.Row="2">
                                 <TextBlock Text="نسبة الخصم (%)"/>
                                 <TextBox x:Name="txtFactoryDiscount" 
-                                         Text="{Binding FactoryDiscountPercentage, UpdateSourceTrigger=PropertyChanged}" 
-                                         Style="{StaticResource ModernTextBox}"/>
+                                         Text="{Binding FactoryDiscountPercentage, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasFactoryDiscountError}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <TextBlock Text="{Binding FactoryDiscountError}" 
+                                           Style="{StaticResource ErrorMessageStyle}"
+                                           Visibility="{Binding HasFactoryDiscountError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
 
                             <!-- Factory Allowed Weight -->
@@ -558,8 +663,21 @@
                             <StackPanel Grid.Row="4">
                                 <TextBlock Text="السعر لكل كيلو"/>
                                 <TextBox x:Name="txtFactoryPrice" 
-                                         Text="{Binding FactoryPricePerTon, UpdateSourceTrigger=PropertyChanged}" 
-                                         Style="{StaticResource ModernTextBox}"/>
+                                         Text="{Binding FactoryPricePerTon, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasFactoryPriceError}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <TextBlock Text="{Binding FactoryPriceError}" 
+                                           Style="{StaticResource ErrorMessageStyle}"
+                                           Visibility="{Binding HasFactoryPriceError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
                         </Grid>
                     </GroupBox>

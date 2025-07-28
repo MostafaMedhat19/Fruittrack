@@ -44,16 +44,7 @@ namespace Fruittrack
             {
                 entity.HasKey(e => e.SupplyEntryId);
                 entity.Property(e => e.EntryDate).IsRequired();
-                entity.Property(e => e.FarmWeight).IsRequired();
-                entity.Property(e => e.FarmDiscountRate).IsRequired();
-                entity.Property(e => e.FarmPricePerTon).IsRequired();
-                entity.Property(e => e.FactoryWeight).IsRequired();
-                entity.Property(e => e.FactoryDiscountRate).IsRequired();
-                entity.Property(e => e.FactoryPricePerTon).IsRequired();
-                entity.Property(e => e.FreightCost).IsRequired();
-                entity.Property(e => e.TransferFrom).IsRequired();
-                entity.Property(e => e.TransferTo).IsRequired();
-
+            
                 entity.HasOne(e => e.Truck)
                       .WithMany(t => t.SupplyEntries)
                       .HasForeignKey(e => e.TruckId)
