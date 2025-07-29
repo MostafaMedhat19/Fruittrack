@@ -1,19 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Fruittrack
@@ -29,35 +17,38 @@ namespace Fruittrack
         {
             InitializeComponent();
             this.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Fonts/#Montserrat");
-            StartClock();
+            UpdateDateTime();
+            
+            // Start timer to update time every second
+            var timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += (s, e) => UpdateDateTime();
+            timer.Start();
         }
-    
+
+        private void UpdateDateTime()
+        {
+            var now = DateTime.Now;
+            DateTextBlock.Text = now.ToString("dddd, MMMM dd, yyyy", new System.Globalization.CultureInfo("ar-SA"));
+            TimeTextBlock.Text = now.ToString("HH:mm tt");
+        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new SupplyRecordPage());
-        }
-        private void StartClock()
-        {
-            _timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-
-            _timer.Tick += (s, e) =>
-            {
-                DateTime now = DateTime.Now;
-
-                DateTextBlock.Text = now.ToString("dddd, MMMM dd, yyyy", new CultureInfo("en-US"));
-                TimeTextBlock.Text = now.ToString("hh:mm tt"); 
-            };
-
-            _timer.Start();
+            // Navigate to Supply Record Page
+            NavigationService.Navigate(new SupplyRecordPage());
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new SuppliesOverview());
+            // Navigate to Supplies Overview Page
+            NavigationService.Navigate(new SuppliesOverview());
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            // Navigate to Invalid Supplies Page
+            NavigationService.Navigate(new InvalidSuppliesPage());
         }
     }
 }
