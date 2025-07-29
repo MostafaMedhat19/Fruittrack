@@ -13,21 +13,10 @@ using System.Windows.Input;
 
 namespace Fruittrack
 {
-    public class BooleanToVisibilityConverter : IValueConverter
-    {
-        public static readonly BooleanToVisibilityConverter Instance = new BooleanToVisibilityConverter();
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (Visibility)value == Visibility.Visible;
-        }
-    }
-
+    /// <summary>
+    /// Interaction logic for SupplyRecordPage.xaml
+    /// </summary>
     public partial class SupplyRecordPage : Page, INotifyPropertyChanged
     {
         // ViewModel for binding
@@ -52,8 +41,8 @@ namespace Fruittrack
             public decimal? TransportPrice { get => _transportPrice; set { _transportPrice = value; OnPropertyChanged(nameof(TransportPrice)); ValidateTransportPrice(); UpdateProfit(); } }
             private decimal? _transportPrice;
 
-            public Farm SelectedFarm { get => _selectedFarm; set { _selectedFarm = value; OnPropertyChanged(nameof(SelectedFarm)); FarmId = value?.FarmId; ValidateFarmName(); } }
-            private Farm _selectedFarm;
+            public Farm? SelectedFarm { get => _selectedFarm; set { _selectedFarm = value; OnPropertyChanged(nameof(SelectedFarm)); FarmId = value?.FarmId; ValidateFarmName(); } }
+            private Farm? _selectedFarm;
 
             public int? FarmId { get => _farmId; set { _farmId = value; OnPropertyChanged(nameof(FarmId)); } }
             private int? _farmId;
@@ -67,14 +56,14 @@ namespace Fruittrack
             public decimal? FarmAllowedWeight { get => _farmAllowedWeight; set { _farmAllowedWeight = value; OnPropertyChanged(nameof(FarmAllowedWeight)); UpdateFarmTotal(); } }
             private decimal? _farmAllowedWeight;
 
-            public decimal? FarmPricePerTon { get => _farmPricePerTon; set { _farmPricePerTon = value; OnPropertyChanged(nameof(FarmPricePerTon)); ValidateFarmPrice(); UpdateFarmTotal(); } }
-            private decimal? _farmPricePerTon;
+            public decimal? FarmPrice { get => _farmPricePerKilo; set { _farmPricePerKilo = value; OnPropertyChanged(nameof(FarmPrice)); ValidateFarmPrice(); UpdateFarmTotal(); } }
+            private decimal? _farmPricePerKilo;
 
             public decimal? FarmTotal { get => _farmTotal; set { _farmTotal = value; OnPropertyChanged(nameof(FarmTotal)); UpdateProfit(); } }
             private decimal? _farmTotal;
 
-            public Factory SelectedFactory { get => _selectedFactory; set { _selectedFactory = value; OnPropertyChanged(nameof(SelectedFactory)); FactoryId = value?.FactoryId; ValidateFactoryName(); } }
-            private Factory _selectedFactory;
+            public Factory? SelectedFactory { get => _selectedFactory; set { _selectedFactory = value; OnPropertyChanged(nameof(SelectedFactory)); ValidateFactoryName(); } }
+            private Factory? _selectedFactory;
 
             public int? FactoryId { get => _factoryId; set { _factoryId = value; OnPropertyChanged(nameof(FactoryId)); } }
             private int? _factoryId;
@@ -82,14 +71,14 @@ namespace Fruittrack
             public decimal? FactoryWeight { get => _factoryWeight; set { _factoryWeight = value; OnPropertyChanged(nameof(FactoryWeight)); ValidateFactoryWeight(); UpdateFactoryAllowedWeight(); } }
             private decimal? _factoryWeight;
 
-            public decimal? FactoryDiscountPercentage { get => _factoryDiscountPercentage; set { _factoryDiscountPercentage = value; OnPropertyChanged(nameof(FactoryDiscountPercentage)); ValidateFactoryDiscount(); UpdateFactoryAllowedWeight(); } }
+            public decimal? FactoryDiscount { get => _factoryDiscountPercentage; set { _factoryDiscountPercentage = value; OnPropertyChanged(nameof(FactoryDiscount)); ValidateFactoryDiscount(); UpdateFactoryAllowedWeight(); } }
             private decimal? _factoryDiscountPercentage;
 
             public decimal? FactoryAllowedWeight { get => _factoryAllowedWeight; set { _factoryAllowedWeight = value; OnPropertyChanged(nameof(FactoryAllowedWeight)); UpdateFactoryTotal(); } }
             private decimal? _factoryAllowedWeight;
 
-            public decimal? FactoryPricePerTon { get => _factoryPricePerTon; set { _factoryPricePerTon = value; OnPropertyChanged(nameof(FactoryPricePerTon)); ValidateFactoryPrice(); UpdateFactoryTotal(); } }
-            private decimal? _factoryPricePerTon;
+            public decimal? FactoryPrice { get => _factoryPricePerKilo; set { _factoryPricePerKilo = value; OnPropertyChanged(nameof(FactoryPrice)); ValidateFactoryPrice(); UpdateFactoryTotal(); } }
+            private decimal? _factoryPricePerKilo;
 
             public decimal? FactoryTotal { get => _factoryTotal; set { _factoryTotal = value; OnPropertyChanged(nameof(FactoryTotal)); UpdateProfit(); } }
             private decimal? _factoryTotal;
@@ -153,24 +142,36 @@ namespace Fruittrack
             }
             private void UpdateFarmTotal()
             {
-                if (FarmAllowedWeight.HasValue && FarmPricePerTon.HasValue)
-                    FarmTotal = FarmAllowedWeight.Value * FarmPricePerTon.Value;
+                // Calculate total with discount applied - prices are per kilo in database
+                if (FarmAllowedWeight.HasValue && FarmPrice.HasValue)
+                    FarmTotal = FarmAllowedWeight.Value * FarmPrice.Value;
                 else
-                    FarmTotal = null;
+                    FarmTotal = 0;
+
+                var discount = (FarmDiscountPercentage ?? 0) / 100m;
+                FarmTotal = FarmTotal * (1 - discount);
             }
             private void UpdateFactoryAllowedWeight()
             {
-                if (FactoryWeight.HasValue && FactoryDiscountPercentage.HasValue)
-                    FactoryAllowedWeight = FactoryWeight.Value * (1 - (FactoryDiscountPercentage.Value / 100m));
+                // Calculate allowed weight with discount
+                if (FactoryWeight.HasValue && FactoryDiscount.HasValue)
+                    FactoryAllowedWeight = FactoryWeight.Value * (1 - (FactoryDiscount.Value / 100m));
                 else
-                    FactoryAllowedWeight = null;
+                    FactoryAllowedWeight = FactoryWeight;
+
+                UpdateFactoryTotal();
             }
+
             private void UpdateFactoryTotal()
             {
-                if (FactoryAllowedWeight.HasValue && FactoryPricePerTon.HasValue)
-                    FactoryTotal = FactoryAllowedWeight.Value * FactoryPricePerTon.Value;
+                // Calculate total with discount applied - prices are per kilo in database
+                if (FactoryAllowedWeight.HasValue && FactoryPrice.HasValue)
+                    FactoryTotal = FactoryAllowedWeight.Value * FactoryPrice.Value;
                 else
-                    FactoryTotal = null;
+                    FactoryTotal = 0;
+
+                var discount = (FactoryDiscount ?? 0) / 100m;
+                FactoryTotal = FactoryTotal * (1 - discount);
             }
             private void UpdateProfit()
             {
@@ -228,11 +229,10 @@ namespace Fruittrack
 
             private void ValidateFarmPrice()
             {
-                // OPTIONAL FIELD - Only validate format if user entered something
-                if (!FarmPricePerTon.HasValue)
-                    FarmPriceError = ""; // No error if empty
-                else if (FarmPricePerTon <= 0)
-                    FarmPriceError = "السعر يجب أن يكون أكبر من صفر";
+                if (!FarmPrice.HasValue)
+                    FarmPriceError = ""; // Optional field, no error
+                else if (FarmPrice <= 0)
+                    FarmPriceError = "يجب أن يكون السعر أكبر من صفر";
                 else
                     FarmPriceError = "";
             }
@@ -256,22 +256,20 @@ namespace Fruittrack
 
             private void ValidateFactoryDiscount()
             {
-                // OPTIONAL FIELD - Only validate format if user entered something
-                if (!FactoryDiscountPercentage.HasValue)
-                    FactoryDiscountError = ""; // No error if empty
-                else if (FactoryDiscountPercentage < 0 || FactoryDiscountPercentage > 100)
-                    FactoryDiscountError = "نسبة الخصم يجب أن تكون بين 0 و 100";
+                if (!FactoryDiscount.HasValue)
+                    FactoryDiscountError = ""; // Optional field, no error
+                else if (FactoryDiscount < 0 || FactoryDiscount > 100)
+                    FactoryDiscountError = "النسبة يجب أن تكون بين 0 و 100";
                 else
                     FactoryDiscountError = "";
             }
 
             private void ValidateFactoryPrice()
             {
-                // OPTIONAL FIELD - Only validate format if user entered something
-                if (!FactoryPricePerTon.HasValue)
-                    FactoryPriceError = ""; // No error if empty
-                else if (FactoryPricePerTon <= 0)
-                    FactoryPriceError = "السعر يجب أن يكون أكبر من صفر";
+                if (!FactoryPrice.HasValue)
+                    FactoryPriceError = ""; // Optional field, no error
+                else if (FactoryPrice <= 0)
+                    FactoryPriceError = "يجب أن يكون السعر أكبر من صفر";
                 else
                     FactoryPriceError = "";
             }
@@ -300,6 +298,7 @@ namespace Fruittrack
         }
 
         public SupplyRecordViewModel ViewModel { get; set; } = new();
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         private readonly FruitTrackDbContext _context;
@@ -425,64 +424,53 @@ namespace Fruittrack
                 var context = _context;
                 
                 // Handle OPTIONAL Farm (only if user entered data)
-                Farm? farm = null;
+                Farm? selectedFarm = null;
                 if (ViewModel.SelectedFarm != null && !string.IsNullOrWhiteSpace(ViewModel.SelectedFarm.FarmName))
                 {
-                    farm = ViewModel.SelectedFarm;
-                    if (farm.FarmId == 0) // New farm
+                    selectedFarm = ViewModel.SelectedFarm;
+                    if (selectedFarm.FarmId == 0) // New farm
                     {
-                        context.Farms.Add(farm);
+                        context.Farms.Add(selectedFarm);
                         context.SaveChanges();
                     }
                 }
 
                 // Handle OPTIONAL Factory (only if user entered data)
-                Factory? factory = null;
+                Factory? selectedFactory = null;
                 if (ViewModel.SelectedFactory != null && !string.IsNullOrWhiteSpace(ViewModel.SelectedFactory.FactoryName))
                 {
-                    factory = ViewModel.SelectedFactory;
-                    if (factory.FactoryId == 0) // New factory
+                    selectedFactory = ViewModel.SelectedFactory;
+                    if (selectedFactory.FactoryId == 0) // New factory
                     {
-                        context.Factories.Add(factory);
+                        context.Factories.Add(selectedFactory);
                         context.SaveChanges();
                     }
                 }
 
                 // REQUIRED Truck: find or create
-                var truck = context.Trucks.FirstOrDefault(t => t.TruckNumber == ViewModel.TruckNumber);
-                if (truck == null)
+                var selectedTruck = context.Trucks.FirstOrDefault(t => t.TruckNumber == ViewModel.TruckNumber);
+                if (selectedTruck == null)
                 {
-                    truck = new Truck { TruckNumber = ViewModel.TruckNumber };
-                    context.Trucks.Add(truck);
+                    selectedTruck = new Truck { TruckNumber = ViewModel.TruckNumber };
+                    context.Trucks.Add(selectedTruck);
                     context.SaveChanges();
                 }
 
-                // Create SupplyEntry with OPTIONAL fields properly handled
+                // Save the entry
                 var supplyEntry = new SupplyEntry
                 {
-                    // REQUIRED FIELDS 
                     EntryDate = ViewModel.Date ?? DateTime.Today,
-                    TruckId = truck.TruckId,
-                    
-                    // OPTIONAL FIELDS - only set if user provided data and farm exists
-                    FarmId = farm?.FarmId,
-                    FarmWeight = farm != null ? ViewModel.FarmWeight : null,
-                    FarmDiscountRate = farm != null ? ViewModel.FarmDiscountPercentage : null,
-                    FarmPricePerTon = farm != null ? ViewModel.FarmPricePerTon : null,
-                    
-                    // OPTIONAL FIELDS - only set if user provided data and factory exists
-                    FactoryId = factory?.FactoryId,
-                    FactoryWeight = factory != null ? ViewModel.FactoryWeight : null,
-                    FactoryDiscountRate = factory != null ? ViewModel.FactoryDiscountPercentage : null,
-                    FactoryPricePerTon = factory != null ? ViewModel.FactoryPricePerTon : null,
-                    
-                    // OPTIONAL TRANSPORT
+                    TruckId = selectedTruck.TruckId,
+                    FarmId = selectedFarm?.FarmId,
+                    FarmWeight = ViewModel.FarmWeight,
+                    FarmDiscountRate = ViewModel.FarmDiscountPercentage,
+                    FarmPricePerKilo = ViewModel.FarmPrice,
+                    FactoryId = selectedFactory?.FactoryId,
+                    FactoryWeight = ViewModel.FactoryWeight,
+                    FactoryDiscountRate = ViewModel.FactoryDiscount,
+                    FactoryPricePerKilo = ViewModel.FactoryPrice,
                     FreightCost = ViewModel.TransportPrice,
-                    TransferFrom = farm?.FarmName,
-                    TransferTo = factory?.FactoryName,
-                    
-                    // OPTIONAL NOTES
-                    Notes = ViewModel.Notes,
+                    Notes = ViewModel.Notes
                 };
 
                 context.SupplyEntries.Add(supplyEntry);
@@ -514,14 +502,14 @@ namespace Fruittrack
             ViewModel.FarmWeight = null;
             ViewModel.FarmDiscountPercentage = null;
             ViewModel.FarmAllowedWeight = null;
-            ViewModel.FarmPricePerTon = null;
+            ViewModel.FarmPrice = null;
             ViewModel.FarmTotal = null;
             ViewModel.SelectedFactory = null;
             ViewModel.FactoryId = null;
             ViewModel.FactoryWeight = null;
-            ViewModel.FactoryDiscountPercentage = null;
+            ViewModel.FactoryDiscount = null;
             ViewModel.FactoryAllowedWeight = null;
-            ViewModel.FactoryPricePerTon = null;
+            ViewModel.FactoryPrice = null;
             ViewModel.FactoryTotal = null;
             ViewModel.ProfitMargin = null;
             ViewModel.Notes = string.Empty;
@@ -538,6 +526,21 @@ namespace Fruittrack
             ViewModel.FactoryPriceError = string.Empty;
         }
 
+        private void ClearFarmSection()
+        {
+            ViewModel.SelectedFarm = null;
+            ViewModel.FarmWeight = null;
+            ViewModel.FarmDiscountPercentage = null;
+            ViewModel.FarmPrice = null;
+        }
+
+        private void ClearFactorySection()
+        {
+            ViewModel.SelectedFactory = null;
+            ViewModel.FactoryWeight = null;
+            ViewModel.FactoryDiscount = null;
+            ViewModel.FactoryPrice = null;
+        }
 
 
         private void ClosePage()

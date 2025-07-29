@@ -44,14 +44,12 @@ namespace Fruittrack
                             FarmId = farm.FarmId,
                             FarmWeight = 10.5m,
                             FarmDiscountRate = 0.05m,
-                            FarmPricePerTon = 200m,
+                            FarmPricePerKilo = 0.2m, // 0.2 SAR per kilo (was 200 per ton)
                             FactoryId = factory.FactoryId,
                             FactoryWeight = 10.0m,
                             FactoryDiscountRate = 0.03m,
-                            FactoryPricePerTon = 220m,
-                            FreightCost = 50m,
-                            TransferFrom = "Green Farm",
-                            TransferTo = "Juice Factory"
+                            FactoryPricePerKilo = 0.22m, // 0.22 SAR per kilo (was 220 per ton)
+                            FreightCost = 50m
                         };
                         context.SupplyEntries.Add(supplyEntry);
                         context.SaveChanges();

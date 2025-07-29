@@ -50,5 +50,11 @@ namespace Fruittrack
             // Navigate to Invalid Supplies Page
             NavigationService.Navigate(new InvalidSuppliesPage());
         }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            // Navigate to Production Reports Page
+            NavigationService.Navigate(new ProductionReportsPage());
+        }
     }
 }

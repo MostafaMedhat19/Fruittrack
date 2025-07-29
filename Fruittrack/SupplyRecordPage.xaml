@@ -535,24 +535,14 @@
                             </StackPanel>
 
                             <!-- Farm Price -->
-                            <StackPanel Grid.Row="4">
-                                <TextBlock Text="السعر لكل كيلو"/>
-                                <TextBox x:Name="txtFarmPrice" 
-                                         Text="{Binding FarmPricePerTon, UpdateSourceTrigger=PropertyChanged}">
-                                    <TextBox.Style>
-                                        <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding HasFarmPriceError}" Value="True">
-                                                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBox.Style>
-                                </TextBox>
+                            <StackPanel Grid.Row="2" Grid.Column="2">
+                                <TextBlock Text="سعر المزرعة (جنيه/كجم)" 
+                                          Style="{StaticResource LabelStyle}"/>
+                                <TextBox Name="txtFarmPrice" 
+                                        Text="{Binding FarmPrice, StringFormat=N2, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{StaticResource ModernTextBox}"/>
                                 <TextBlock Text="{Binding FarmPriceError}" 
-                                           Style="{StaticResource ErrorMessageStyle}"
-                                           Visibility="{Binding HasFarmPriceError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
+                                          Style="{StaticResource ErrorTextStyle}"/>
                             </StackPanel>
                         </Grid>
                     </GroupBox>
@@ -651,24 +641,14 @@
                             </StackPanel>
 
                             <!-- Factory Price -->
-                            <StackPanel Grid.Row="4">
-                                <TextBlock Text="السعر لكل كيلو"/>
-                                <TextBox x:Name="txtFactoryPrice" 
-                                         Text="{Binding FactoryPricePerTon, UpdateSourceTrigger=PropertyChanged}">
-                                    <TextBox.Style>
-                                        <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding HasFactoryPriceError}" Value="True">
-                                                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBox.Style>
-                                </TextBox>
+                            <StackPanel Grid.Row="2" Grid.Column="2">
+                                <TextBlock Text="سعر المصنع (جنيه/كجم)" 
+                                          Style="{StaticResource LabelStyle}"/>
+                                <TextBox Name="txtFactoryPrice" 
+                                        Text="{Binding FactoryPrice, StringFormat=N2, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{StaticResource ModernTextBox}"/>
                                 <TextBlock Text="{Binding FactoryPriceError}" 
-                                           Style="{StaticResource ErrorMessageStyle}"
-                                           Visibility="{Binding HasFactoryPriceError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
+                                          Style="{StaticResource ErrorTextStyle}"/>
                             </StackPanel>
                         </Grid>
                     </GroupBox>

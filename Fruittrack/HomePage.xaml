@@ -259,6 +259,15 @@
                         </StackPanel>
                     </Button>
 
+                    <!-- Production Reports Button -->
+                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_3">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" 
+                                  Style="{StaticResource MenuIconStyle}"/>
+                            <TextBlock Text="تقارير الإنتاج والتوزيع" FontSize="18" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
                     <!-- Settings Button -->
                     <Button Style="{StaticResource MenuButtonStyle}">
                         <StackPanel Orientation="Horizontal">
@@ -274,14 +283,6 @@
                             <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" 
                                   Style="{StaticResource MenuIconStyle}"/>
                             <TextBlock Text="صفحة التسوية المالية" FontSize="18" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Style="{StaticResource MenuButtonStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" 
-                                  Style="{StaticResource MenuIconStyle}"/>
-                            <TextBlock Text="صفحة تقارير الإنتاج والتوزيع" FontSize="18" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

@@ -212,141 +212,157 @@
                           RowHeaderWidth="0">
 
                             <DataGrid.Columns>
-                                <!-- Error Type Icon -->
-                                <DataGridTemplateColumn Header="نوع الخطأ" Width="80" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                <!-- Error Type -->
+                                <DataGridTemplateColumn Header="نوع الخطأ" Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Border CornerRadius="12" Padding="8,4" HorizontalAlignment="Center">
+                                            <Border CornerRadius="4" Padding="8,4" Margin="2">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding ErrorType}" Value="وزن صفر">
-                                                                <Setter Property="Background" Value="#EF4444"/>
+                                                                <Setter Property="Background" Value="#FEF2F2"/>
+                                                                <Setter Property="BorderBrush" Value="#EF4444"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
                                                             </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ErrorType}" Value="وزن غير مسجل">
-                                                                <Setter Property="Background" Value="#F59E0B"/>
+                                                            <DataTrigger Binding="{Binding ErrorType}" Value="وزن فارغ">
+                                                                <Setter Property="Background" Value="#FEF3C7"/>
+                                                                <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding ErrorType}" Value="مصنع غير صحيح">
-                                                                <Setter Property="Background" Value="#8B5CF6"/>
+                                                                <Setter Property="Background" Value="#F3E8FF"/>
+                                                                <Setter Property="BorderBrush" Value="#8B5CF6"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ErrorType}" Value="وزن سالب">
+                                                                <Setter Property="Background" Value="#FEF2F2"/>
+                                                                <Setter Property="BorderBrush" Value="#EF4444"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ErrorType}" Value="عربية مفقودة">
+                                                                <Setter Property="Background" Value="#DCFCE7"/>
+                                                                <Setter Property="BorderBrush" Value="#10B981"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ErrorType}" Value="مزرعة مفقودة">
+                                                                <Setter Property="Background" Value="#DCFCE7"/>
+                                                                <Setter Property="BorderBrush" Value="#10B981"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
-                                                <TextBlock Text="{Binding ErrorType}" Foreground="White" FontWeight="Bold" FontSize="11"/>
+                                                <TextBlock Text="{Binding ErrorType}" FontWeight="Medium" FontSize="11" TextAlignment="Center"/>
                                             </Border>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <!-- Date Column -->
+                                <!-- Date -->
                                 <DataGridTextColumn Header="التاريخ" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" 
-                                           Width="90" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Center"/>
                                             <Setter Property="VerticalAlignment" Value="Center"/>
-                                            <Setter Property="Padding" Value="5,0"/>
+                                            <Setter Property="Padding" Value="0,0,5,0"/>
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
 
                                 <!-- Truck Number -->
                                 <DataGridTextColumn Header="رقم العربية" Binding="{Binding TruckNumber}" 
-                                           Width="80" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Center"/>
                                             <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="0,0,5,0"/>
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
 
                                 <!-- Farm Name -->
                                 <DataGridTextColumn Header="اسم المزرعة" Binding="{Binding FarmName}" 
-                                           Width="120" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
+                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                                 <!-- Factory Name -->
                                 <DataGridTextColumn Header="اسم المصنع" Binding="{Binding FactoryName}" 
-                                           Width="120" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
+                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                                 <!-- Factory Weight -->
-                                <DataGridTextColumn Header="وزن المصنع" Binding="{Binding FactoryWeight, StringFormat={}{0:N1}}" 
-                                           Width="90" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding FactoryWeight, StringFormat={}{0:N1}}" 
+                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Right"/>
                                             <Setter Property="VerticalAlignment" Value="Center"/>
                                             <Setter Property="Padding" Value="0,0,5,0"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding FactoryWeight}" Value="0">
-                                                    <Setter Property="Foreground" Value="#EF4444"/>
-                                                    <Setter Property="FontWeight" Value="Bold"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding FactoryWeight}" Value="{x:Null}">
-                                                    <Setter Property="Foreground" Value="#F59E0B"/>
-                                                    <Setter Property="FontWeight" Value="Bold"/>
-                                                    <Setter Property="Text" Value="غير مسجل"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
 
                                 <!-- Error Description -->
-                                <DataGridTextColumn Header="وصف الخطأ" Binding="{Binding ErrorDescription}" 
-                                           Width="200" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                <DataGridTextColumn Header="وصف المشكلة" Binding="{Binding ErrorDescription}" 
+                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
-                                            <Setter Property="TextWrapping" Value="Wrap"/>
                                             <Setter Property="HorizontalAlignment" Value="Right"/>
                                             <Setter Property="VerticalAlignment" Value="Center"/>
-                                            <Setter Property="Padding" Value="5,3"/>
+                                            <Setter Property="Padding" Value="0,0,5,0"/>
+                                            <Setter Property="TextWrapping" Value="Wrap"/>
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
 
                                 <!-- Suggested Fix -->
                                 <DataGridTextColumn Header="الحل المقترح" Binding="{Binding SuggestedFix}" 
-                                           Width="250" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
-                                            <Setter Property="TextWrapping" Value="Wrap"/>
                                             <Setter Property="HorizontalAlignment" Value="Right"/>
                                             <Setter Property="VerticalAlignment" Value="Center"/>
-                                            <Setter Property="Padding" Value="5,3"/>
-                                            <Setter Property="Foreground" Value="#10B981"/>
+                                            <Setter Property="Padding" Value="0,0,5,0"/>
+                                            <Setter Property="TextWrapping" Value="Wrap"/>
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
 
                                 <!-- Priority -->
-                                <DataGridTemplateColumn Header="الأولوية" Width="70" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                <DataGridTemplateColumn Header="الأولوية" Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Border CornerRadius="8" Padding="6,3" HorizontalAlignment="Center">
+                                            <Border CornerRadius="4" Padding="6,3" Margin="2">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding Priority}" Value="عالي">
-                                                                <Setter Property="Background" Value="#EF4444"/>
+                                                                <Setter Property="Background" Value="#FEF2F2"/>
+                                                                <Setter Property="BorderBrush" Value="#EF4444"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Priority}" Value="متوسط">
-                                                                <Setter Property="Background" Value="#F59E0B"/>
+                                                                <Setter Property="Background" Value="#FEF3C7"/>
+                                                                <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Priority}" Value="منخفض">
-                                                                <Setter Property="Background" Value="#10B981"/>
+                                                                <Setter Property="Background" Value="#DCFCE7"/>
+                                                                <Setter Property="BorderBrush" Value="#10B981"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
-                                                <TextBlock Text="{Binding Priority}" Foreground="White" FontWeight="Bold" FontSize="10"/>
+                                                <TextBlock Text="{Binding Priority}" FontWeight="Medium" FontSize="11" TextAlignment="Center"/>
                                             </Border>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
                                 <!-- Actions -->
-                                <DataGridTemplateColumn Header="الإجراءات" Width="100" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                <DataGridTemplateColumn Header="الإجراءات" Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
