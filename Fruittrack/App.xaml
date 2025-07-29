@@ -6,9 +6,9 @@
     <Application.Resources>
         <!-- Modern ComboBox Style -->
         <Style x:Key="ModernComboBox" TargetType="ComboBox">
-            <Setter Property="Background" Value="#003366"/>
-            <Setter Property="BorderBrush" Value="#205295"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#D0D7DE"/>
+            <Setter Property="Foreground" Value="#24292F"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Height" Value="30"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -43,8 +43,8 @@
                                        Focusable="False"
                                        PopupAnimation="Slide">
                                     <Border x:Name="PopupBorder"
-                                            Background="#003366"
-                                            BorderBrush="#205295"
+                                            Background="#F8F9FA"
+                                            BorderBrush="#D0D7DE"
                                             BorderThickness="1"
                                             CornerRadius="4"
                                             MaxHeight="{TemplateBinding MaxDropDownHeight}">
@@ -60,16 +60,16 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="#80FFFFFF"/>
+                    <Setter Property="BorderBrush" Value="#8B949E"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
 
         <Style x:Key="ModernTextBox" TargetType="TextBox">
-            <Setter Property="Background" Value="#003366"/>
-            <Setter Property="BorderBrush" Value="#205295"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#D0D7DE"/>
+            <Setter Property="Foreground" Value="#24292F"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="10,5"/>
             <Setter Property="Height" Value="30"/>
@@ -93,10 +93,10 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="#80FFFFFF"/>
+                    <Setter Property="BorderBrush" Value="#8B949E"/>
                 </Trigger>
                 <Trigger Property="IsKeyboardFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="#FFA500"/>
+                    <Setter Property="BorderBrush" Value="#6CB6FF"/>
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter Property="Opacity" Value="0.5"/>
@@ -106,7 +106,7 @@
 
         <!-- Accent Button Style -->
         <Style x:Key="AccentButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#205295"/>
+            <Setter Property="Background" Value="#6CB6FF"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -126,10 +126,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#144272"/>
+                                <Setter TargetName="border" Property="Background" Value="#8CC8FF"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#0A2647"/>
+                                <Setter TargetName="border" Property="Background" Value="#54A6FF"/>
                                 <Setter TargetName="contentPresenter" Property="Margin" Value="1,1,0,0"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -139,13 +139,13 @@
         </Style>
 
         <!-- Card Shadow Effect -->
-        <DropShadowEffect x:Key="CardShadow" BlurRadius="10" ShadowDepth="2" Color="#33000000"/>
+        <DropShadowEffect x:Key="CardShadow" BlurRadius="8" ShadowDepth="1" Color="#10000000"/>
 
         <!-- Centered Header Style -->
         <Style x:Key="CenteredHeader" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#003366"/>
-            <Setter Property="Foreground" Value="#80FFFFFF"/>
-            <Setter Property="BorderBrush" Value="#205295"/>
+            <Setter Property="Background" Value="#F6F8FA"/>
+            <Setter Property="Foreground" Value="#24292F"/>
+            <Setter Property="BorderBrush" Value="#D0D7DE"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -157,9 +157,9 @@
      
         <!-- Custom ScrollBar Style -->
         <Style x:Key="CustomScrollBar" TargetType="ScrollBar">
-            <Setter Property="Background" Value="#003366"/>
-            <Setter Property="BorderBrush" Value="#205295"/>
-            <Setter Property="Foreground" Value="#80FFFFFF"/>
+            <Setter Property="Background" Value="#F6F8FA"/>
+            <Setter Property="BorderBrush" Value="#D0D7DE"/>
+            <Setter Property="Foreground" Value="#656D76"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ScrollBar">
@@ -167,8 +167,8 @@
                             <Track x:Name="PART_Track" 
                                    IsDirectionReversed="True">
                                 <Track.Thumb>
-                                    <Thumb Background="#205295" 
-                                           BorderBrush="#80FFFFFF"
+                                    <Thumb Background="#8B949E" 
+                                           BorderBrush="#D0D7DE"
                                            BorderThickness="1"/>
                                 </Track.Thumb>
                             </Track>

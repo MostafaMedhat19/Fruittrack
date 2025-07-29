@@ -7,39 +7,39 @@
         mc:Ignorable="d"
         Title="Makkah Traders - Point of Sale" 
   
-        Background="Transparent">
+        Background="#F8F9FA">
 
     <Page.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Montserrat"/>
-            <Setter Property="Foreground" Value="#003366"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
         </Style>
 
-        <!-- Gradient Backgrounds -->
+        <!-- Updated Gradient Backgrounds to Soft Theme -->
         <LinearGradientBrush x:Key="PrimaryGradient" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#0a2647" Offset="0"/>
-            <GradientStop Color="#144272" Offset="0.5"/>
-            <GradientStop Color="#205295" Offset="1"/>
+            <GradientStop Color="#E3F2FD" Offset="0"/>
+            <GradientStop Color="#BBDEFB" Offset="0.5"/>
+            <GradientStop Color="#90CAF9" Offset="1"/>
         </LinearGradientBrush>
 
         <LinearGradientBrush x:Key="SecondaryGradient" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#2C74B3" Offset="0"/>
-            <GradientStop Color="#205295" Offset="1"/>
+            <GradientStop Color="#F1F8FF" Offset="0"/>
+            <GradientStop Color="#E3F2FD" Offset="1"/>
         </LinearGradientBrush>
 
-        <!-- Effects -->
-        <DropShadowEffect x:Key="CardShadow" BlurRadius="20" ShadowDepth="5" Color="#40000000"/>
-        <DropShadowEffect x:Key="TextGlow" BlurRadius="10" ShadowDepth="0" Color="#60FFFFFF"/>
+        <!-- Effects - very subtle -->
+        <DropShadowEffect x:Key="CardShadow" BlurRadius="8" ShadowDepth="1" Color="#08000000"/>
 
         <!-- Button Styles -->
         <Style TargetType="Button" x:Key="MenuButtonStyle">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Padding" Value="20,15"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Margin" Value="0,10,0,0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="Margin" Value="0,8,0,0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="Template">
@@ -48,11 +48,11 @@
                         <Border x:Name="border" 
                                 Background="{TemplateBinding Background}"
                                 CornerRadius="8"
-                                BorderThickness="1"
-                                BorderBrush="#40FFFFFF">
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
                             <Grid>
                                 <Border x:Name="hoverOverlay" 
-                                        Background="#20FFFFFF" 
+                                        Background="#6CB6FF" 
                                         CornerRadius="8"
                                         Opacity="0"/>
                                 <ContentPresenter x:Name="contentPresenter" 
@@ -63,15 +63,11 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="1"/>
-                                <Setter TargetName="border" Property="Effect">
-                                    <Setter.Value>
-                                        <DropShadowEffect BlurRadius="15" ShadowDepth="0" Color="#80FFFFFF"/>
-                                    </Setter.Value>
-                                </Setter>
+                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.05"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#9CA3AF"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#40000000"/>
+                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.1"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -81,46 +77,40 @@
 
         <!-- Icon Styles -->
         <Style TargetType="Path" x:Key="MenuIconStyle">
-            <Setter Property="Fill" Value="White"/>
+            <Setter Property="Fill" Value="#6B7280"/>
             <Setter Property="Stretch" Value="Uniform"/>
             <Setter Property="Width" Value="24"/>
             <Setter Property="Height" Value="24"/>
             <Setter Property="Margin" Value="0,0,15,0"/>
-            <Setter Property="Effect" Value="{StaticResource TextGlow}"/>
         </Style>
 
         <!-- Notification Badge Style -->
         <Style TargetType="Border" x:Key="NotificationBadge">
-            <Setter Property="Background" Value="#FF5252"/>
+            <Setter Property="Background" Value="#FB7185"/>
             <Setter Property="CornerRadius" Value="9"/>
             <Setter Property="Width" Value="18"/>
             <Setter Property="Height" Value="18"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
             <Setter Property="Margin" Value="0,-5,-5,0"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect BlurRadius="5" ShadowDepth="0" Color="#80FF5252"/>
-                </Setter.Value>
-            </Setter>
         </Style>
 
         <!-- Animation Resources -->
         <Storyboard x:Key="PulseAnimation" RepeatBehavior="Forever">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)">
                 <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.6"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.8"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:2" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </Page.Resources>
 
     <Grid>
-        <!-- Animated Background -->
-        <Grid Background="{StaticResource PrimaryGradient}">
-            <!-- Floating Particles -->
+        <!-- Soft Background -->
+        <Grid Background="#F8F9FA">
+            <!-- Subtle accent pattern -->
             <Canvas>
-                <Ellipse Canvas.Left="15" Canvas.Top="20" Width="4" Height="4" Fill="#40FFFFFF" Opacity="0.7">
+                <Ellipse Canvas.Left="15" Canvas.Top="20" Width="4" Height="4" Fill="#D1D5DB" Opacity="0.3">
                     <Ellipse.RenderTransform>
                         <TranslateTransform X="0" Y="0"/>
                     </Ellipse.RenderTransform>
@@ -137,13 +127,12 @@
                         </EventTrigger>
                     </Ellipse.Triggers>
                 </Ellipse>
-                <!-- Additional particles would be added here -->
             </Canvas>
 
-            <!-- Wave Effect Bottom -->
+            <!-- Soft Wave Effect Bottom -->
             <Path HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
                   Stretch="Fill" Height="180"
-                  Fill="{StaticResource SecondaryGradient}" Opacity="0.7">
+                  Fill="{StaticResource SecondaryGradient}" Opacity="0.4">
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure StartPoint="0,180">
@@ -158,7 +147,7 @@
         </Grid>
 
         <!-- Top Bar -->
-        <Border Background="#10000000" Height="50" VerticalAlignment="Top">
+        <Border Background="#FFFFFF" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1" Height="50" VerticalAlignment="Top">
             <Grid>
                 <!-- Notification Button -->
                 <Button Width="40" Height="40" HorizontalAlignment="Left" 
@@ -166,7 +155,7 @@
                         Background="Transparent" BorderThickness="0">
                     <Grid>
                         <Path Data="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" 
-                              Fill="White" Stretch="Uniform" Width="24" Height="24"/>
+                              Fill="#6B7280" Stretch="Uniform" Width="24" Height="24"/>
                         <Border Style="{StaticResource NotificationBadge}">
                             <TextBlock Text="3" Foreground="White" FontSize="10" 
                                        FontWeight="Bold" HorizontalAlignment="Center" 
@@ -175,16 +164,11 @@
                     </Grid>
                 </Button>
 
-                        <!-- Date/Time Display -->
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock x:Name="DateTextBlock" Foreground="#A0FFFFFF" FontSize="14"/>
-            <TextBlock x:Name="TimeTextBlock" Foreground="White" FontSize="18" FontWeight="Bold" 
-                       Effect="{StaticResource TextGlow}"/>
-        </StackPanel>
-
-
-                <!-- Window Controls - Now aligned in a single line -->
-
+                <!-- Date/Time Display -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock x:Name="DateTextBlock" Foreground="#6B7280" FontSize="14"/>
+                    <TextBlock x:Name="TimeTextBlock" Foreground="#1F2937" FontSize="18" FontWeight="Bold"/>
+                </StackPanel>
             </Grid>
         </Border>
         <Grid>
@@ -200,56 +184,44 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Left Side: Branding -->
-                <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <!-- Animated Logo -->
-                    <Border Width="200" Height="200" CornerRadius="100"
-                            Margin="0,0,0,20" HorizontalAlignment="Center"
-                            Background="#20000000" BorderBrush="#40FFFFFF" BorderThickness="1">
-                        <Border.Effect>
-                            <BlurEffect Radius="0"/>
-                        </Border.Effect>
-                        <Image Source="F:\VisualStudio\Source\Repos\Fruittrack\Fruittrack\Images\support-icon.jpg"
-                               Stretch="Uniform" Opacity="0.9">
-                            <Image.Clip>
-                                <EllipseGeometry Center="100,100" RadiusX="100" RadiusY="100"/>
-                            </Image.Clip>
-                        </Image>
-                        <Border.Triggers>
+                <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Height="334" Width="260">
+                    <!-- Logo -->
+                    <Image x:Name="LogoImage"
+                           Source="pack://application:,,,/Images/support-icon.jpg"
+                           Width="245" Height="210"
+                           Stretch="Uniform" 
+                           Margin="0,0,0,20" 
+                           HorizontalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality">
+                        <Image.Triggers>
                             <EventTrigger RoutedEvent="Loaded">
                                 <BeginStoryboard>
                                     <Storyboard RepeatBehavior="Forever" AutoReverse="True">
                                         <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" 
-                                                         From="0.9" To="1" Duration="0:0:2"/>
+                                                         From="0.9" To="1" Duration="0:0:3"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
-                        </Border.Triggers>
-                    </Border>
+                        </Image.Triggers>
+                    </Image>
 
-                    <!-- Brand Name with Glow -->
-                    <TextBlock Text="MAKKAH TRADERS" FontWeight="Bold" FontSize="32" 
-                               Foreground="White" Margin="0,0,0,5"
-                               HorizontalAlignment="Center">
-                        <TextBlock.Effect>
-                            <DropShadowEffect BlurRadius="15" ShadowDepth="0" Color="#40000000"/>
-                        </TextBlock.Effect>
-                    </TextBlock>
+                    <!-- Brand Name -->
 
-                    <TextBlock Text="Point of Sale System" FontSize="20" 
-                               Foreground="#CCFFFFFF" Margin="0,0,0,30"
+                    <TextBlock Text="Future Company" FontSize="20" 
+                               Foreground="#6B7280" Margin="0,0,0,30"
                                HorizontalAlignment="Center"/>
 
                     <!-- Status Indicators -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                        <Border Width="12" Height="12" CornerRadius="6" Background="#4CAF50" 
+                        <Border Width="12" Height="12" CornerRadius="6" Background="#10B981" 
                                 Margin="0,0,10,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="System Status: Operational" Foreground="#CCFFFFFF" FontSize="14"/>
+                        <TextBlock Text="System Status: Operational" Foreground="#6B7280" FontSize="14"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Border Width="12" Height="12" CornerRadius="6" Background="#4CAF50" 
+                        <Border Width="12" Height="12" CornerRadius="6" Background="#10B981" 
                                 Margin="0,0,10,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="Database: Connected" Foreground="#CCFFFFFF" FontSize="14"/>
+                        <TextBlock Text="Database: Connected" Foreground="#6B7280" FontSize="14"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -257,12 +229,8 @@
                 <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Width="400" Margin="40,0,0,0">
                     <TextBlock Text="القائمة الرئسية " FontSize="24" FontWeight="Bold"
-                               Foreground="White" Margin="0,0,0,30"
-                               HorizontalAlignment="Center">
-                        <TextBlock.Effect>
-                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="#40000000"/>
-                        </TextBlock.Effect>
-                    </TextBlock>
+                               Foreground="#1F2937" Margin="0,0,0,30"
+                               HorizontalAlignment="Center"/>
 
                     <!-- Sales Button -->
                     <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click">
@@ -312,9 +280,8 @@
                     <Button Style="{StaticResource MenuButtonStyle}">
                         <StackPanel Orientation="Horizontal">
                             <Path Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" 
-Style="{StaticResource MenuIconStyle}"/>
+                                  Style="{StaticResource MenuIconStyle}"/>
                             <TextBlock Text="صفحة تقارير الإنتاج والتوزيع" FontSize="18" VerticalAlignment="Center"/>
-
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -322,9 +289,9 @@ Style="{StaticResource MenuIconStyle}"/>
         </Grid>
 
         <!-- Bottom Status Bar -->
-        <Border Background="#10000000" Height="30" VerticalAlignment="Bottom">
+        <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="0,1,0,0" Height="30" VerticalAlignment="Bottom">
             <TextBlock Text="Version 2.1.5 | © 2025 Makkah Traders | All rights reserved" 
-                       Foreground="#80FFFFFF" FontSize="12"
+                       Foreground="#6B7280" FontSize="12"
                        VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0"/>
         </Border>
     </Grid>

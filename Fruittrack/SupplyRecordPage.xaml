@@ -9,18 +9,18 @@
         Title="تسجيل عملية التوريد" 
         FontFamily="Segoe UI"
         FontSize="16"
-        Background="White">
+        Background="#F8F9FA">
 
     <Page.Resources>
         <!-- Color Palette -->
-        <SolidColorBrush x:Key="PrimaryBrush" Color="#1E3A8A"/>
-        <SolidColorBrush x:Key="SecondaryBrush" Color="#3B82F6"/>
-        <SolidColorBrush x:Key="AccentBrush" Color="#10B981"/>
-        <SolidColorBrush x:Key="DangerBrush" Color="#EF4444"/>
-        <SolidColorBrush x:Key="LightBackground" Color="#F8FAFC"/>
-        <SolidColorBrush x:Key="BorderBrush" Color="#E2E8F0"/>
-        <SolidColorBrush x:Key="TextPrimary" Color="#1E293B"/>
-        <SolidColorBrush x:Key="TextSecondary" Color="#64748B"/>
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#6CB6FF"/>
+        <SolidColorBrush x:Key="SecondaryBrush" Color="#8CC8FF"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#7DD3FC"/>
+        <SolidColorBrush x:Key="DangerBrush" Color="#FB7185"/>
+        <SolidColorBrush x:Key="LightBackground" Color="#F1F5F9"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#D0D7DE"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#1F2937"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#6B7280"/>
 
         <!-- Animations -->
         <Storyboard x:Key="HoverAnimation">
@@ -73,12 +73,12 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource SecondaryBrush}"/>
-                                <Setter TargetName="hoverEffect" Property="Opacity" Value="0.05"/>
+                                <Setter TargetName="hoverEffect" Property="Opacity" Value="0.02"/>
                             </Trigger>
                             <Trigger Property="IsFocused" Value="True">
                                 <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource SecondaryBrush}"/>
                                 <Setter TargetName="border" Property="BorderThickness" Value="1.5"/>
-                                <Setter TargetName="hoverEffect" Property="Opacity" Value="0.1"/>
+                                <Setter TargetName="hoverEffect" Property="Opacity" Value="0.05"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -168,12 +168,12 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource SecondaryBrush}"/>
-                                <Setter TargetName="hoverEffect" Property="Opacity" Value="0.05"/>
+                                <Setter TargetName="hoverEffect" Property="Opacity" Value="0.02"/>
                             </Trigger>
                             <Trigger Property="IsFocused" Value="True">
                                 <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource SecondaryBrush}"/>
                                 <Setter TargetName="border" Property="BorderThickness" Value="1.5"/>
-                                <Setter TargetName="hoverEffect" Property="Opacity" Value="0.1"/>
+                                <Setter TargetName="hoverEffect" Property="Opacity" Value="0.05"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -240,26 +240,17 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.2"/>
-                                <Setter TargetName="border" Property="Effect">
-                                    <Setter.Value>
-                                        <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="DarkBlue" Opacity="0.5"/>
-                                    </Setter.Value>
-                                </Setter>
+                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.15"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#0F1E3A8A"/>
-                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.3"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource SecondaryBrush}"/>
+                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.2"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-
-
-
-
 
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="0,0,0,20"/>
@@ -272,8 +263,8 @@
                         <Grid>
                             <Border Background="White"
                                     CornerRadius="8"
-                                    BorderThickness="0"
-                                  >
+                                    BorderThickness="1"
+                                    BorderBrush="{StaticResource BorderBrush}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
@@ -302,8 +293,8 @@
         </Style>
 
         <!-- Effects -->
-        <DropShadowEffect x:Key="CardShadow" BlurRadius="20" ShadowDepth="0" Color="#10000000" Direction="270"/>
-        <DropShadowEffect x:Key="HeaderShadow" BlurRadius="10" ShadowDepth="2" Color="#20000000"/>
+        <DropShadowEffect x:Key="CardShadow" BlurRadius="6" ShadowDepth="1" Color="#08000000" Direction="270"/>
+        <DropShadowEffect x:Key="HeaderShadow" BlurRadius="4" ShadowDepth="1" Color="#10000000"/>
 
         <!-- Value Styles -->
         <Style x:Key="ValueTextStyle" TargetType="TextBlock">
@@ -334,7 +325,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header with gradient background -->
+        <!-- Header with soft background -->
         <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" Padding="20">
             <Grid>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -728,7 +719,7 @@
 
                         <!-- Profit Margin -->
                         <Border Grid.Column="2" 
-                                Background="#E6F7F0" 
+                                Background="#EDF9F7" 
                                 CornerRadius="8"
                                 Padding="20,15"
                                 Margin="10,0,0,0">
@@ -797,16 +788,11 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.2"/>
-                                    <Setter TargetName="border" Property="Effect">
-                                        <Setter.Value>
-                                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="Green" Opacity="0.5"/>
-                                        </Setter.Value>
-                                    </Setter>
+                                    <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.15"/>
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="#0E10B981"/>
-                                    <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.3"/>
+                                    <Setter TargetName="border" Property="Background" Value="#54C6D6"/>
+                                    <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.2"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
