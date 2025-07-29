@@ -11,7 +11,7 @@ namespace Fruittrack
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false)
+                .AddJsonFile("appsettings.LLjson", optional: false)
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<FruitTrackDbContext>();

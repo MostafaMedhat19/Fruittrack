@@ -56,5 +56,10 @@ namespace Fruittrack
             // Navigate to Production Reports Page
             NavigationService.Navigate(new ProductionReportsPage());
         }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new TotalProfitSummaryPage());
+        }
     }
 }

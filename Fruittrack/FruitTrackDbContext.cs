@@ -53,12 +53,12 @@ namespace Fruittrack
                 entity.HasOne(e => e.Farm)
                       .WithMany(f => f.SupplyEntries)
                       .HasForeignKey(e => e.FarmId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                      .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(e => e.Factory)
                       .WithMany(f => f.SupplyEntries)
                       .HasForeignKey(e => e.FactoryId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                      .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(e => e.FinancialSettlement)
                       .WithOne(fs => fs.SupplyEntry)

@@ -13,7 +13,6 @@ using System.Windows.Input;
 
 namespace Fruittrack
 {
-
     /// <summary>
     /// Interaction logic for SupplyRecordPage.xaml
     /// </summary>
@@ -142,14 +141,11 @@ namespace Fruittrack
             }
             private void UpdateFarmTotal()
             {
-                // Calculate total with discount applied - prices are per kilo in database
+                // Calculate total using allowed weight (discount already applied in FarmAllowedWeight)
                 if (FarmAllowedWeight.HasValue && FarmPrice.HasValue)
                     FarmTotal = FarmAllowedWeight.Value * FarmPrice.Value;
                 else
                     FarmTotal = 0;
-
-                var discount = (FarmDiscountPercentage ?? 0) / 100m;
-                FarmTotal = FarmTotal * (1 - discount);
             }
             private void UpdateFactoryAllowedWeight()
             {
@@ -164,14 +160,11 @@ namespace Fruittrack
 
             private void UpdateFactoryTotal()
             {
-                // Calculate total with discount applied - prices are per kilo in database
+                // Calculate total using allowed weight (discount already applied in FactoryAllowedWeight)
                 if (FactoryAllowedWeight.HasValue && FactoryPrice.HasValue)
                     FactoryTotal = FactoryAllowedWeight.Value * FactoryPrice.Value;
                 else
                     FactoryTotal = 0;
-
-                var discount = (FactoryDiscount ?? 0) / 100m;
-                FactoryTotal = FactoryTotal * (1 - discount);
             }
             private void UpdateProfit()
             {

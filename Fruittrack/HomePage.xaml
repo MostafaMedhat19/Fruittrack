@@ -285,6 +285,10 @@
                             <TextBlock Text="صفحة التسوية المالية" FontSize="18" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
+
+                    <!-- Navigation Button 4: Production Reports -->
+
+                    <!-- Navigation Button 5: Total Profit Summary -->
                 </StackPanel>
             </Grid>
         </Grid>
