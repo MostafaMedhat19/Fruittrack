@@ -47,6 +47,12 @@ namespace Fruittrack
             ErrorTypeFilter.SelectedIndex = 0;
             PriorityFilter.SelectedIndex = 0;
             
+            // Wire up event handlers for filters
+            ErrorTypeFilter.SelectionChanged += (s, e) => ApplyFilters();
+            FactoryFilter.SelectionChanged += (s, e) => ApplyFilters();
+            TruckNumberFilter.TextChanged += (s, e) => ApplyFilters();
+            PriorityFilter.SelectionChanged += (s, e) => ApplyFilters();
+            
             LoadData();
         }
 
@@ -227,6 +233,9 @@ namespace Fruittrack
                 UpdateSummaryCards();
                 UpdateStatusBar();
 
+                // Load factories for the filter ComboBox
+                await LoadFactoryFilter();
+
                 // Show completion message
                 var totalSupplies = supplies.Count;
                 var invalidCount = invalidItems.Count;
@@ -255,6 +264,48 @@ namespace Fruittrack
             }
         }
 
+        private async Task LoadFactoryFilter()
+        {
+            try
+            {
+                if (_context == null) return;
+
+                // Get all unique factories from the database
+                var factories = await _context.Factories
+                    .OrderBy(f => f.FactoryName)
+                    .ToListAsync();
+
+                // Clear the ComboBox
+                FactoryFilter.Items.Clear();
+
+                // Add "All" option first
+                var allItem = new ComboBoxItem
+                {
+                    Content = "جميع المصانع",
+                    Tag = "ALL"
+                };
+                FactoryFilter.Items.Add(allItem);
+
+                // Add each factory
+                foreach (var factory in factories)
+                {
+                    var item = new ComboBoxItem
+                    {
+                        Content = factory.FactoryName,
+                        Tag = factory.FactoryId
+                    };
+                    FactoryFilter.Items.Add(item);
+                }
+
+                // Set default selection to "All"
+                FactoryFilter.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطأ في تحميل قائمة المصانع: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void ApplyFilters()
         {
             try
@@ -276,9 +327,11 @@ namespace Fruittrack
                 }
 
                 // Factory filter
-                if (!string.IsNullOrWhiteSpace(FactoryFilter.Text))
+                if (FactoryFilter.SelectedItem is ComboBoxItem factoryItem && 
+                    factoryItem.Tag?.ToString() != "ALL")
                 {
-                    filtered = filtered.Where(x => x.FactoryName.Contains(FactoryFilter.Text, StringComparison.OrdinalIgnoreCase));
+                    var selectedFactoryName = factoryItem.Content.ToString();
+                    filtered = filtered.Where(x => x.FactoryName == selectedFactoryName);
                 }
 
                 // Truck number filter
@@ -346,7 +399,7 @@ namespace Fruittrack
             FromDatePicker.SelectedDate = null;
             ToDatePicker.SelectedDate = null;
             ErrorTypeFilter.SelectedIndex = 0;
-            FactoryFilter.Text = "";
+                            FactoryFilter.SelectedIndex = 0; // Reset to "All"
             TruckNumberFilter.Text = "";
             PriorityFilter.SelectedIndex = 0;
             
