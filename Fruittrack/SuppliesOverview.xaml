@@ -437,65 +437,7 @@
             </Setter>
         </Style>
 
-        <Style x:Key="ModernComboBox" TargetType="ComboBox">
-            <Setter Property="Background" Value="#F9FAFB"/>
-            <Setter Property="BorderBrush" Value="#D1D5DB"/>
-            <Setter Property="Foreground" Value="#1F2937"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ComboBox">
-                        <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4">
-                            <Grid>
-                                <ToggleButton x:Name="ToggleButton"  
-                                              Grid.Column="2" 
-                                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                              Background="Transparent"/>
-                                <ContentPresenter x:Name="ContentSite" 
-                                                  Content="{TemplateBinding SelectionBoxItem}"
-                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                                  Margin="5,0,30,0"
-                                                  VerticalAlignment="Center"
-                                                  HorizontalAlignment="Left"/>
-                                <TextBox x:Name="PART_EditableTextBox" 
-                                         Visibility="Hidden"
-                                         Background="Transparent"
-                                         Foreground="{TemplateBinding Foreground}"
-                                         Padding="5,0,5,0"/>
-                                <Popup x:Name="Popup"
-                                       Placement="Bottom"
-                                       IsOpen="{TemplateBinding IsDropDownOpen}"
-                                       AllowsTransparency="True"
-                                       Focusable="False"
-                                       PopupAnimation="Slide">
-                                    <Border x:Name="PopupBorder"
-                                            Background="#F9FAFB"
-                                            BorderBrush="#D1D5DB"
-                                            BorderThickness="1"
-                                            CornerRadius="4"
-                                            MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                        <ScrollViewer>
-                                            <ItemsPresenter/>
-                                        </ScrollViewer>
-                                    </Border>
-                                </Popup>
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="#9CA3AF"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+
 
         <Style x:Key="AccentButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#6CB6FF"/>

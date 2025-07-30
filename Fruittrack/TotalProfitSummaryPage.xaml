@@ -6,55 +6,7 @@
       FlowDirection="RightToLeft">
 
     <Page.Resources>
-        <!-- Modern ComboBox Style -->
-        <Style x:Key="ModernComboBox" TargetType="ComboBox">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#D0D7DE"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ComboBox">
-                        <Border x:Name="border" 
-                                Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6">
-                            <Grid>
-                                <ToggleButton x:Name="toggleButton" 
-                                              Background="Transparent" 
-                                              BorderThickness="0"
-                                              IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                              ClickMode="Press">
-                                    <Path x:Name="arrow" 
-                                          HorizontalAlignment="Right" 
-                                          VerticalAlignment="Center" 
-                                          Data="M 0 0 L 4 4 L 8 0 Z" 
-                                          Fill="#6B7280" 
-                                          Margin="0,0,10,0"/>
-                                </ToggleButton>
-                                <ContentPresenter x:Name="contentPresenter" 
-                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
-                                                  Content="{TemplateBinding SelectionBoxItem}"
-                                                  HorizontalAlignment="Right" 
-                                                  VerticalAlignment="Center"
-                                                  Margin="{TemplateBinding Padding}"/>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#6CB6FF"/>
-                            </Trigger>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#6CB6FF"/>
-                                <Setter TargetName="border" Property="Background" Value="#F8FAFF"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+
 
         <!-- Modern TextBox Style -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
