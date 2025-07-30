@@ -155,7 +155,7 @@
                         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
                             <TextBlock Text="المصنع:" VerticalAlignment="Center" Margin="0,0,10,0"
                                        Foreground="#1F2937" FontSize="14"/>
-                            <ComboBox x:Name="FactoryFilter" Width="140" Height="30" Style="{StaticResource ModernComboBox}" IsEditable="True"/>
+                            <ComboBox x:Name="FactoryFilter" Width="140" Height="30" Style="{StaticResource ModernComboBox}"/>
                         </StackPanel>
 
                         <!-- Truck Number Filter -->
