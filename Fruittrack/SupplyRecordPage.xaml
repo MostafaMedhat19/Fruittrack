@@ -12,7 +12,7 @@
         Background="White">
 
     <Page.Resources>
-        <!-- Color Palette -->
+        <!-- Color Palsette -->
         <SolidColorBrush x:Key="PrimaryBrush" Color="#1E3A8A"/>
         <SolidColorBrush x:Key="SecondaryBrush" Color="#3B82F6"/>
         <SolidColorBrush x:Key="AccentBrush" Color="#10B981"/>
