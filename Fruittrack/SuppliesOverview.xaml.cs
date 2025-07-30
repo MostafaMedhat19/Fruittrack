@@ -84,30 +84,30 @@ namespace Fruittrack
                     var item = new SupplyOverviewItem
                     {
                         Date = supply.EntryDate,
-                        TruckNumber = supply.Truck?.TruckNumber ?? "",
+                        TruckNumber = supply.Truck?.TruckNumber ?? "غير محدد",
                         FreightCost = supply.FreightCost ?? 0,
                         
                         // Farm data
-                        FarmName = supply.Farm?.FarmName ?? "",
-                        WeightAtFarm = supply.FarmWeight ?? 0,
+                        FarmName = supply.Farm?.FarmName ?? "غير محدد",
+                        FarmWeight = supply.FarmWeight ?? 0,
                         FarmDiscountPercentage = supply.FarmDiscountRate ?? 0,
-                        FarmPrice = supply.FarmPricePerTon ?? 0,
+                        FarmPrice = supply.FarmPricePerKilo ?? 0,
                         
                         // Factory data  
-                        FactoryName = supply.Factory?.FactoryName ?? "",
-                        WeightAtFactory = supply.FactoryWeight ?? 0,
+                        FactoryName = supply.Factory?.FactoryName ?? "غير محدد",
+                        FactoryWeight = supply.FactoryWeight ?? 0,
                         FactoryDiscountPercentage = supply.FactoryDiscountRate ?? 0,
-                        FactoryPrice = supply.FactoryPricePerTon ?? 0,
+                        FactoryPrice = supply.FactoryPricePerKilo ?? 0,
                         
                         // Notes
                         Notes = supply.Notes ?? ""
                     };
                     
                     // Calculate derived values
-                    item.AllowedWeightFromFarm = item.WeightAtFarm * (1 - (item.FarmDiscountPercentage / 100));
+                    item.AllowedWeightFromFarm = item.FarmWeight * (1 - (item.FarmDiscountPercentage / 100));
                     item.FarmTotal = item.AllowedWeightFromFarm * item.FarmPrice;
                     
-                    item.AllowedWeightFromFactory = item.WeightAtFactory * (1 - (item.FactoryDiscountPercentage / 100));
+                    item.AllowedWeightFromFactory = item.FactoryWeight * (1 - (item.FactoryDiscountPercentage / 100));
                     item.FactoryTotal = item.AllowedWeightFromFactory * item.FactoryPrice;
                     
                     item.ProfitLoss = item.FactoryTotal - (item.FarmTotal + item.FreightCost);
@@ -267,7 +267,7 @@ namespace Fruittrack
         
         // Farm section
         public string FarmName { get; set; } = "";
-        public decimal WeightAtFarm { get; set; }
+        public decimal FarmWeight { get; set; }
         public decimal FarmDiscountPercentage { get; set; }
         public decimal AllowedWeightFromFarm { get; set; }
         public decimal FarmPrice { get; set; }
@@ -275,7 +275,7 @@ namespace Fruittrack
         
         // Factory section
         public string FactoryName { get; set; } = "";
-        public decimal WeightAtFactory { get; set; }
+        public decimal FactoryWeight { get; set; }
         public decimal FactoryDiscountPercentage { get; set; }
         public decimal AllowedWeightFromFactory { get; set; }
         public decimal FactoryPrice { get; set; }

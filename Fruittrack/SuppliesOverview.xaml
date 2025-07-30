@@ -7,7 +7,7 @@
       Title="نظرة عامة على كل التوريدات" 
       FlowDirection="RightToLeft"
       FontFamily="Segoe UI"
-      Background="#0A2647">
+      Background="#F8F9FA">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -17,11 +17,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Title with accent bar -->
-        <Border Grid.Row="0" Background="#003366" CornerRadius="6" Padding="15" Margin="0,0,0,20"
+        <!-- Title with soft accent -->
+        <Border Grid.Row="0" Background="#6CB6FF" CornerRadius="6" Padding="15" Margin="0,0,0,20"
                 BorderThickness="0" BorderBrush="Transparent">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Rectangle Width="5" Height="30" Fill="#205295" Margin="0,0,10,0" RadiusX="2" RadiusY="2"/>
+                <Rectangle Width="5" Height="30" Fill="White" Margin="0,0,10,0" RadiusX="2" RadiusY="2"/>
                 <TextBlock Text="نظرة عامة على كل التوريدات" 
                            FontSize="24" FontWeight="SemiBold" 
                            Foreground="White" VerticalAlignment="Center"/>
@@ -29,9 +29,8 @@
         </Border>
 
         <!-- Filters Card -->
-        <Border Grid.Row="1" Background="#144272" CornerRadius="6" 
-                BorderThickness="0" Padding="15" Margin="0,10,0,25"
-                Effect="{StaticResource CardShadow}">
+        <Border Grid.Row="1" Background="White" CornerRadius="6" 
+                BorderThickness="1" BorderBrush="#E5E7EB" Padding="15" Margin="0,10,0,25">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -47,45 +46,45 @@
                 <!-- Date Filters -->
                 <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="من تاريخ:" VerticalAlignment="Center" Margin="0,0,10,0"
-                               Foreground="White" FontSize="14"/>
+                               Foreground="#1F2937" FontSize="14"/>
                     <DatePicker x:Name="FromDatePicker" Width="140" Height="30" 
-                               Background="#003366" BorderBrush="#205295"  Foreground="Black" 
+                               Background="#F9FAFB" BorderBrush="#D1D5DB"  Foreground="#1F2937" 
                                BorderThickness="1" VerticalContentAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
                     <TextBlock Text="إلى تاريخ:" VerticalAlignment="Center" Margin="0,0,10,0"
-                               Foreground="White" FontSize="14"/>
+                               Foreground="#1F2937" FontSize="14"/>
                     <DatePicker x:Name="ToDatePicker" Width="140" Height="30" 
-                               Background="#003366" BorderBrush="#205295" Foreground="Black" 
+                               Background="#F9FAFB" BorderBrush="#D1D5DB" Foreground="#1F2937" 
                                BorderThickness="1" VerticalContentAlignment="Center"/>
                 </StackPanel>
 
                 <!-- Truck and Farm Filters -->
                 <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="رقم العربية:" VerticalAlignment="Center" Margin="0,0,10,0"
-                               Foreground="#80FFFFFF" FontSize="14"/>
+                               Foreground="#1F2937" FontSize="14"/>
                     <TextBox x:Name="TruckNumberFilter" Width="140" Height="30" Style="{StaticResource ModernTextBox}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
                     <TextBlock Text="المزرعة:" VerticalAlignment="Center" Margin="0,0,10,0"
-                               Foreground="#80FFFFFF" FontSize="14"/>
+                               Foreground="#1F2937" FontSize="14"/>
                     <ComboBox x:Name="FarmFilter" Width="140" Height="30" Style="{StaticResource ModernComboBox}" IsEditable="True"/>
                 </StackPanel>
 
                 <!-- Factory and Profit Filters -->
                 <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="المصنع:" VerticalAlignment="Center" Margin="0,0,10,0"
-                               Foreground="#80FFFFFF" FontSize="14"/>
+                               Foreground="#1F2937" FontSize="14"/>
                     <ComboBox x:Name="FactoryFilter" Width="140" Height="30" Style="{StaticResource ModernComboBox}" IsEditable="True"/>
                 </StackPanel>
                 <StackPanel Grid.Column="2" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
                     <TextBlock Text="نوع الربح:" VerticalAlignment="Center" Margin="0,0,10,0"
-                               Foreground="#80FFFFFF" FontSize="14"/>
+                               Foreground="#1F2937" FontSize="14"/>
                     <ComboBox x:Name="ProfitTypeFilter" Width="140" Height="30" Style="{StaticResource ModernComboBox}">
                         <ComboBoxItem Content="الكل"/>
-                        <ComboBoxItem Content="ربح" Foreground="#FF4CAF50"/>
-                        <ComboBoxItem Content="خسارة" Foreground="#FFF44336"/>
-                        <ComboBoxItem Content="صفر" Foreground="#FF9E9E9E"/>
+                        <ComboBoxItem Content="ربح" Foreground="#10B981"/>
+                        <ComboBoxItem Content="خسارة" Foreground="#FB7185"/>
+                        <ComboBoxItem Content="صفر" Foreground="#6B7280"/>
                     </ComboBox>
                 </StackPanel>
 
@@ -100,7 +99,7 @@
 
         <!-- Data Grid -->
         <Border Grid.Row="2" CornerRadius="6" Margin="0,0,0,10" 
-                Background="#144272" Padding="1" Effect="{StaticResource CardShadow}">
+                Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="1">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -116,9 +115,9 @@
                   SelectionUnit="FullRow"
                   BorderThickness="0"
                   Background="Transparent"
-                  RowBackground="#003366"
-                  AlternatingRowBackground="#0A2647"
-                  Foreground="White"
+                  RowBackground="White"
+                  AlternatingRowBackground="#F9FAFB"
+                  Foreground="#1F2937"
                   FontSize="13"
                   ColumnWidth="Auto"
                   CanUserResizeColumns="True"
@@ -130,45 +129,54 @@
                     <DataGrid.Columns>
                         <!-- Date Column -->
                         <DataGridTextColumn Header="التاريخ" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" 
-                                   Width="90" HeaderStyle="{StaticResource CenteredHeader}">
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
                                     <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="5,0"/>
+                                    <Setter Property="Padding" Value="0,0,5,0"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
                         <!-- Truck Info -->
                         <DataGridTextColumn Header="رقم العربية" Binding="{Binding TruckNumber}" 
-                                   Width="80" HeaderStyle="{StaticResource CenteredHeader}">
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
                                     <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="0,0,5,0"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
                         <!-- Freight Cost -->
                         <DataGridTextColumn Header="النولون" Binding="{Binding FreightCost, StringFormat={}{0:N0}}" 
-                                   Width="80" HeaderStyle="{StaticResource CenteredHeader}">
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
                                     <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="0,0,10,0"/>
+                                    <Setter Property="Padding" Value="0,0,5,0"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
                         <!-- Farm Section -->
                         <DataGridTextColumn Header="اسم المزرعة" Binding="{Binding FarmName}" 
-                                   Width="100" HeaderStyle="{StaticResource CenteredHeader}"/>
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="0,0,5,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="وزن المزرعة" Binding="{Binding WeightAtFarm, StringFormat={}{0:N1}}" 
-                                   Width="90" HeaderStyle="{StaticResource CenteredHeader}">
+                        <DataGridTextColumn Header="وزن المزرعة (كجم)" Binding="{Binding FarmWeight, StringFormat={}{0:N1}}" 
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -179,7 +187,7 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="خصم%" Binding="{Binding FarmDiscountPercentage, StringFormat={}{0}%}" 
-                                   Width="60" HeaderStyle="{StaticResource CenteredHeader}">
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -189,7 +197,7 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="الوزن المسموح" Binding="{Binding AllowedWeightFromFarm, StringFormat={}{0:N1}}" 
-                                   Width="100" HeaderStyle="{StaticResource CenteredHeader}">
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -199,35 +207,32 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="سعر المزرعة" Binding="{Binding FarmPrice, StringFormat={}{0:N1}}" 
-                                   Width="85" HeaderStyle="{StaticResource CenteredHeader}">
+                        <!-- Farm Price Column -->
+                        <DataGridTextColumn Header="سعر المزرعة (جنيه/كجم)" 
+                                           Binding="{Binding FarmPrice, StringFormat={}{0:N3}}" 
+                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="0,0,5,0"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-
-                        <DataGridTextColumn Header="إجمالي المزرعة" Binding="{Binding FarmTotal, StringFormat={}{0:N0}}" 
-                                   Width="100" HeaderStyle="{StaticResource CenteredHeader}">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="0,0,5,0"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Padding" Value="5,0"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
                         <!-- Factory Section -->
                         <DataGridTextColumn Header="اسم المصنع" Binding="{Binding FactoryName}" 
-                                   Width="100" HeaderStyle="{StaticResource CenteredHeader}"/>
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="0,0,5,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="وزن المصنع" Binding="{Binding WeightAtFactory, StringFormat={}{0:N1}}" 
-                                   Width="90" HeaderStyle="{StaticResource CenteredHeader}">
+                        <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding FactoryWeight, StringFormat={}{0:N1}}" 
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -238,7 +243,7 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="خصم%" Binding="{Binding FactoryDiscountPercentage, StringFormat={}{0}%}" 
-                                   Width="60" HeaderStyle="{StaticResource CenteredHeader}">
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -248,7 +253,7 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="الوزن المسموح" Binding="{Binding AllowedWeightFromFactory, StringFormat={}{0:N1}}" 
-                                   Width="100" HeaderStyle="{StaticResource CenteredHeader}">
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -258,32 +263,21 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="سعر المصنع" Binding="{Binding FactoryPrice, StringFormat={}{0:N1}}" 
-                                   Width="85" HeaderStyle="{StaticResource CenteredHeader}">
+                        <!-- Factory Price Column -->
+                        <DataGridTextColumn Header="سعر المصنع (جنيه/كجم)" 
+                                           Binding="{Binding FactoryPrice, StringFormat={}{0:N3}}" 
+                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="0,0,5,0"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-
-                        <DataGridTextColumn Header="إجمالي المصنع" Binding="{Binding FactoryTotal, StringFormat={}{0:N0}}" 
-                                   Width="100" HeaderStyle="{StaticResource CenteredHeader}">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="0,0,5,0"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Padding" Value="5,0"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
                         <!-- Profit/Loss -->
                         <DataGridTextColumn Header="الربح/الخسارة" Binding="{Binding ProfitLoss, StringFormat={}{0:N0}}" 
-                                   Width="100" HeaderStyle="{StaticResource CenteredHeader}">
+                                   Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -292,10 +286,10 @@
                                     <Setter Property="FontWeight" Value="Bold"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding ProfitLoss}" Value="-1">
-                                            <Setter Property="Foreground" Value="#FFFF5252"/>
+                                            <Setter Property="Foreground" Value="#FB7185"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding ProfitLoss}" Value="0">
-                                            <Setter Property="Foreground" Value="#FF4CAF50"/>
+                                            <Setter Property="Foreground" Value="#10B981"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -303,7 +297,7 @@
                         </DataGridTextColumn>
 
                         <!-- Notes -->
-                        <DataGridTemplateColumn Header="الملاحظات" Width="200" HeaderStyle="{StaticResource CenteredHeader}">
+                        <DataGridTemplateColumn Header="الملاحظات" Width="Auto" HeaderStyle="{StaticResource CenteredHeader}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Notes}" 
@@ -331,7 +325,7 @@
 
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
-                            <Setter Property="BorderBrush" Value="#205295"/>
+                            <Setter Property="BorderBrush" Value="#E5E7EB"/>
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             <Setter Property="VerticalContentAlignment" Value="Stretch"/>
@@ -339,19 +333,19 @@
                             <Setter Property="Height" Value="Auto"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ProfitLoss}" Value="-1">
-                                    <Setter Property="Background" Value="#33FF5252"/>
-                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Background" Value="#FEF2F2"/>
+                                    <Setter Property="Foreground" Value="#1F2937"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding ProfitLoss}" Value="0">
-                                    <Setter Property="Background" Value="#332196F3"/>
-                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Background" Value="#F0FDF4"/>
+                                    <Setter Property="Foreground" Value="#1F2937"/>
                                 </DataTrigger>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#205295"/>
+                                    <Setter Property="Background" Value="#F3F4F6"/>
                                 </Trigger>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#205295"/>
-                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Background" Value="#DBEAFE"/>
+                                    <Setter Property="Foreground" Value="#1F2937"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -359,7 +353,7 @@
 
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
-                            <Setter Property="BorderBrush" Value="#205295"/>
+                            <Setter Property="BorderBrush" Value="#E5E7EB"/>
                             <Setter Property="BorderThickness" Value="0,0,1,0"/>
                             <Setter Property="Padding" Value="5,0"/>
                             <Setter Property="Template">
@@ -377,7 +371,7 @@
                             </Setter>
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Foreground" Value="#1F2937"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -400,10 +394,10 @@
         </Border>
 
         <!-- Status Bar -->
-        <Border Grid.Row="3" Background="#003366" CornerRadius="6" Padding="10">
+        <Border Grid.Row="3" Background="#6CB6FF" CornerRadius="6" Padding="10">
             <Grid>
-                <TextBlock x:Name="RecordCountText" Text="إجمالي السجلات: 0" Foreground="#80FFFFFF" HorizontalAlignment="Left"/>
-                <TextBlock x:Name="LastUpdateText" Text="آخر تحديث: --" Foreground="#80FFFFFF" HorizontalAlignment="Right"/>
+                <TextBlock x:Name="RecordCountText" Text="إجمالي السجلات: 0" Foreground="White" HorizontalAlignment="Left"/>
+                <TextBlock x:Name="LastUpdateText" Text="آخر تحديث: --" Foreground="White" HorizontalAlignment="Right"/>
             </Grid>
         </Border>
     </Grid>
@@ -411,9 +405,9 @@
     <Page.Resources>
         <!-- Styles -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
-            <Setter Property="Background" Value="#003366"/>
-            <Setter Property="BorderBrush" Value="#205295"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Height" Value="30"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -431,10 +425,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="#80FFFFFF"/>
+                                <Setter Property="BorderBrush" Value="#9CA3AF"/>
                             </Trigger>
                             <Trigger Property="IsFocused" Value="True">
-                                <Setter Property="BorderBrush" Value="#80FFFFFF"/>
+                                <Setter Property="BorderBrush" Value="#6CB6FF"/>
                                 <Setter Property="BorderThickness" Value="2"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -444,9 +438,9 @@
         </Style>
 
         <Style x:Key="ModernComboBox" TargetType="ComboBox">
-            <Setter Property="Background" Value="#003366"/>
-            <Setter Property="BorderBrush" Value="#205295"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Height" Value="30"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -481,8 +475,8 @@
                                        Focusable="False"
                                        PopupAnimation="Slide">
                                     <Border x:Name="PopupBorder"
-                                            Background="#003366"
-                                            BorderBrush="#205295"
+                                            Background="#F9FAFB"
+                                            BorderBrush="#D1D5DB"
                                             BorderThickness="1"
                                             CornerRadius="4"
                                             MaxHeight="{TemplateBinding MaxDropDownHeight}">
@@ -498,13 +492,13 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="#80FFFFFF"/>
+                    <Setter Property="BorderBrush" Value="#9CA3AF"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
         <Style x:Key="AccentButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#205295"/>
+            <Setter Property="Background" Value="#6CB6FF"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -524,10 +518,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#144272"/>
+                                <Setter TargetName="border" Property="Background" Value="#8CC8FF"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#0A2647"/>
+                                <Setter TargetName="border" Property="Background" Value="#54A6FF"/>
                                 <Setter TargetName="contentPresenter" Property="Margin" Value="1,1,0,0"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -537,9 +531,9 @@
         </Style>
 
         <Style x:Key="DarkDataGridColumnHeader" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#003366"/>
-            <Setter Property="Foreground" Value="#80FFFFFF"/>
-            <Setter Property="BorderBrush" Value="#205295"/>
+            <Setter Property="Background" Value="#F6F8FA"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -548,7 +542,7 @@
         </Style>
 
         <Style x:Key="DarkDataGridCell" TargetType="DataGridCell">
-            <Setter Property="BorderBrush" Value="#205295"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
             <Setter Property="BorderThickness" Value="0,0,1,0"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -565,7 +559,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Foreground" Value="#1F2937"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -574,7 +568,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
         </Style>
 
-        <!-- Shadow Effect -->
-        <DropShadowEffect x:Key="CardShadow" BlurRadius="10" ShadowDepth="2" Color="#33000000"/>
+        <!-- Shadow Effect - very minimal -->
+        <DropShadowEffect x:Key="CardShadow" BlurRadius="4" ShadowDepth="1" Color="#08000000"/>
     </Page.Resources>
 </Page>

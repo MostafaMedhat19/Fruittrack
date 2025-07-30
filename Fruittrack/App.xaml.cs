@@ -1,9 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Configuration;
+using System.Data;
+using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Globalization;
+using System.Windows.Data;
 
 namespace Fruittrack
 {
@@ -58,6 +62,30 @@ namespace Fruittrack
                 disposable.Dispose();
             }
             base.OnExit(e);
+        }
+    }
+
+    // Boolean to Visibility Converter
+    public class BooleanToVisibilityConverter : IValueConverter
+    {
+        public static readonly BooleanToVisibilityConverter Instance = new BooleanToVisibilityConverter();
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool boolValue)
+            {
+                return boolValue ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Visibility visibility)
+            {
+                return visibility == Visibility.Visible;
+            }
+            return false;
         }
     }
 }

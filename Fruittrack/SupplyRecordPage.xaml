@@ -109,6 +109,37 @@
             <Setter Property="FontWeight" Value="Medium"/>
         </Style>
 
+
+
+        <!-- ComboBox Toggle Button Template - Must be defined before ComboBox style -->
+        <ControlTemplate x:Key="ComboBoxToggleButtonTemplate" TargetType="ToggleButton">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="20"/>
+                </Grid.ColumnDefinitions>
+                <Border x:Name="border" 
+                        Grid.ColumnSpan="2"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CornerRadius="6"/>
+                <Path x:Name="arrow" 
+                      Grid.Column="1" 
+                      Fill="{StaticResource TextSecondary}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Data="M0,0 L4,4 8,0 Z"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="arrow" Property="Fill" Value="{StaticResource PrimaryBrush}"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="true">
+                    <Setter TargetName="arrow" Property="Data" Value="M0,4 L4,0 8,4 Z"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
         <!-- Simple Working DatePicker like in the image -->
         <Style x:Key="WorkingDatePicker" TargetType="DatePicker">
             <Setter Property="Background" Value="White"/>
@@ -145,7 +176,7 @@
                                     SnapsToDevicePixels="True">
                                 <Grid>
                                     <ToggleButton x:Name="ToggleButton" 
-                                                 
+                                                  Template="{StaticResource ComboBoxToggleButtonTemplate}"
                                                   Grid.Column="2" 
                                                   Focusable="false"
                                                   IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
@@ -180,34 +211,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <ControlTemplate x:Key="ComboBoxToggleButtonTemplate" TargetType="ToggleButton">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="20"/>
-                </Grid.ColumnDefinitions>
-                <Border x:Name="border" 
-                        Grid.ColumnSpan="2"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        CornerRadius="6"/>
-                <Path x:Name="arrow" 
-                      Grid.Column="1" 
-                      Fill="{StaticResource TextSecondary}"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Center"
-                      Data="M0,0 L4,4 8,0 Z"/>
-            </Grid>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter TargetName="arrow" Property="Fill" Value="{StaticResource PrimaryBrush}"/>
-                </Trigger>
-                <Trigger Property="IsChecked" Value="true">
-                    <Setter TargetName="arrow" Property="Data" Value="M0,4 L4,0 8,4 Z"/>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
 
         <Style TargetType="Button">
             <Setter Property="Margin" Value="10,5"/>
@@ -257,10 +260,6 @@
             </Setter>
         </Style>
 
-
-
-
-
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="0,0,0,20"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -273,7 +272,7 @@
                             <Border Background="White"
                                     CornerRadius="8"
                                     BorderThickness="0"
-                                  >
+                                    Effect="{StaticResource CardShadow}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
@@ -338,7 +337,6 @@
         <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" Padding="20">
             <Grid>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    
                     <TextBlock Text="تسجيل عملية التوريد" 
                                Foreground="White" 
                                FontSize="24" 
@@ -395,8 +393,7 @@
                                        Style="{StaticResource WorkingDatePicker}"
                                        IsTodayHighlighted="True"
                                        SelectedDateFormat="Short"
-                                       SelectedDateChanged="CalendarControl_SelectedDateChanged"
-                                       Text="Select a date"/>
+                                       SelectedDateChanged="CalendarControl_SelectedDateChanged"/>
                         </StackPanel>
 
                         <!-- Truck Number -->
@@ -451,7 +448,13 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Farm Section -->
-                    <GroupBox Grid.Column="0" Header="بيانات المزرعة" Margin="0,0,10,0">
+                    <GroupBox Grid.Column="0" Header="🌾 بيانات المزرعة" Margin="0,0,10,0">
+                        <GroupBox.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontSize="16" FontWeight="Bold" 
+                                           Foreground="{StaticResource PrimaryBrush}"/>
+                            </DataTemplate>
+                        </GroupBox.HeaderTemplate>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -463,7 +466,7 @@
 
                             <!-- Farm Name -->
                             <StackPanel Grid.Row="0">
-                                <TextBlock Text="اسم المزرعة"/>
+                                <TextBlock Text="اسم المزرعة" FontWeight="SemiBold"/>
                                 <ComboBox x:Name="FarmName" 
                                          ItemsSource="{Binding Farms}"
                                          SelectedItem="{Binding SelectedFarm, Mode=TwoWay}"
@@ -495,9 +498,9 @@
 
                             <!-- Farm Weight -->
                             <StackPanel Grid.Row="1">
-                                <TextBlock Text="الوزن عند المزرعة "/>
+                                <TextBlock Text="الوزن عند المزرعة (كجم)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFarmWeight" 
-                                         Text="{Binding FarmWeight, UpdateSourceTrigger=PropertyChanged}">
+                                         Text="{Binding FarmWeight, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -514,9 +517,9 @@
                                            Visibility="{Binding HasFarmWeightError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
 
-                            <!-- Farm Discount -->
+                            <!-- Farm Discount Percentage -->
                             <StackPanel Grid.Row="2">
-                                <TextBlock Text="نسبة الخصم (%)"/>
+                                <TextBlock Text="نسبة الخصم (%)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFarmDiscount" 
                                          Text="{Binding FarmDiscountPercentage, UpdateSourceTrigger=PropertyChanged}">
                                     <TextBox.Style>
@@ -535,19 +538,37 @@
                                            Visibility="{Binding HasFarmDiscountError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
 
-                            <!-- Farm Allowed Weight -->
+                            <!-- Farm Allowed Weight - AUTO CALCULATED -->
                             <StackPanel Grid.Row="3">
-                                <TextBlock Text="الوزن المسموح "/>
-                                <TextBlock x:Name="txtFarmAllowedWeight" 
-                                           Text="{Binding FarmAllowedWeight, Mode=OneWay}" 
-                                           Style="{StaticResource ValueTextStyle}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="الوزن المسموح - " FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}"/>
+                                    <TextBlock Text="⚡ تلقائي" FontSize="11" FontWeight="Bold" 
+                                               Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Border Background="#E6F7F0" BorderBrush="{StaticResource AccentBrush}" 
+                                        BorderThickness="2" CornerRadius="6" Padding="12,8">
+                                    <Grid>
+                                        <TextBlock Text="{Binding FarmAllowedWeight, Mode=OneWay, StringFormat={}{0:N2} كجم}" 
+                                                   FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"
+                                                   Foreground="{StaticResource AccentBrush}"/>
+                                        <Border Background="{StaticResource AccentBrush}" CornerRadius="10" 
+                                                Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                Margin="-5,-5,0,0">
+                                            <TextBlock Text="⚡" Foreground="White" HorizontalAlignment="Center" 
+                                                       VerticalAlignment="Center" FontSize="10"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <TextBlock Text="يتم حساب الوزن المسموح تلقائياً: الوزن - (الوزن × نسبة الخصم)" 
+                                           FontSize="10" Foreground="{StaticResource TextSecondary}" 
+                                           FontStyle="Italic" Margin="2,4,0,0"/>
                             </StackPanel>
 
                             <!-- Farm Price -->
                             <StackPanel Grid.Row="4">
-                                <TextBlock Text="السعر لكل كيلو"/>
+                                <TextBlock Text="السعر لكل كيلو (جنيه)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFarmPrice" 
-                                         Text="{Binding FarmPricePerTon, UpdateSourceTrigger=PropertyChanged}">
+                                        Text="{Binding FarmPrice, UpdateSourceTrigger=PropertyChanged}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -567,7 +588,13 @@
                     </GroupBox>
 
                     <!-- Factory Section -->
-                    <GroupBox Grid.Column="1" Header="بيانات المصنع" Margin="10,0,0,0">
+                    <GroupBox Grid.Column="1" Header="🏭 بيانات المصنع" Margin="10,0,0,0">
+                        <GroupBox.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontSize="16" FontWeight="Bold" 
+                                           Foreground="{StaticResource PrimaryBrush}"/>
+                            </DataTemplate>
+                        </GroupBox.HeaderTemplate>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -579,30 +606,30 @@
 
                             <!-- Factory Name -->
                             <StackPanel Grid.Row="0">
-                                <TextBlock Text="اسم المصنع"/>
+                                <TextBlock Text="اسم المصنع" FontWeight="SemiBold"/>
                                 <ComboBox x:Name="FactoryName" 
                                          ItemsSource="{Binding Factories}"
                                          SelectedItem="{Binding SelectedFactory, Mode=TwoWay}"
                                          DisplayMemberPath="FactoryName"
                                          IsEditable="True"
                                          Text="{Binding SelectedFactory.FactoryName, Mode=TwoWay}">
-                                     <ComboBox.Style>
-                                         <Style TargetType="ComboBox">
-                                             <Setter Property="Margin" Value="0,0,0,12"/>
-                                             <Setter Property="Padding" Value="12,10"/>
-                                             <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                             <Setter Property="Background" Value="White"/>
-                                             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-                                             <Setter Property="BorderThickness" Value="1"/>
-                                             <Setter Property="FontSize" Value="14"/>
-                                             <Style.Triggers>
-                                                 <DataTrigger Binding="{Binding HasFactoryNameError}" Value="True">
-                                                     <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
-                                                     <Setter Property="BorderThickness" Value="1.5"/>
-                                                 </DataTrigger>
-                                             </Style.Triggers>
-                                         </Style>
-                                     </ComboBox.Style>
+                                    <ComboBox.Style>
+                                        <Style TargetType="ComboBox">
+                                            <Setter Property="Margin" Value="0,0,0,12"/>
+                                            <Setter Property="Padding" Value="12,10"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Background" Value="White"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                            <Setter Property="FontSize" Value="14"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasFactoryNameError}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ComboBox.Style>
                                 </ComboBox>
                                 <TextBlock Text="{Binding FactoryNameError}" 
                                            Style="{StaticResource ErrorMessageStyle}"
@@ -611,9 +638,9 @@
 
                             <!-- Factory Weight -->
                             <StackPanel Grid.Row="1">
-                                <TextBlock Text="الوزن عند المصنع"/>
+                                <TextBlock Text="الوزن عند المصنع (كجم)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFactoryWeight" 
-                                         Text="{Binding FactoryWeight, UpdateSourceTrigger=PropertyChanged}">
+                                         Text="{Binding FactoryWeight, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -630,11 +657,11 @@
                                            Visibility="{Binding HasFactoryWeightError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
 
-                            <!-- Factory Discount -->
+                            <!-- Factory Discount Percentage -->
                             <StackPanel Grid.Row="2">
-                                <TextBlock Text="نسبة الخصم (%)"/>
+                                <TextBlock Text="نسبة الخصم (%)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFactoryDiscount" 
-                                         Text="{Binding FactoryDiscountPercentage, UpdateSourceTrigger=PropertyChanged}">
+                                         Text="{Binding FactoryDiscount, UpdateSourceTrigger=PropertyChanged}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -651,19 +678,37 @@
                                            Visibility="{Binding HasFactoryDiscountError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
 
-                            <!-- Factory Allowed Weight -->
+                            <!-- Factory Allowed Weight - AUTO CALCULATED -->
                             <StackPanel Grid.Row="3">
-                                <TextBlock Text="الوزن المسموح "/>
-                                <TextBlock x:Name="txtFactoryAllowedWeight" 
-                                           Text="{Binding FactoryAllowedWeight, Mode=OneWay}" 
-                                           Style="{StaticResource ValueTextStyle}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="الوزن المسموح - " FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}"/>
+                                    <TextBlock Text="⚡ تلقائي" FontSize="11" FontWeight="Bold" 
+                                               Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Border Background="#E6F7F0" BorderBrush="{StaticResource AccentBrush}" 
+                                        BorderThickness="2" CornerRadius="6" Padding="12,8">
+                                    <Grid>
+                                        <TextBlock Text="{Binding FactoryAllowedWeight, Mode=OneWay, StringFormat={}{0:N2} كجم}" 
+                                                   FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"
+                                                   Foreground="{StaticResource AccentBrush}"/>
+                                        <Border Background="{StaticResource AccentBrush}" CornerRadius="10" 
+                                                Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                Margin="-5,-5,0,0">
+                                            <TextBlock Text="⚡" Foreground="White" HorizontalAlignment="Center" 
+                                                       VerticalAlignment="Center" FontSize="10"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <TextBlock Text="يتم حساب الوزن المسموح تلقائياً: الوزن - (الوزن × نسبة الخصم)" 
+                                           FontSize="10" Foreground="{StaticResource TextSecondary}" 
+                                           FontStyle="Italic" Margin="2,4,0,0"/>
                             </StackPanel>
 
                             <!-- Factory Price -->
                             <StackPanel Grid.Row="4">
-                                <TextBlock Text="السعر لكل كيلو"/>
+                                <TextBlock Text="السعر لكل كيلو (جنيه)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFactoryPrice" 
-                                         Text="{Binding FactoryPricePerTon, UpdateSourceTrigger=PropertyChanged}">
+                                         Text="{Binding FactoryPrice, UpdateSourceTrigger=PropertyChanged}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -683,8 +728,20 @@
                     </GroupBox>
                 </Grid>
 
-                <!-- Totals Section -->
-                <GroupBox Grid.Row="2" Header="الإجماليات">
+                <!-- Totals Section - AUTO CALCULATED -->
+                <GroupBox Grid.Row="2" Header="💰 الإجماليات - حسابات تلقائية">
+                    <GroupBox.HeaderTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding}" FontSize="18" FontWeight="Bold" 
+                                           Foreground="{StaticResource AccentBrush}"/>
+                                <Border Background="{StaticResource AccentBrush}" CornerRadius="12" 
+                                        Margin="10,0,0,0" Padding="8,3">
+                                    <TextBlock Text="⚡ تلقائي" Foreground="White" FontSize="11" FontWeight="Bold"/>
+                                </Border>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GroupBox.HeaderTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -692,59 +749,85 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Farm Total -->
+                        <!-- Farm Total - AUTO CALCULATED -->
                         <Border Grid.Column="0" 
                                 Background="{StaticResource LightBackground}" 
                                 CornerRadius="8"
                                 Padding="20,15"
-                                Margin="0,0,10,0">
+                                Margin="0,0,10,0"
+                                BorderBrush="{StaticResource SecondaryBrush}"
+                                BorderThickness="2">
                             <StackPanel>
-                                <TextBlock Text="إجمالي المزرعة" 
-                                           Foreground="{StaticResource TextSecondary}"
-                                           HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Path Data="{StaticResource FarmIcon}" 
+                                          Fill="{StaticResource SecondaryBrush}" 
+                                          Width="18" Height="18"
+                                          Margin="0,0,5,0"/>
+                                    <TextBlock Text="إجمالي المزرعة" 
+                                               Foreground="{StaticResource TextSecondary}"
+                                               FontWeight="SemiBold"/>
+                                </StackPanel>
                                 <TextBlock x:Name="txtFarmTotal" 
                                            Text="{Binding FarmTotal, Mode=OneWay, StringFormat={}{0:C}}" 
                                            Style="{StaticResource ValueTextStyle}"
-                                           HorizontalAlignment="Center"/>
+                                           HorizontalAlignment="Center"
+                                           Foreground="{StaticResource SecondaryBrush}"/>
                             </StackPanel>
                         </Border>
 
-                        <!-- Factory Total -->
+                        <!-- Factory Total - AUTO CALCULATED -->
                         <Border Grid.Column="1" 
                                 Background="{StaticResource LightBackground}" 
                                 CornerRadius="8"
                                 Padding="20,15"
-                                Margin="10,0">
+                                Margin="10,0"
+                                BorderBrush="{StaticResource PrimaryBrush}"
+                                BorderThickness="2">
                             <StackPanel>
-                                <TextBlock Text="إجمالي المصنع" 
-                                           Foreground="{StaticResource TextSecondary}"
-                                           HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Path Data="{StaticResource FactoryIcon}" 
+                                          Fill="{StaticResource PrimaryBrush}" 
+                                          Width="18" Height="18"
+                                          Margin="0,0,5,0"/>
+                                    <TextBlock Text="إجمالي المصنع" 
+                                               Foreground="{StaticResource TextSecondary}"
+                                               FontWeight="SemiBold"/>
+                                </StackPanel>
                                 <TextBlock x:Name="txtFactoryTotal" 
                                            Text="{Binding FactoryTotal, Mode=OneWay, StringFormat={}{0:C}}" 
                                            Style="{StaticResource ValueTextStyle}"
-                                           HorizontalAlignment="Center"/>
+                                           HorizontalAlignment="Center"
+                                           Foreground="{StaticResource PrimaryBrush}"/>
                             </StackPanel>
                         </Border>
 
-                        <!-- Profit Margin -->
+                        <!-- Profit Margin - AUTO CALCULATED -->
                         <Border Grid.Column="2" 
                                 Background="#E6F7F0" 
                                 CornerRadius="8"
                                 Padding="20,15"
-                                Margin="10,0,0,0">
+                                Margin="10,0,0,0"
+                                BorderBrush="{StaticResource AccentBrush}"
+                                BorderThickness="3">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <TextBlock Text="هامش الربح" 
-                                               Foreground="{StaticResource TextSecondary}"
-                                               Margin="0,0,5,0"/>
                                     <Path Data="{StaticResource ProfitIcon}" 
                                           Fill="{StaticResource AccentBrush}" 
-                                          Width="18" Height="18"/>
+                                          Width="20" Height="20"
+                                          Margin="0,0,5,0"/>
+                                    <TextBlock Text="هامش الربح" 
+                                               Foreground="{StaticResource TextSecondary}"
+                                               FontWeight="Bold"/>
                                 </StackPanel>
                                 <TextBlock x:Name="txtProfitMargin" 
                                            Text="{Binding ProfitMargin, Mode=OneWay, StringFormat={}{0:C}}" 
                                            Style="{StaticResource ProfitTextStyle}"
                                            HorizontalAlignment="Center"/>
+                                <TextBlock Text="= إجمالي المصنع - (المزرعة + النولون)" 
+                                           FontSize="10"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           HorizontalAlignment="Center"
+                                           TextWrapping="Wrap"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -753,7 +836,7 @@
                 <!-- Notes Section -->
                 <GroupBox Grid.Row="3" Header="ملاحظات">
                     <TextBox x:Name="txtNotes" 
-                             Text="{Binding Notes}" 
+                             Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" 
                              AcceptsReturn="True" 
                              TextWrapping="Wrap" 
                              Height="120"

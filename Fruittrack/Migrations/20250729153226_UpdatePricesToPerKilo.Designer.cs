@@ -4,6 +4,7 @@ using Fruittrack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fruittrack.Migrations
 {
     [DbContext(typeof(FruitTrackDbContext))]
-    partial class FruitTrackDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250729153226_UpdatePricesToPerKilo")]
+    partial class UpdatePricesToPerKilo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,39 +24,6 @@ namespace Fruittrack.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Fruittrack.Models.CashReceiptTransaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("PaidBackAmount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,2)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<decimal>("ReceivedAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("RemainingAmount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,2)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<string>("SourceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CashReceiptTransactions");
-                });
 
             modelBuilder.Entity("Fruittrack.Models.Factory", b =>
                 {
@@ -208,12 +178,12 @@ namespace Fruittrack.Migrations
                     b.HasOne("Fruittrack.Models.Factory", "Factory")
                         .WithMany("SupplyEntries")
                         .HasForeignKey("FactoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Fruittrack.Models.Farm", "Farm")
                         .WithMany("SupplyEntries")
                         .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Fruittrack.Models.Truck", "Truck")
                         .WithMany("SupplyEntries")

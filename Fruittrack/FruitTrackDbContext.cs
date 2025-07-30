@@ -10,6 +10,7 @@ namespace Fruittrack
         public DbSet<Factory> Factories { get; set; }
         public DbSet<SupplyEntry> SupplyEntries { get; set; }
         public DbSet<FinancialSettlement> FinancialSettlements { get; set; }
+        public DbSet<CashReceiptTransaction> CashReceiptTransactions { get; set; }
 
         public FruitTrackDbContext(DbContextOptions<FruitTrackDbContext> options)
             : base(options)
@@ -53,12 +54,12 @@ namespace Fruittrack
                 entity.HasOne(e => e.Farm)
                       .WithMany(f => f.SupplyEntries)
                       .HasForeignKey(e => e.FarmId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                      .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(e => e.Factory)
                       .WithMany(f => f.SupplyEntries)
                       .HasForeignKey(e => e.FactoryId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                      .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(e => e.FinancialSettlement)
                       .WithOne(fs => fs.SupplyEntry)
@@ -77,6 +78,17 @@ namespace Fruittrack
                       .WithOne(se => se.FinancialSettlement)
                       .HasForeignKey<FinancialSettlement>(e => e.SupplyEntryId)
                       .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // CashReceiptTransaction
+            modelBuilder.Entity<CashReceiptTransaction>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.SourceName).IsRequired();
+                entity.Property(e => e.ReceivedAmount).IsRequired();
+                entity.Property(e => e.Date).IsRequired();
+                entity.Property(e => e.PaidBackAmount).HasDefaultValue(0);
+                entity.Property(e => e.RemainingAmount).HasDefaultValue(0);
             });
         }
     }
