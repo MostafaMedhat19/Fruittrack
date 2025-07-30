@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Threading;
@@ -12,25 +13,25 @@ namespace Fruittrack
     public partial class HomePage : Page
     {
         private DispatcherTimer _timer;
-
+        public int number = 0; 
         public HomePage()
         {
             InitializeComponent();
             this.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Fonts/#Montserrat");
             UpdateDateTime();
-            
+            InvalidCountTextBlock.Text = number.ToString();
             // Start timer to update time every second
-            var timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += (s, e) => UpdateDateTime();
-            timer.Start();
+            _timer = new System.Windows.Threading.DispatcherTimer();
+            _timer.Interval = TimeSpan.FromSeconds(1);
+            _timer.Tick += (s, e) => UpdateDateTime();
+            _timer.Start();
         }
 
         private void UpdateDateTime()
         {
             var now = DateTime.Now;
             DateTextBlock.Text = now.ToString("dddd, MMMM dd, yyyy", new System.Globalization.CultureInfo("ar-SA"));
-            TimeTextBlock.Text = now.ToString("HH:mm tt");
+            TimeTextBlock.Text = now.ToString("hh:mm tt", new System.Globalization.CultureInfo("en-US"));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -38,7 +39,7 @@ namespace Fruittrack
             // Navigate to Supply Record Page
             NavigationService.Navigate(new SupplyRecordPage());
         }
-
+     
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             // Navigate to Supplies Overview Page
@@ -50,6 +51,10 @@ namespace Fruittrack
             // Navigate to Invalid Supplies Page
             NavigationService.Navigate(new InvalidSuppliesPage());
         }
+        private void NotificationBadge_Click(object sender, MouseButtonEventArgs e)
+        {
+            NavigationService?.Navigate(new InvalidSuppliesPage());
+        }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
@@ -57,9 +62,16 @@ namespace Fruittrack
             NavigationService.Navigate(new ProductionReportsPage());
         }
 
-        private void Button_Click_4(object sender, RoutedEventArgs e)
+        private void Button_Click_CashReceipt(object sender, RoutedEventArgs e)
+        {
+            // Navigate to Cash Receipt Page
+            NavigationService.Navigate(new CashReceiptPage());
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(new TotalProfitSummaryPage());
         }
+
     }
 }

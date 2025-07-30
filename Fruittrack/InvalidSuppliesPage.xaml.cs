@@ -19,9 +19,11 @@ namespace Fruittrack
         private readonly FruitTrackDbContext _context;
         private ObservableCollection<InvalidSupplyItem> _invalidSupplies;
         private ObservableCollection<InvalidSupplyItem> _filteredSupplies;
-
+        public int invalidNumbers;
+        public HomePage homePage = new HomePage();
         public InvalidSuppliesPage()
         {
+            homePage.number = invalidNumbers;
             InitializeComponent();
             
             // Use dependency injection like other pages
@@ -228,6 +230,7 @@ namespace Fruittrack
                 // Show completion message
                 var totalSupplies = supplies.Count;
                 var invalidCount = invalidItems.Count;
+                invalidNumbers = invalidCount;
                 LastUpdateText.Text = $"آخر تحديث: {DateTime.Now:dd/MM/yyyy HH:mm} | فحص {totalSupplies} توريد";
 
                 // Show message about results

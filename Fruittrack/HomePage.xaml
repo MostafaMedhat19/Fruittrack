@@ -153,14 +153,20 @@
                 <Button Width="40" Height="40" HorizontalAlignment="Left" 
                         Margin="20,0,0,0" VerticalAlignment="Center"
                         Background="Transparent" BorderThickness="0">
-                    <Grid>
+                    <Grid  MouseLeftButtonUp="NotificationBadge_Click">
                         <Path Data="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" 
                               Fill="#6B7280" Stretch="Uniform" Width="24" Height="24"/>
-                        <Border Style="{StaticResource NotificationBadge}">
-                            <TextBlock Text="3" Foreground="White" FontSize="10" 
-                                       FontWeight="Bold" HorizontalAlignment="Center" 
-                                       VerticalAlignment="Center"/>
+                            <Border Style="{StaticResource NotificationBadge}"
+                            Cursor="Hand" Background="Red">
+                                  <TextBlock x:Name="InvalidCountTextBlock"
+                                   Text="3"
+                                   Foreground="White"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/> 
                         </Border>
+
                     </Grid>
                 </Button>
 
@@ -269,7 +275,7 @@
                     </Button>
 
                     <!-- Settings Button -->
-                    <Button Style="{StaticResource MenuButtonStyle}">
+                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_5">
                         <StackPanel Orientation="Horizontal">
                             <Path Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" 
                                   Style="{StaticResource MenuIconStyle}"/>
@@ -278,11 +284,14 @@
                     </Button>
 
                     <!-- Additional Buttons -->
-                    <Button Style="{StaticResource MenuButtonStyle}">
+            
+
+                    <!-- Cash Receipt Page Button -->
+                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_CashReceipt">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" 
+                            <Path Data="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z" 
                                   Style="{StaticResource MenuIconStyle}"/>
-                            <TextBlock Text="صفحة التسوية المالية" FontSize="18" VerticalAlignment="Center"/>
+                            <TextBlock Text="صفحة استلام نقدية" FontSize="18" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
