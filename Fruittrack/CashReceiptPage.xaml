@@ -9,117 +9,134 @@
       Title="صفحة استلام نقدية"
       Background="#F5F5F5">
 
-    <Grid Margin="20">
+    <Grid Margin="15">
+        <Grid.Resources>
+            <!-- Shared Styles -->
+            <Style TargetType="TextBlock" x:Key="HeaderText">
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Margin" Value="0,0,0,5"/>
+                <Setter Property="Foreground" Value="#444"/>
+            </Style>
+
+            <Style TargetType="Control" x:Key="InputControl">
+                <Setter Property="Padding" Value="12,10"/>
+                <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Height" Value="40"/>
+            </Style>
+
+            <Style TargetType="Button" x:Key="PrimaryButton">
+                <Setter Property="Background" Value="#2196F3"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Padding" Value="16,10"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="MinWidth" Value="120"/>
+            </Style>
+
+            <Style TargetType="Border" x:Key="CardStyle">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Form Section -->
         <Border Grid.Row="0" 
-                Background="White" 
-                CornerRadius="8" 
+                Style="{StaticResource CardStyle}"
                 Padding="20" 
-                Margin="0,0,0,20"
-              >
-            
-            <StackPanel Orientation="Vertical">
+                Margin="0,0,0,15">
+
+            <StackPanel Orientation="Vertical" >
                 <TextBlock Text="صفحة استلام نقدية" 
-                           FontSize="24" 
-                           FontWeight="Bold" 
-                           Margin="0,0,0,20"
+                           FontSize="22" 
+                           FontWeight="Bold"
                            HorizontalAlignment="Center"
                            Foreground="#2196F3"/>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <!-- Source Name -->
-                    <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,10,0">
-                        <TextBlock Text="اسم الشخص اللي استلمت منه" 
-                                   FontWeight="SemiBold" 
-                                   Margin="0,0,0,5"/>
-                        <TextBox Text="{Binding SourceName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
-                                 ToolTip="ادخل اسم الشخص"
-                                 Padding="10,8"
-                                 BorderBrush="#E0E0E0"
-                                 BorderThickness="1"
-                                 />
+                    <StackPanel Grid.Column="0" Grid.Row="0">
+                        <TextBlock Text="اسم الشخص اللي استلمت منه" Style="{StaticResource HeaderText}"/>
+                        <ComboBox x:Name="cmbSourceName"
+                                 ItemsSource="{Binding SourceNames}"
+                                 SelectedItem="{Binding SelectedSourceName, Mode=TwoWay}"
+                                 IsEditable="True"
+                                 Text="{Binding SourceName, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="اختر أو اكتب اسم الشخص"
+                                 Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
                     <!-- Received Amount -->
-                    <StackPanel Grid.Column="1" Grid.Row="0" Margin="10,0,0,0">
-                        <TextBlock Text="المبلغ المستلم" 
-                                   FontWeight="SemiBold" 
-                                   Margin="0,0,0,5"/>
+                    <StackPanel Grid.Column="2" Grid.Row="0">
+                        <TextBlock Text="المبلغ المستلم" Style="{StaticResource HeaderText}"/>
                         <TextBox Text="{Binding ReceivedAmount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
                                  ToolTip="ادخل المبلغ المستلم"
-                                 Padding="10,8"
-                                 BorderBrush="#E0E0E0"
-                                 BorderThickness="1"
-                                />
+                                 Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
                     <!-- Date -->
-                    <StackPanel Grid.Column="0" Grid.Row="1" Margin="0,0,10,0">
-                        <TextBlock Text="التاريخ" 
-                                   FontWeight="SemiBold" 
-                                   Margin="0,0,0,5"/>
+                    <StackPanel Grid.Column="0" Grid.Row="2">
+                        <TextBlock Text="التاريخ" Style="{StaticResource HeaderText}"/>
                         <DatePicker SelectedDate="{Binding Date, UpdateSourceTrigger=PropertyChanged}" 
-                                   Padding="10,8"
-                                   BorderBrush="#E0E0E0"
-                                   BorderThickness="1"/>
+                                   Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
                     <!-- Paid Back Amount -->
-                    <StackPanel Grid.Column="1" Grid.Row="1" Margin="10,0,0,0">
-                        <TextBlock Text="المبلغ المسدد" 
-                                   FontWeight="SemiBold" 
-                                   Margin="0,0,0,5"/>
+                    <StackPanel Grid.Column="2" Grid.Row="2">
+                        <TextBlock Text="المبلغ المسدد" Style="{StaticResource HeaderText}"/>
                         <TextBox Text="{Binding PaidBackAmount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
                                  ToolTip="ادخل المبلغ المسدد"
-                                 Padding="10,8"
-                                 BorderBrush="#E0E0E0"
-                                 BorderThickness="1"
-                                />
+                                 Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
                     <!-- Remaining Amount -->
-                    <StackPanel Grid.Column="0" Grid.Row="2" Margin="0,0,10,0">
-                        <TextBlock Text="المتبقي عليه سداده" 
-                                   FontWeight="SemiBold" 
-                                   Margin="0,0,0,5"/>
+                    <StackPanel Grid.Column="0" Grid.Row="4">
+                        <TextBlock Text="المتبقي عليه سداده" Style="{StaticResource HeaderText}"/>
                         <TextBox Text="{Binding RemainingAmount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, Mode=OneWay}" 
                                  ToolTip="المتبقي عليه سداده"
                                  IsReadOnly="True"
                                  Background="#F8F9FA"
-                                 Padding="10,8"
-                                 BorderBrush="#E0E0E0"
-                                 BorderThickness="1"
-                               />
+                                 Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
                     <!-- Buttons -->
-                    <StackPanel Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Margin="10,0,0,0" VerticalAlignment="Bottom">
+                    <StackPanel Grid.Column="2" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Left">
                         <Button Content="إضافة معاملة" 
                                 Command="{Binding AddTransactionCommand}" 
-                                Background="#4CAF50"
-                                Foreground="White"
-                                Padding="10,8"
-                                FontWeight="SemiBold"
-                               />
-                        
+                                Style="{StaticResource PrimaryButton}"
+                                Background="#4CAF50"/>
 
+                        <Button Content="تحديث المعاملة" 
+                                Padding="10,8"
+                                Command="{Binding UpdateTransactionCommand}"
+                                Style="{StaticResource PrimaryButton}"/>
                     </StackPanel>
                 </Grid>
             </StackPanel>
@@ -127,158 +144,158 @@
 
         <!-- DataGrid Section -->
         <Border Grid.Row="1" 
-                Background="White" 
-                CornerRadius="8" 
-                Margin="0,0,0,10"
-                Padding="5"
-              >
-            
+                Style="{StaticResource CardStyle}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+                <StackPanel>
+                    <TextBlock Text="المعاملات المسجلة" 
+                               Margin="0,10,10,0"
+FontSize="20" 
+FontWeight="Bold" 
+HorizontalAlignment="Center"
 
-                <TextBlock Grid.Row="0" 
-                           Text="المعاملات المسجلة" 
-                           FontSize="18" 
-                           FontWeight="Bold" 
-                           Margin="10,10,10,10"
-                           Foreground="#2196F3"/>
+Foreground="#2196F3"/>
+                </StackPanel>
+                <StackPanel Grid.Row="0"  Orientation="Horizontal" 
+            HorizontalAlignment="Stretch" 
+           >
+                    <!-- Search Box -->
+                    <Grid Width="245" Height="35" Margin="0,0,15,0">
+                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                 Padding="10,5,35,5"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Center"
+                 FontSize="14"
+                 FontFamily="Segoe UI"
+                 Foreground="Black"
+                 Background="White"
+                 BorderBrush="#DDD"
+                 BorderThickness="1">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <Border CornerRadius="8" 
+                                        Background="{TemplateBinding Background}" 
+                                        BorderBrush="{TemplateBinding BorderBrush}" 
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                                    <Grid>
+                                                        <ScrollViewer Margin="0" x:Name="PART_ContentHost"/>
+                                                        <TextBlock Text="     " 
+                                                   Foreground="#888"
+                                                   Margin="10,0,35,0"
+                                                   VerticalAlignment="Center"
+                                               />
+                                                    </Grid>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <!-- Search Icon -->
+                        <Path Data="M15.5,14h-0.79l-0.28,-0.27c0.98,-1.14 1.57,-2.62 1.57,-4.23 0,-3.59 -2.91,-6.5 -6.5,-6.5s-6.5,2.91 -6.5,6.5 2.91,6.5 6.5,6.5c1.61,0 3.09,-0.59 4.23,-1.57l0.27,0.28v0.79l5,4.99 1.49,-1.49 -4.99,-5zm-6,0c-2.49,0 -4.5,-2.01 -4.5,-4.5s2.01,-4.5 4.5,-4.5 4.5,2.01 4.5,4.5 -2.01,4.5 -4.5,4.5z"
+              Fill="#888"
+              Width="16"
+              Height="16"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Center"
+              Margin="0,0,10,0"/>
+                    </Grid>
+
+                    <!-- Header Text -->
+                 
+                </StackPanel>
 
                 <DataGrid Grid.Row="1"
-                          ItemsSource="{Binding Transactions}"
+                         ItemsSource="{Binding FilteredTransactions}"
+                          SelectedItem="{Binding SelectedTransaction}"
                           AutoGenerateColumns="False"
                           CanUserAddRows="False"
-                          IsReadOnly="False"
+                          IsReadOnly="True"
                           Margin="10,0,10,10"
-                          GridLinesVisibility="Horizontal"
+                          GridLinesVisibility="None"
                           HeadersVisibility="Column"
                           AlternatingRowBackground="#F8F9FA"
                           RowBackground="White"
-                          BorderBrush="#E0E0E0"
-                          BorderThickness="1"
-                          ColumnWidth="*">
-                    
+                          BorderThickness="0"
+                          ColumnHeaderHeight="40"
+                          RowHeight="40">
+
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#F5F5F5"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Padding" Value="30,0"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Foreground" Value="#444"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="اسم الشخص" 
-                                            Binding="{Binding SourceName, Mode=TwoWay}" 
+                                            Binding="{Binding SourceName}" 
                                             Width="*"
-                                            FontWeight="SemiBold"/>
+                                           />
                         <DataGridTextColumn Header="المبلغ المستلم" 
-                                            Binding="{Binding ReceivedAmount, Mode=TwoWay, StringFormat=C}" 
-                                            Width="*"/>
+                                            Binding="{Binding ReceivedAmount, StringFormat=C}" 
+                                            Width="*"
+                                          />
                         <DataGridTextColumn Header="التاريخ" 
-                                            Binding="{Binding Date, StringFormat=d, Mode=TwoWay}" 
-                                            Width="*"/>
+                                            Binding="{Binding Date, StringFormat=d}" 
+                                            Width="*"
+                                          />
                         <DataGridTextColumn Header="المبلغ المسدد" 
-                                            Binding="{Binding PaidBackAmount, Mode=TwoWay, StringFormat=C}" 
-                                            Width="*"/>
+                                            Binding="{Binding PaidBackAmount, StringFormat=C}" 
+                                            Width="*"
+                                          />
                         <DataGridTextColumn Header="المتبقي عليه سداده" 
-                                            Binding="{Binding RemainingAmount, Mode=TwoWay, StringFormat=C}" 
-                                            Width="*"/>
+                                            Binding="{Binding RemainingAmount, StringFormat=C}" 
+                                            Width="*"
+                                         />
+                        <DataGridTemplateColumn Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="حذف" 
+                    Command="{Binding DataContext.DeleteTransactionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                    CommandParameter="{Binding}"
+                    Background="#F44336"
+                    Foreground="White"
+                    Padding="10,5"
+                    Margin="5,0"
+                    FontWeight="SemiBold"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    ToolTip="حذف المعاملة"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
+
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="15,0"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Grid Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.CellStyle>
                 </DataGrid>
             </Grid>
         </Border>
-
-        <!-- Reports Section -->
-        <TabControl Grid.Row="2" 
-                    Background="White" 
-                    BorderBrush="#E0E0E0"
-                    BorderThickness="1"
-                  
-                   >
-            
-            <TabItem Header="تقرير المعاملات غير المسددة">
-                <ListView ItemsSource="{Binding Transactions}" 
-                          Margin="20"
-                          Background="Transparent">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="White" 
-                                    Margin="0,5" 
-                                    Padding="15" 
-                                    CornerRadius="4"
-                                    BorderBrush="#E0E0E0"
-                                    BorderThickness="1">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="{Binding SourceName}" 
-                                                   FontWeight="Bold" 
-                                                   FontSize="14"/>
-                                        <TextBlock Text="{Binding Date, StringFormat='التاريخ: {0:d}'}" 
-                                                   Foreground="#666"/>
-                                    </StackPanel>
-                                    
-                                    <TextBlock Grid.Column="1" 
-                                               Text="{Binding RemainingAmount, StringFormat='المتبقي: {0:C}'}" 
-                                               FontWeight="SemiBold" 
-                                               Foreground="#E74C3C"
-                                               VerticalAlignment="Center"
-                                               Margin="20,0"/>
-                                    
-                                    <TextBlock Grid.Column="2" 
-                                               Text="{Binding ReceivedAmount, StringFormat='المستلم: {0:C}'}" 
-                                               Foreground="#27AE60"
-                                               VerticalAlignment="Center"/>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </TabItem>
-            
-            <TabItem Header="تقرير المبالغ المستلمة حسب المورد">
-                <ListView ItemsSource="{Binding Transactions}" 
-                          Margin="20"
-                          Background="Transparent">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="White" 
-                                    Margin="0,5" 
-                                    Padding="15" 
-                                    CornerRadius="4"
-                                    BorderBrush="#E0E0E0"
-                                    BorderThickness="1">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="{Binding SourceName}" 
-                                                   FontWeight="Bold" 
-                                                   FontSize="14"/>
-                                        <TextBlock Text="{Binding Date, StringFormat='التاريخ: {0:d}'}" 
-                                                   Foreground="#666"/>
-                                    </StackPanel>
-                                    
-                                    <TextBlock Grid.Column="1" 
-                                               Text="{Binding ReceivedAmount, StringFormat='المستلم: {0:C}'}" 
-                                               FontWeight="SemiBold" 
-                                               Foreground="#27AE60"
-                                               VerticalAlignment="Center"
-                                               Margin="20,0"/>
-                                    
-                                    <TextBlock Grid.Column="2" 
-                                               Text="{Binding PaidBackAmount, StringFormat='المسدد: {0:C}'}" 
-                                               Foreground="#F39C12"
-                                               VerticalAlignment="Center"/>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </TabItem>
-        </TabControl>
     </Grid>
-</Page> 
+</Page>

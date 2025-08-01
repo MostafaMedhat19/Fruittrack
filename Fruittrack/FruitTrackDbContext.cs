@@ -11,6 +11,7 @@ namespace Fruittrack
         public DbSet<SupplyEntry> SupplyEntries { get; set; }
         public DbSet<FinancialSettlement> FinancialSettlements { get; set; }
         public DbSet<CashReceiptTransaction> CashReceiptTransactions { get; set; }
+        public DbSet<CashDisbursementTransaction> CashDisbursementTransactions { get; set; }
 
         public FruitTrackDbContext(DbContextOptions<FruitTrackDbContext> options)
             : base(options)
@@ -89,6 +90,18 @@ namespace Fruittrack
                 entity.Property(e => e.Date).IsRequired();
                 entity.Property(e => e.PaidBackAmount).HasDefaultValue(0);
                 entity.Property(e => e.RemainingAmount).HasDefaultValue(0);
+            });
+
+            // CashDisbursementTransaction
+            modelBuilder.Entity<CashDisbursementTransaction>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.EntityName).IsRequired();
+                entity.Property(e => e.Amount).IsRequired();
+                entity.Property(e => e.TransactionDate).IsRequired();
+                entity.Property(e => e.Credit).HasDefaultValue(0);
+                entity.Property(e => e.Debit).HasDefaultValue(0);
+                entity.Property(e => e.Balance).HasDefaultValue(0);
             });
         }
     }

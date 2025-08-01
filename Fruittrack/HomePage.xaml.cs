@@ -73,5 +73,9 @@ namespace Fruittrack
             NavigationService.Navigate(new TotalProfitSummaryPage());
         }
 
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new CashDisbursementPage());
+        }
     }
 }

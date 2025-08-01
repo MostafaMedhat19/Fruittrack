@@ -14,6 +14,7 @@ namespace Fruittrack
     public partial class App : Application
     {
         public static IServiceProvider ServiceProvider { get; private set; }
+        public FruitTrackDbContext DbContext { get; private set; }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -50,8 +51,10 @@ namespace Fruittrack
 
             ServiceProvider = services.BuildServiceProvider();
 
-            // Start the application
-     
+            // Create DbContext instance
+            DbContext = ServiceProvider.GetRequiredService<FruitTrackDbContext>();
+
+          
         }
 
         protected override void OnExit(ExitEventArgs e)
