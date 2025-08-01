@@ -191,7 +191,7 @@
         </Border>
 
         <!-- DataGrid Section -->
-        <Border Grid.Row="3" Background="White" Padding="0" Margin="0,0,0,10">
+        <Border Grid.Row="3" Background="White" Padding="1" Margin="0,0,0,5">
             <DataGrid x:Name="SummaryDataGrid" 
                       ItemsSource="{Binding FilteredSummaries}"
                       AutoGenerateColumns="False" 
@@ -204,7 +204,7 @@
                 <DataGrid.Columns>
                     <!-- Date -->
                     <DataGridTextColumn Header="التاريخ" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" 
-                               Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                               Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -216,15 +216,15 @@
 
                     <!-- Farm Name -->
                     <DataGridTextColumn Header="اسم المزرعة" Binding="{Binding FarmName}" 
-                               Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
+                               Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                     <!-- Factory Name -->
                     <DataGridTextColumn Header="اسم المصنع" Binding="{Binding FactoryName}" 
-                               Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
+                               Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                     <!-- Truck Number -->
                     <DataGridTextColumn Header="رقم العربية" Binding="{Binding TruckNumber}" 
-                               Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                               Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -236,7 +236,7 @@
 
                     <!-- Total Farm Weight -->
                     <DataGridTextColumn Header="وزن المزرعة (كجم)" Binding="{Binding TotalFarmWeight, StringFormat={}{0:N1}}" 
-                               Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                               Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -248,7 +248,7 @@
 
                     <!-- Total Factory Weight -->
                     <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding TotalFactoryWeight, StringFormat={}{0:N1}}" 
-                               Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                               Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -260,7 +260,7 @@
 
                     <!-- Total Freight Cost -->
                     <DataGridTextColumn Header="إجمالي النولون (جنيه)" Binding="{Binding TotalFreightCost, StringFormat={}{0:N2}}" 
-                               Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                               Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -272,7 +272,7 @@
 
                     <!-- Total Farm Cost -->
                     <DataGridTextColumn Header="إجمالي أسعار المزرعة (جنيه)" Binding="{Binding TotalFarmCost, StringFormat={}{0:N2}}" 
-                               Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                               Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -284,7 +284,7 @@
 
                     <!-- Total Factory Revenue -->
                     <DataGridTextColumn Header="إجمالي أسعار المصنع (جنيه)" Binding="{Binding TotalFactoryRevenue, StringFormat={}{0:N2}}" 
-                               Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                               Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -295,7 +295,7 @@
                     </DataGridTextColumn>
 
                     <!-- Profit/Loss -->
-                    <DataGridTemplateColumn Header="الربح/الخسارة (جنيه)" Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                    <DataGridTemplateColumn Header="الربح/الخسارة (جنيه)" Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding ProfitLoss, StringFormat={}{0:N2}}" 
@@ -327,7 +327,7 @@
 
                     <!-- Profit Margin % -->
                     <DataGridTextColumn Header="هامش الربح %" Binding="{Binding ProfitMargin, StringFormat={}{0:N1}%}" 
-                               Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                               Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Right"/>

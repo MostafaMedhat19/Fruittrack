@@ -204,7 +204,7 @@
                           AlternatingRowBackground="#F9FAFB"
                           Foreground="#1F2937"
                           FontSize="13"
-                          ColumnWidth="Auto"
+                          ColumnWidth="*"
                           CanUserResizeColumns="True"
                           CanUserReorderColumns="True"
                           CanUserSortColumns="True"
@@ -213,7 +213,7 @@
 
                             <DataGrid.Columns>
                                 <!-- Error Type -->
-                                <DataGridTemplateColumn Header="نوع الخطأ" Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                <DataGridTemplateColumn Header="نوع الخطأ" Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Border CornerRadius="4" Padding="8,4" Margin="2">
@@ -261,7 +261,7 @@
 
                                 <!-- Date -->
                                 <DataGridTextColumn Header="التاريخ" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" 
-                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -273,7 +273,7 @@
 
                                 <!-- Truck Number -->
                                 <DataGridTextColumn Header="رقم العربية" Binding="{Binding TruckNumber}" 
-                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -285,15 +285,15 @@
 
                                 <!-- Farm Name -->
                                 <DataGridTextColumn Header="اسم المزرعة" Binding="{Binding FarmName}" 
-                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                                 <!-- Factory Name -->
                                 <DataGridTextColumn Header="اسم المصنع" Binding="{Binding FactoryName}" 
-                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                                 <!-- Factory Weight -->
                                 <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding FactoryWeight, StringFormat={}{0:N1}}" 
-                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -305,7 +305,7 @@
 
                                 <!-- Error Description -->
                                 <DataGridTextColumn Header="وصف المشكلة" Binding="{Binding ErrorDescription}" 
-                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -318,7 +318,7 @@
 
                                 <!-- Suggested Fix -->
                                 <DataGridTextColumn Header="الحل المقترح" Binding="{Binding SuggestedFix}" 
-                                           Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -330,7 +330,7 @@
                                 </DataGridTextColumn>
 
                                 <!-- Priority -->
-                                <DataGridTemplateColumn Header="الأولوية" Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                <DataGridTemplateColumn Header="الأولوية" Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Border CornerRadius="4" Padding="6,3" Margin="2">
@@ -362,7 +362,7 @@
                                 </DataGridTemplateColumn>
 
                                 <!-- Actions -->
-                                <DataGridTemplateColumn Header="الإجراءات" Width="Auto" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                <DataGridTemplateColumn Header="الإجراءات" Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

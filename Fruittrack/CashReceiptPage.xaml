@@ -145,7 +145,6 @@
         <!-- DataGrid Section -->
         <Border Grid.Row="1" 
                 Style="{StaticResource CardStyle}">
-
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
