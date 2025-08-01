@@ -19,7 +19,6 @@ namespace Fruittrack
             InitializeComponent();
             this.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Fonts/#Montserrat");
             UpdateDateTime();
-            InvalidCountTextBlock.Text = number.ToString();
             // Start timer to update time every second
             _timer = new System.Windows.Threading.DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(1);
