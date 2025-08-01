@@ -296,6 +296,16 @@
                     </Button>
 
                     <!-- Navigation Button 4: Production Reports -->
+                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_4">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
+10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm1.31-7.9l-.95.95C12.9 12.45
+12 13.5 12 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41
+0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.69 1.9z"
+              Style="{StaticResource MenuIconStyle}"/>
+                            <TextBlock Text="تسجيل صرف نقدي" FontSize="18" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
 
                     <!-- Navigation Button 5: Total Profit Summary -->
                 </StackPanel>

@@ -2,6 +2,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using Fruittrack.Models;
 using Microsoft.EntityFrameworkCore;
@@ -11,29 +13,48 @@ namespace Fruittrack.ViewModels
     public class CashReceiptPageViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
         private readonly FruitTrackDbContext _dbContext;
+        private CashReceiptTransaction _selectedTransaction;
+        private string _searchText;
+        private CollectionViewSource _transactionsViewSource;
 
         public CashReceiptPageViewModel(FruitTrackDbContext dbContext)
         {
             _dbContext = dbContext;
 
-            Transactions = new ObservableCollection<CashReceiptTransaction>(_dbContext.CashReceiptTransactions.ToList());
-
+            // Load transactions from database
+            _transactionsViewSource = new CollectionViewSource();
+            Transactions = new ObservableCollection<CashReceiptTransaction>(
+                _dbContext.CashReceiptTransactions.OrderByDescending(t => t.Date).ToList());
+            _transactionsViewSource.Source = Transactions;
+            _transactionsViewSource.Filter += ApplyFilter;
+            LoadSourceNames();
+            // Initialize commands
             AddTransactionCommand = new RelayCommand(AddTransaction, CanAddTransaction);
-         
-            // Dummy data for testing
-            if (!Transactions.Any())
-            {
-                Transactions.Add(new CashReceiptTransaction
-                {
-                    SourceName = "أحمد علي",
-                    ReceivedAmount = 1000,
-                    Date = DateTime.Now.AddDays(-2),
-                    PaidBackAmount = 200,
-                    RemainingAmount = 800
-                });
-            }
+            UpdateTransactionCommand = new RelayCommand(UpdateTransaction, CanUpdateTransaction);
+            EditTransactionCommand = new RelayCommand<CashReceiptTransaction>(EditTransaction);
+            DeleteTransactionCommand = new RelayCommand<CashReceiptTransaction>(DeleteTransaction);
+        }
+        private async void LoadSourceNames()
+        {
+            // تجيب الأسماء الفريدة من قاعدة البيانات
+            var names = await _dbContext.CashReceiptTransactions
+                .Select(t => t.SourceName)
+                .Distinct()
+                .ToListAsync();
+
+            SourceNames = new ObservableCollection<string>(names);
         }
 
+        private ObservableCollection<string> _sourceNames;
+        public ObservableCollection<string> SourceNames
+        {
+            get => _sourceNames;
+            set
+            {
+                _sourceNames = value;
+                OnPropertyChanged(nameof(SourceNames));
+            }
+        }
         // Form fields
         private string _sourceName;
         public string SourceName
@@ -62,46 +83,133 @@ namespace Fruittrack.ViewModels
             get => _paidBackAmount;
             set { _paidBackAmount = value; OnPropertyChanged(nameof(PaidBackAmount)); OnPropertyChanged(nameof(RemainingAmount)); }
         }
-
-        private decimal _remainingAmount;
-        public decimal RemainingAmount
+        public string SearchText
         {
-            get => ReceivedAmount - PaidBackAmount;
-            set { _remainingAmount = value; OnPropertyChanged(nameof(RemainingAmount)); }
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+                _transactionsViewSource.View.Refresh(); // Refresh filter when search text changes
+            }
         }
-
+        public decimal RemainingAmount => ReceivedAmount - PaidBackAmount;
+        public ICollectionView FilteredTransactions => _transactionsViewSource.View;
         // DataGrid collection
         public ObservableCollection<CashReceiptTransaction> Transactions { get; set; }
 
+        // Selected transaction for editing
+        private void ApplyFilter(object sender, FilterEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                e.Accepted = true;
+                return;
+            }
+
+            var transaction = e.Item as CashReceiptTransaction;
+            if (transaction == null) return;
+
+            e.Accepted = transaction.SourceName?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true;
+        }
+
+        public CashReceiptTransaction SelectedTransaction
+        {
+            get => _selectedTransaction;
+            set
+            {
+                _selectedTransaction = value;
+                OnPropertyChanged(nameof(SelectedTransaction));
+
+                if (value != null)
+                {
+                    // Populate form fields when transaction is selected
+                    SourceName = value.SourceName;
+                    ReceivedAmount = value.ReceivedAmount;
+                    PaidBackAmount = value.PaidBackAmount;
+                    Date = value.Date;
+                }
+            }
+        }
+
         // Commands
         public ICommand AddTransactionCommand { get; }
-        public ICommand NavigateToFinancialSettlementCommand { get; }
-
-        // Add Transaction
+        public ICommand UpdateTransactionCommand { get; }
+        public ICommand EditTransactionCommand { get; }
+        public ICommand DeleteTransactionCommand { get; }
+        // Add new transaction
         private void AddTransaction(object obj)
         {
             var transaction = new CashReceiptTransaction
             {
-                SourceName = this.SourceName,
-                ReceivedAmount = this.ReceivedAmount,
-                Date = this.Date,
-                PaidBackAmount = this.PaidBackAmount,
-                RemainingAmount = this.RemainingAmount
+                SourceName = SourceName,
+                ReceivedAmount = ReceivedAmount,
+                Date = Date,
+                PaidBackAmount = PaidBackAmount,
+                RemainingAmount = RemainingAmount
             };
 
             _dbContext.CashReceiptTransactions.Add(transaction);
             _dbContext.SaveChanges();
 
-            Transactions.Add(transaction);
-
-            // Clear form
-            SourceName = string.Empty;
-            ReceivedAmount = 0;
-            PaidBackAmount = 0;
-            Date = DateTime.Now;
-            OnPropertyChanged(nameof(RemainingAmount));
+            Transactions.Insert(0, transaction); // Add at beginning of list
+            ClearForm();
         }
 
+        // Update existing transaction
+        private void UpdateTransaction(object obj)
+        {
+            if (SelectedTransaction == null) return;
+
+            SelectedTransaction.SourceName = SourceName;
+            SelectedTransaction.ReceivedAmount = ReceivedAmount;
+            SelectedTransaction.PaidBackAmount = PaidBackAmount;
+            SelectedTransaction.Date = Date;
+            SelectedTransaction.RemainingAmount = RemainingAmount;
+
+            _dbContext.Entry(SelectedTransaction).State = EntityState.Modified;
+            _dbContext.SaveChanges();
+
+            // Refresh the collection
+            var index = Transactions.IndexOf(SelectedTransaction);
+            Transactions[index] = SelectedTransaction;
+            OnPropertyChanged(nameof(Transactions));
+
+            ClearForm();
+            SelectedTransaction = null;
+        }
+
+        // Edit transaction (populate form)
+        private void EditTransaction(CashReceiptTransaction transaction)
+        {
+            SelectedTransaction = transaction;
+        }
+        //  deleting transactions
+        private void DeleteTransaction(CashReceiptTransaction transaction)
+        {
+            if (transaction == null) return;
+
+            // Show confirmation dialog
+            var result = MessageBox.Show(
+                $"هل انت متأكد من أنك تريد حذف معاملة {transaction.SourceName} بقيمة {transaction.ReceivedAmount}؟",
+                "تأكيد الحذف",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    _dbContext.CashReceiptTransactions.Remove(transaction);
+                    _dbContext.SaveChanges();
+                    Transactions.Remove(transaction);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"حدث خطأ أثناء الحذف: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
         private bool CanAddTransaction(object obj)
         {
             return !string.IsNullOrWhiteSpace(SourceName) &&
@@ -109,7 +217,22 @@ namespace Fruittrack.ViewModels
                    Date != default;
         }
 
-      
+        private bool CanUpdateTransaction(object obj)
+        {
+            return SelectedTransaction != null &&
+                   !string.IsNullOrWhiteSpace(SourceName) &&
+                   ReceivedAmount > 0 &&
+                   Date != default;
+        }
+
+        private void ClearForm()
+        {
+            SourceName = string.Empty;
+            ReceivedAmount = 0;
+            PaidBackAmount = 0;
+            Date = DateTime.Now;
+            OnPropertyChanged(nameof(RemainingAmount));
+        }
 
         // INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -132,9 +255,13 @@ namespace Fruittrack.ViewModels
                     case nameof(Date):
                         if (Date == default) return "التاريخ مطلوب";
                         break;
+                    case nameof(PaidBackAmount):
+                        if (PaidBackAmount < 0) return "المبلغ المسدد لا يمكن أن يكون سالباً";
+                        if (PaidBackAmount > ReceivedAmount) return "المبلغ المسدد لا يمكن أن يكون أكبر من المبلغ المستلم";
+                        break;
                 }
                 return null;
             }
         }
     }
-} 
+}
