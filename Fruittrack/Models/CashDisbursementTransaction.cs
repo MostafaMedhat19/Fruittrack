@@ -20,8 +20,14 @@ namespace Fruittrack.Models
         public string Notes { get; set; }
 
         // Calculated properties for display
+        [Required(ErrorMessage = "المبلغ المصروف مطلوب")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "يجب أن يكون المبلغ المصروف أكبر من صفر")]
         public decimal Credit { get; set; } // ليه كام (How much the party should receive)
+
+        [Required(ErrorMessage = "المبلغ المدفوع مطلوب")]
+        [Range(0.00, double.MaxValue, ErrorMessage = "المبلغ المدفوع لا يمكن أن يكون سالبًا")]
         public decimal Debit { get; set; }  // عليه كام (How much the party owes)
         public decimal Balance { get; set; } // الصافي (Net balance)
+     // الصافي (Net balance)
     }
 } 

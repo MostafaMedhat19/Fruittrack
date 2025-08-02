@@ -19,7 +19,7 @@ namespace Fruittrack
             InitializeComponent();
             this.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Fonts/#Montserrat");
             UpdateDateTime();
-            InvalidCountTextBlock.Text = number.ToString();
+         
             // Start timer to update time every second
             _timer = new System.Windows.Threading.DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(1);
@@ -30,7 +30,7 @@ namespace Fruittrack
         private void UpdateDateTime()
         {
             var now = DateTime.Now;
-            DateTextBlock.Text = now.ToString("dddd, MMMM dd, yyyy", new System.Globalization.CultureInfo("ar-SA"));
+            DateTextBlock.Text = now.ToString("dddd, MMMM dd, yyyy", new System.Globalization.CultureInfo("ar-EG")); // Egypt uses Gregorian by default
             TimeTextBlock.Text = now.ToString("hh:mm tt", new System.Globalization.CultureInfo("en-US"));
         }
 
@@ -51,10 +51,7 @@ namespace Fruittrack
             // Navigate to Invalid Supplies Page
             NavigationService.Navigate(new InvalidSuppliesPage());
         }
-        private void NotificationBadge_Click(object sender, MouseButtonEventArgs e)
-        {
-            NavigationService?.Navigate(new InvalidSuppliesPage());
-        }
+       
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {

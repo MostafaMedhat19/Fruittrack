@@ -11,6 +11,8 @@ using Fruittrack.Models;
 using System.IO;
 using Microsoft.Win32;
 using Microsoft.Extensions.DependencyInjection;
+using Fruittrack.Utilities;
+using System.Text;
 
 namespace Fruittrack
 {
@@ -45,6 +47,29 @@ namespace Fruittrack
             ProfitTypeFilter.SelectedIndex = 0;
             
             LoadData();
+        }
+
+        private void PrintButton_Click(object sender, RoutedEventArgs e)
+        {
+            ExportUtilities.PrintPage(this, "تقارير الإنتاج والتوزيع");
+        }
+
+        private void PdfButton_Click(object sender, RoutedEventArgs e)
+        {
+            var filePath = ExportUtilities.GetSaveFilePath("تقارير_الإنتاج_والتوزيع.pdf", "PDF files (*.pdf)|*.pdf");
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                ExportUtilities.ExportToPdf(this, filePath, "تقارير الإنتاج والتوزيع");
+            }
+        }
+
+        private void ExcelButton_Click(object sender, RoutedEventArgs e)
+        {
+            var filePath = ExportUtilities.GetSaveFilePath("تقارير_الإنتاج_والتوزيع.xlsx", "Excel files (*.xlsx)|*.xlsx");
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                ExportUtilities.ExportDataGridToExcel(ReportsDataGrid, filePath, "تقارير الإنتاج والتوزيع");
+            }
         }
 
         public ObservableCollection<ProductionReportItem> AllReports
@@ -98,7 +123,6 @@ namespace Fruittrack
                 {
                     FarmFilter.Items.Add(new ComboBoxItem { Content = farm.FarmName, Tag = farm.FarmId });
                 }
-                FarmFilter.SelectedIndex = 0;
 
                 FactoryFilter.Items.Clear();
                 FactoryFilter.Items.Add(new ComboBoxItem { Content = "جميع المصانع" });
@@ -106,54 +130,14 @@ namespace Fruittrack
                 {
                     FactoryFilter.Items.Add(new ComboBoxItem { Content = factory.FactoryName, Tag = factory.FactoryId });
                 }
-                FactoryFilter.SelectedIndex = 0;
 
-                var reportItems = new List<ProductionReportItem>();
+                // Clear existing data
+                AllReports.Clear();
 
+                // Process each supply entry
                 foreach (var supply in supplies)
                 {
-                    // Calculate profit/loss
-                    decimal totalFarmCost = 0;
-                    decimal totalFactoryRevenue = 0;
-                    decimal profitLoss = 0;
-                    decimal profitMargin = 0;
-                    int profitLossStatus = 0; // -1: loss, 0: break-even, 1: profit
-
-                    // Calculate farm cost (including transport and discounts)
-                    // Prices are now stored per kilo in database
-                    if (supply.FarmWeight.HasValue && supply.FarmPricePerKilo.HasValue)
-                    {
-                        decimal farmRevenue = supply.FarmWeight.Value * supply.FarmPricePerKilo.Value;
-                        decimal farmDiscount = supply.FarmDiscountRate.HasValue ? 
-                            farmRevenue * (supply.FarmDiscountRate.Value / 100) : 0;
-                        totalFarmCost = farmRevenue - farmDiscount + (supply.FreightCost ?? 0);
-                    }
-
-                    // Calculate factory revenue (including discounts)
-                    // Prices are now stored per kilo in database
-                    if (supply.FactoryWeight.HasValue && supply.FactoryPricePerKilo.HasValue)
-                    {
-                        decimal factoryRevenue = supply.FactoryWeight.Value * supply.FactoryPricePerKilo.Value;
-                        decimal factoryDiscount = supply.FactoryDiscountRate.HasValue ? 
-                            factoryRevenue * (supply.FactoryDiscountRate.Value / 100) : 0;
-                        totalFactoryRevenue = factoryRevenue - factoryDiscount;
-                    }
-
-                    // Calculate profit/loss
-                    profitLoss = totalFactoryRevenue - totalFarmCost;
-                    
-                    // Calculate profit margin percentage
-                    if (totalFarmCost > 0)
-                    {
-                        profitMargin = (profitLoss / totalFarmCost) * 100;
-                    }
-
-                    // Determine status
-                    if (profitLoss > 0) profitLossStatus = 1;
-                    else if (profitLoss < 0) profitLossStatus = -1;
-                    else profitLossStatus = 0;
-
-                    reportItems.Add(new ProductionReportItem
+                    var reportItem = new ProductionReportItem
                     {
                         SupplyEntryId = supply.SupplyEntryId,
                         Date = supply.EntryDate,
@@ -163,42 +147,44 @@ namespace Fruittrack
                         FarmWeight = supply.FarmWeight ?? 0,
                         FactoryWeight = supply.FactoryWeight ?? 0,
                         FarmPricePerKilo = supply.FarmPricePerKilo ?? 0,
-                        FactoryPricePerKilo = supply.FactoryPricePerKilo ?? 0,
-                        ProfitLoss = profitLoss,
-                        ProfitMargin = profitMargin,
-                        ProfitLossStatus = profitLossStatus,
-                        TotalFarmCost = totalFarmCost,
-                        TotalFactoryRevenue = totalFactoryRevenue
-                    });
+                        FactoryPricePerKilo = supply.FactoryPricePerKilo ?? 0
+                    };
+
+                    // Calculate totals and profit/loss
+                    reportItem.TotalFarmCost = reportItem.FarmWeight * reportItem.FarmPricePerKilo;
+                    reportItem.TotalFactoryRevenue = reportItem.FactoryWeight * reportItem.FactoryPricePerKilo;
+                    reportItem.ProfitLoss = reportItem.TotalFactoryRevenue - reportItem.TotalFarmCost;
+
+                    // Calculate profit margin percentage
+                    if (reportItem.TotalFarmCost > 0)
+                    {
+                        reportItem.ProfitMargin = (reportItem.ProfitLoss / reportItem.TotalFarmCost) * 100;
+                    }
+
+                    // Set profit/loss status (1 = profit, 0 = break-even, -1 = loss)
+                    if (reportItem.ProfitLoss > 0)
+                        reportItem.ProfitLossStatus = 1;
+                    else if (reportItem.ProfitLoss < 0)
+                        reportItem.ProfitLossStatus = -1;
+                    else
+                        reportItem.ProfitLossStatus = 0;
+
+                    AllReports.Add(reportItem);
                 }
 
-                // Clear and populate collections
-                AllReports.Clear();
-                FilteredReports.Clear();
-
-                foreach (var item in reportItems.OrderByDescending(x => x.Date))
-                {
-                    AllReports.Add(item);
-                    FilteredReports.Add(item); // Show all data initially
-                }
+                // Apply initial filters
+                ApplyFilters();
 
                 // Update summary statistics
                 UpdateSummaryStatistics();
+
+                // Update status
                 UpdateStatusBar();
-
-                // Show completion message
-                var totalSupplies = supplies.Count;
-                LastUpdateText.Text = $"آخر تحديث: {DateTime.Now:dd/MM/yyyy HH:mm} | تم تحليل {totalSupplies} توريد";
-
-                MessageBox.Show($"تم تحليل {totalSupplies} توريد بنجاح", 
-                              "تحديث مكتمل", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"خطأ في تحميل البيانات: {ex.Message}\n\nتفاصيل الخطأ: {ex.InnerException?.Message}", 
-                              "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
-                
-                LastUpdateText.Text = $"خطأ في التحميل: {DateTime.Now:dd/MM/yyyy HH:mm}";
+                MessageBox.Show($"خطأ في تحميل البيانات: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                LastUpdateText.Text = "حدث خطأ في تحميل البيانات";
             }
         }
 
@@ -206,45 +192,29 @@ namespace Fruittrack
         {
             try
             {
-                var data = FilteredReports.ToList();
+                var totalGrossWeight = FilteredReports.Sum(r => r.FarmWeight);
+                var totalNetWeight = FilteredReports.Sum(r => r.FactoryWeight);
+                var totalProfitLoss = FilteredReports.Sum(r => r.ProfitLoss);
 
-                // Total Gross Weight
-                decimal totalGrossWeight = data.Sum(x => x.FarmWeight);
                 TotalGrossWeightText.Text = $"{totalGrossWeight:N1} كجم";
-
-                // Total Net Weight
-                decimal totalNetWeight = data.Sum(x => x.FactoryWeight);
                 TotalNetWeightText.Text = $"{totalNetWeight:N1} كجم";
+                TotalProfitLossText.Text = $"{totalProfitLoss:N0} جنيه";
 
-                // Total Profit/Loss
-                decimal totalProfitLoss = data.Sum(x => x.ProfitLoss);
-                TotalProfitLossText.Text = $"{totalProfitLoss:N2} جنيه";
-                TotalProfitLossText.Foreground = totalProfitLoss >= 0 ? 
-                    System.Windows.Media.Brushes.Green : System.Windows.Media.Brushes.Red;
-
-                // Best Supplier (highest profit)
-                var bestSupplier = data
-                    .GroupBy(x => x.FarmName)
-                    .Select(g => new 
-                    { 
-                        FarmName = g.Key, 
-                        TotalProfit = g.Sum(x => x.ProfitLoss),
-                        Count = g.Count()
-                    })
-                    .OrderByDescending(x => x.TotalProfit)
+                // Find best supplier (highest profit)
+                var bestSupplier = FilteredReports
+                    .Where(r => r.ProfitLoss > 0)
+                    .OrderByDescending(r => r.ProfitLoss)
                     .FirstOrDefault();
 
-                if (bestSupplier != null && bestSupplier.TotalProfit > 0)
+                if (bestSupplier != null)
                 {
                     BestSupplierText.Text = bestSupplier.FarmName;
-                    BestSupplierProfitText.Text = $"{bestSupplier.TotalProfit:N2} جنيه";
-                    BestSupplierProfitText.Foreground = System.Windows.Media.Brushes.Green;
+                    BestSupplierProfitText.Text = $"{bestSupplier.ProfitLoss:N0} جنيه";
                 }
                 else
                 {
-                    BestSupplierText.Text = "لا يوجد";
+                    BestSupplierText.Text = "غير محدد";
                     BestSupplierProfitText.Text = "0 جنيه";
-                    BestSupplierProfitText.Foreground = System.Windows.Media.Brushes.Gray;
                 }
             }
             catch (Exception ex)
@@ -257,15 +227,17 @@ namespace Fruittrack
         {
             try
             {
-                var total = AllReports.Count;
-                var filtered = FilteredReports.Count;
-                var profitable = FilteredReports.Count(x => x.ProfitLossStatus == 1);
-                var losses = FilteredReports.Count(x => x.ProfitLossStatus == -1);
+                var totalRecords = FilteredReports.Count;
+                var profitableRecords = FilteredReports.Count(r => r.ProfitLoss > 0);
+                var lossRecords = FilteredReports.Count(r => r.ProfitLoss < 0);
+                var breakEvenRecords = FilteredReports.Count(r => r.ProfitLoss == 0);
 
-                RecordCountText.Text = $"إجمالي السجلات: {total}";
-                FilteredCountText.Text = $"المعروض: {filtered}";
-                ProfitableCountText.Text = $"مربح: {profitable}";
-                LossCountText.Text = $"خسارة: {losses}";
+                RecordCountText.Text = $"إجمالي السجلات: {totalRecords}";
+                //ProfitableRecordsText.Text = $"سجلات ربحية: {profitableRecords}";
+                //LossRecordsText.Text = $"سجلات خسارة: {lossRecords}";
+                //BreakEvenRecordsText.Text = $"سجلات تعادل: {breakEvenRecords}";
+
+                LastUpdateText.Text = $"آخر تحديث: {DateTime.Now:dd/MM/yyyy HH:mm}";
             }
             catch (Exception ex)
             {
@@ -279,61 +251,58 @@ namespace Fruittrack
             {
                 var filtered = AllReports.AsEnumerable();
 
-                // Date filter
+                // Date range filter
                 if (FromDatePicker.SelectedDate.HasValue)
-                    filtered = filtered.Where(x => x.Date >= FromDatePicker.SelectedDate.Value);
+                {
+                    filtered = filtered.Where(r => r.Date >= FromDatePicker.SelectedDate.Value);
+                }
 
                 if (ToDatePicker.SelectedDate.HasValue)
-                    filtered = filtered.Where(x => x.Date <= ToDatePicker.SelectedDate.Value);
+                {
+                    filtered = filtered.Where(r => r.Date <= ToDatePicker.SelectedDate.Value);
+                }
 
                 // Farm filter
-                if (FarmFilter.SelectedItem is ComboBoxItem farmItem && 
-                    farmItem.Content?.ToString() != "جميع المزارع" && 
-                    !string.IsNullOrEmpty(farmItem.Content?.ToString()))
+                if (FarmFilter.SelectedItem is ComboBoxItem selectedFarmItem && selectedFarmItem.Tag != null)
                 {
-                    var farmName = farmItem.Content.ToString();
-                    filtered = filtered.Where(x => x.FarmName.Contains(farmName, StringComparison.OrdinalIgnoreCase));
+                    int farmId = (int)selectedFarmItem.Tag;
+                    filtered = filtered.Where(r => r.FarmName == selectedFarmItem.Content.ToString());
                 }
 
                 // Factory filter
-                if (FactoryFilter.SelectedItem is ComboBoxItem factoryItem && 
-                    factoryItem.Content?.ToString() != "جميع المصانع" && 
-                    !string.IsNullOrEmpty(factoryItem.Content?.ToString()))
+                if (FactoryFilter.SelectedItem is ComboBoxItem selectedFactoryItem && selectedFactoryItem.Tag != null)
                 {
-                    var factoryName = factoryItem.Content.ToString();
-                    filtered = filtered.Where(x => x.FactoryName.Contains(factoryName, StringComparison.OrdinalIgnoreCase));
-                }
-
-                // Truck number filter
-                if (!string.IsNullOrWhiteSpace(TruckNumberFilter.Text))
-                {
-                    filtered = filtered.Where(x => x.TruckNumber.Contains(TruckNumberFilter.Text, StringComparison.OrdinalIgnoreCase));
+                    int factoryId = (int)selectedFactoryItem.Tag;
+                    filtered = filtered.Where(r => r.FactoryName == selectedFactoryItem.Content.ToString());
                 }
 
                 // Profit type filter
-                if (ProfitTypeFilter.SelectedItem is ComboBoxItem profitItem && 
-                    !string.IsNullOrEmpty(profitItem.Content?.ToString()))
+                if (ProfitTypeFilter.SelectedItem is ComboBoxItem selectedProfitItem)
                 {
-                    switch (profitItem.Content.ToString())
+                    string profitType = selectedProfitItem.Content.ToString();
+                    switch (profitType)
                     {
-                        case "ربح فقط":
-                            filtered = filtered.Where(x => x.ProfitLossStatus == 1);
+                        case "ربح":
+                            filtered = filtered.Where(r => r.ProfitLoss > 0);
                             break;
-                        case "خسارة فقط":
-                            filtered = filtered.Where(x => x.ProfitLossStatus == -1);
+                        case "خسارة":
+                            filtered = filtered.Where(r => r.ProfitLoss < 0);
                             break;
-                        case "متعادل":
-                            filtered = filtered.Where(x => x.ProfitLossStatus == 0);
+                        case "تعادل":
+                            filtered = filtered.Where(r => r.ProfitLoss == 0);
                             break;
+                        // "الكل" shows all records
                     }
                 }
 
+                // Update filtered collection
                 FilteredReports.Clear();
                 foreach (var item in filtered)
                 {
                     FilteredReports.Add(item);
                 }
 
+                // Update statistics
                 UpdateSummaryStatistics();
                 UpdateStatusBar();
             }
@@ -350,22 +319,22 @@ namespace Fruittrack
 
         private void ClearFiltersButton_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                // Clear all filters
             FromDatePicker.SelectedDate = null;
             ToDatePicker.SelectedDate = null;
             FarmFilter.SelectedIndex = 0;
             FactoryFilter.SelectedIndex = 0;
-            TruckNumberFilter.Text = "";
             ProfitTypeFilter.SelectedIndex = 0;
 
-            // Reset to show all data
-            FilteredReports.Clear();
-            foreach (var item in AllReports)
-            {
-                FilteredReports.Add(item);
+                // Apply filters to show all data
+                ApplyFilters();
             }
-
-            UpdateSummaryStatistics();
-            UpdateStatusBar();
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطأ في مسح الفلاتر: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
@@ -377,17 +346,15 @@ namespace Fruittrack
         {
             try
             {
-                var saveDialog = new SaveFileDialog
+                var saveFileDialog = new SaveFileDialog
                 {
-                    Filter = "CSV Files|*.csv",
-                    DefaultExt = "csv",
-                    FileName = $"تقرير_الإنتاج_والتوزيع_{DateTime.Now:yyyyMMdd_HHmm}.csv"
+                    Filter = "CSV files (*.csv)|*.csv",
+                    FileName = $"تقرير_الإنتاج_{DateTime.Now:yyyyMMdd}.csv"
                 };
 
-                if (saveDialog.ShowDialog() == true)
+                if (saveFileDialog.ShowDialog() == true)
                 {
-                    ExportToCSV(saveDialog.FileName);
-                    MessageBox.Show("تم تصدير التقرير بنجاح", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ExportToCSV(saveFileDialog.FileName);
                 }
             }
             catch (Exception ex)
@@ -398,57 +365,81 @@ namespace Fruittrack
 
         private void ExportToCSV(string fileName)
         {
-            var lines = new List<string>
+            try
             {
-                "التاريخ,اسم المزرعة,اسم المصنع,رقم العربية,الوزن الإجمالي (كجم),الوزن الصافي (كجم),سعر المزرعة (جنيه/كجم),سعر المصنع (جنيه/كجم),الربح/الخسارة (جنيه),هامش الربح %"
-            };
+                using var writer = new StreamWriter(fileName, false, Encoding.UTF8);
+                
+                // Write header
+                writer.WriteLine("التاريخ,المزرعة,المصنع,رقم العربية,وزن المزرعة,وزن المصنع,سعر المزرعة,سعر المصنع,إجمالي تكلفة المزرعة,إجمالي إيرادات المصنع,الربح/الخسارة,نسبة الربح");
 
-            // Add summary statistics
-            lines.Add($"إحصائيات التقرير:,,,,,,,,");
-            lines.Add($"إجمالي الوزن الإجمالي:,{FilteredReports.Sum(x => x.FarmWeight):N1} كجم,,,,,,,");
-            lines.Add($"إجمالي الوزن الصافي:,{FilteredReports.Sum(x => x.FactoryWeight):N1} كجم,,,,,,,");
-            lines.Add($"إجمالي الربح/الخسارة:,{FilteredReports.Sum(x => x.ProfitLoss):N2} جنيه,,,,,,,");
-            lines.Add(",,,,,,,,");
-            lines.Add("تفاصيل التوريدات:,,,,,,,,");
-
+                // Write data
             foreach (var item in FilteredReports)
-            {
-                var line = $"{item.Date:dd/MM/yyyy},{item.FarmName},{item.FactoryName},{item.TruckNumber}," +
-                          $"{item.FarmWeight:N1},{item.FactoryWeight:N1},{item.FarmPricePerKilo:N3},{item.FactoryPricePerKilo:N3}," +
-                          $"{item.ProfitLoss:N2},{item.ProfitMargin:N1}";
-                lines.Add(line);
-            }
+                {
+                    writer.WriteLine($"{item.Date:dd/MM/yyyy}," +
+                                   $"{item.FarmName}," +
+                                   $"{item.FactoryName}," +
+                                   $"{item.TruckNumber}," +
+                                   $"{item.FarmWeight}," +
+                                   $"{item.FactoryWeight}," +
+                                   $"{item.FarmPricePerKilo}," +
+                                   $"{item.FactoryPricePerKilo}," +
+                                   $"{item.TotalFarmCost}," +
+                                   $"{item.TotalFactoryRevenue}," +
+                                   $"{item.ProfitLoss}," +
+                                   $"{item.ProfitMargin:F2}%");
+                }
 
-            File.WriteAllLines(fileName, lines, System.Text.Encoding.UTF8);
+                MessageBox.Show($"تم تصدير التقرير بنجاح إلى: {fileName}", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطأ في حفظ الملف: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void DetailedReportButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Create detailed analysis
-                var totalRevenue = FilteredReports.Sum(x => x.TotalFactoryRevenue);
-                var totalCost = FilteredReports.Sum(x => x.TotalFarmCost);
-                var overallProfitMargin = totalCost > 0 ? ((totalRevenue - totalCost) / totalCost * 100) : 0;
+                var detailedReport = new StringBuilder();
+                detailedReport.AppendLine("تقرير مفصل للإنتاج والتوزيع");
+                detailedReport.AppendLine(new string('=', 50));
+                detailedReport.AppendLine($"التاريخ: {DateTime.Now:dd/MM/yyyy HH:mm}");
+                detailedReport.AppendLine();
 
-                var profitable = FilteredReports.Where(x => x.ProfitLossStatus == 1);
-                var losses = FilteredReports.Where(x => x.ProfitLossStatus == -1);
+                // Summary statistics
+                var totalGrossWeight = FilteredReports.Sum(r => r.FarmWeight);
+                var totalNetWeight = FilteredReports.Sum(r => r.FactoryWeight);
+                var totalProfitLoss = FilteredReports.Sum(r => r.ProfitLoss);
+                var profitableRecords = FilteredReports.Count(r => r.ProfitLoss > 0);
+                var lossRecords = FilteredReports.Count(r => r.ProfitLoss < 0);
 
-                var message = $"تقرير مفصل للإنتاج والتوزيع\n" +
-                             $"==============================\n\n" +
-                             $"إجمالي الإيرادات: {totalRevenue:N2} جنيه\n" +
-                             $"إجمالي التكاليف: {totalCost:N2} جنيه\n" +
-                             $"صافي الربح/الخسارة: {(totalRevenue - totalCost):N2} جنيه\n" +
-                             $"هامش الربح الإجمالي: {overallProfitMargin:N1}%\n\n" +
-                             $"التوريدات المربحة: {profitable.Count()}\n" +
-                             $"متوسط ربح التوريد: {(profitable.Any() ? profitable.Average(x => x.ProfitLoss) : 0):N2} جنيه\n\n" +
-                             $"التوريدات الخاسرة: {losses.Count()}\n" +
-                             $"متوسط خسارة التوريد: {(losses.Any() ? Math.Abs(losses.Average(x => x.ProfitLoss)) : 0):N2} جنيه\n\n" +
-                             $"إجمالي الوزن المعالج: {FilteredReports.Sum(x => x.FarmWeight):N1} كجم\n" +
-                             $"إجمالي الوزن المسلم: {FilteredReports.Sum(x => x.FactoryWeight):N1} كجم\n" +
-                             $"نسبة الفاقد: {(FilteredReports.Sum(x => x.FarmWeight) > 0 ? ((FilteredReports.Sum(x => x.FarmWeight) - FilteredReports.Sum(x => x.FactoryWeight)) / FilteredReports.Sum(x => x.FarmWeight) * 100) : 0):N1}%";
+                detailedReport.AppendLine("الإحصائيات الإجمالية:");
+                detailedReport.AppendLine($"إجمالي الوزن الإجمالي: {totalGrossWeight:N1} كجم");
+                detailedReport.AppendLine($"إجمالي الوزن الصافي: {totalNetWeight:N1} كجم");
+                detailedReport.AppendLine($"إجمالي الربح/الخسارة: {totalProfitLoss:N0} جنيه");
+                detailedReport.AppendLine($"عدد السجلات الربحية: {profitableRecords}");
+                detailedReport.AppendLine($"عدد السجلات الخاسرة: {lossRecords}");
+                detailedReport.AppendLine();
 
-                MessageBox.Show(message, "تقرير مفصل", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Detailed records
+                detailedReport.AppendLine("التفاصيل:");
+                detailedReport.AppendLine(new string('=', 50));
+
+                foreach (var item in FilteredReports)
+                {
+                    detailedReport.AppendLine($"التاريخ: {item.Date:dd/MM/yyyy}");
+                    detailedReport.AppendLine($"المزرعة: {item.FarmName}");
+                    detailedReport.AppendLine($"المصنع: {item.FactoryName}");
+                    detailedReport.AppendLine($"رقم العربية: {item.TruckNumber}");
+                    detailedReport.AppendLine($"وزن المزرعة: {item.FarmWeight:N1} كجم");
+                    detailedReport.AppendLine($"وزن المصنع: {item.FactoryWeight:N1} كجم");
+                    detailedReport.AppendLine($"الربح/الخسارة: {item.ProfitLoss:N0} جنيه");
+                    detailedReport.AppendLine();
+                }
+
+                // Show detailed report
+                var result = MessageBox.Show(detailedReport.ToString(), "تقرير مفصل", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -458,8 +449,7 @@ namespace Fruittrack
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (NavigationService != null)
-                NavigationService.GoBack();
+            NavigationService?.GoBack();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -470,7 +460,6 @@ namespace Fruittrack
         }
     }
 
-    // Model class for production report items
     public class ProductionReportItem : INotifyPropertyChanged
     {
         private int _supplyEntryId;

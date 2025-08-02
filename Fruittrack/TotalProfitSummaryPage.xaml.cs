@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using System.Collections.Generic; // Added missing import for List
+using Fruittrack.Utilities;
 
 namespace Fruittrack
 {
@@ -61,6 +62,29 @@ namespace Fruittrack
             
             LoadFilters();
             LoadData();
+        }
+
+        private void PrintButton_Click(object sender, RoutedEventArgs e)
+        {
+            ExportUtilities.PrintPage(this, "ملخص الربح الإجمالي");
+        }
+
+        private void PdfButton_Click(object sender, RoutedEventArgs e)
+        {
+            var filePath = ExportUtilities.GetSaveFilePath("ملخص_الربح_الإجمالي.pdf", "PDF files (*.pdf)|*.pdf");
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                ExportUtilities.ExportToPdf(this, filePath, "ملخص الربح الإجمالي");
+            }
+        }
+
+        private void ExcelButton_Click(object sender, RoutedEventArgs e)
+        {
+            var filePath = ExportUtilities.GetSaveFilePath("ملخص_الربح_الإجمالي.xlsx", "Excel files (*.xlsx)|*.xlsx");
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                ExportUtilities.ExportDataGridToExcel(SummaryDataGrid, filePath, "ملخص الربح الإجمالي");
+            }
         }
 
         private void LoadFilters()

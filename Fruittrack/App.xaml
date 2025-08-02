@@ -13,7 +13,8 @@
         <SolidColorBrush x:Key="LightBackground" Color="#F8F9FA"/>
         <SolidColorBrush x:Key="TextPrimary" Color="#1F2937"/>
         <SolidColorBrush x:Key="TextSecondary" Color="#6B7280"/>
-        
+        <local:HomePage x:Key="ResourceKeyToBrushConverter"/>
+
         <!-- Modern ComboBox Style -->
         <Style x:Key="ModernComboBox" TargetType="ComboBox">
             <Setter Property="Background" Value="#F8F9FA"/>

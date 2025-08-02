@@ -61,11 +61,37 @@
                 Margin="0,0,0,15">
 
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="صرف نقدية" 
-                           FontSize="22" 
-                           FontWeight="Bold"
-                           HorizontalAlignment="Center"
-                           Foreground="#2196F3"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0" Text="صرف نقدية" 
+                               FontSize="22" 
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Foreground="#2196F3"/>
+
+                    <!-- Export Buttons -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="طباعة" 
+                                Click="PrintButton_Click"
+                                Background="#FF9800" Foreground="White"
+                                Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
+                                MinWidth="100" Margin="5,0" Cursor="Hand"/>
+                        <Button Content="PDF" 
+                                Click="PdfButton_Click"
+                                Background="#F44336" Foreground="White"
+                                Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
+                                MinWidth="100" Margin="5,0" Cursor="Hand"/>
+                        <Button Content="Excel" 
+                                Click="ExcelButton_Click"
+                                Background="#4CAF50" Foreground="White"
+                                Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
+                                MinWidth="100" Margin="5,0" Cursor="Hand"/>
+                    </StackPanel>
+                </Grid>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -84,43 +110,51 @@
                     </Grid.RowDefinitions>
 
                     <!-- Entity Type -->
-               
                     <!-- Entity Name -->
-                    <StackPanel Grid.Column="2" Grid.Row="0">
+                    <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,10,10">
                         <TextBlock Text="اسم الجهة" Style="{StaticResource HeaderText}"/>
-                        <ComboBox  x:Name="cmbEntityName"
-                                 ItemsSource="{Binding EntityNames}"
-                                 SelectedItem="{Binding SelectedEntityName, Mode=TwoWay}"
-                                 IsEditable="True"
-                                 Text="{Binding EntityName, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="اختر أو اكتب اسم الجهة"
-                                 Style="{StaticResource InputControl}"/>
-                    </StackPanel>
-
-                    <!-- Amount -->
-                    <StackPanel Grid.Column="0" Grid.Row="2">
-                        <TextBlock Text="المبلغ" Style="{StaticResource HeaderText}"/>
-                        <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
-                                 ToolTip="ادخل المبلغ المصروف"
-                                 Style="{StaticResource InputControl}"/>
+                        <ComboBox x:Name="cmbEntityName"
+               ItemsSource="{Binding EntityNames}"
+               SelectedItem="{Binding SelectedEntityName, Mode=TwoWay}"
+               IsEditable="True"
+               Text="{Binding EntityName, UpdateSourceTrigger=PropertyChanged}"
+               ToolTip="اختر أو اكتب اسم الجهة"
+               Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
                     <!-- Date -->
-                    <StackPanel Grid.Column="2" Grid.Row="2">
+                    <StackPanel Grid.Column="2" Grid.Row="0" Margin="10,0,0,10">
                         <TextBlock Text="التاريخ" Style="{StaticResource HeaderText}"/>
                         <DatePicker SelectedDate="{Binding TransactionDate, UpdateSourceTrigger=PropertyChanged}" 
-                                   Style="{StaticResource InputControl}"/>
+                 Style="{StaticResource InputControl}"/>
+                    </StackPanel>
+
+                    <!-- Amount Owed -->
+                    <StackPanel Grid.Column="0" Grid.Row="2" Margin="0,0,10,10">
+                        <TextBlock Text="المبلغ اللي عليه" Style="{StaticResource HeaderText}"/>
+                        <TextBox Text="{Binding Debit, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
+              ToolTip="ادخل المبلغ المصروف"
+              Style="{StaticResource InputControl}"/>
+                    </StackPanel>
+
+                    <!-- Amount Owned -->
+                    <StackPanel Grid.Column="2" Grid.Row="2" Margin="10,0,0,10">
+                        <TextBlock Text="المبلغ اللي له" Style="{StaticResource HeaderText}"/>
+                        <TextBox Text="{Binding Credit, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
+              ToolTip="ادخل المبلغ المستلم"
+              Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
                     <!-- Notes -->
-                    <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="3">
+                    <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="3" Margin="0,10,0,0">
                         <TextBlock Text="الملاحظات" Style="{StaticResource HeaderText}"/>
                         <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" 
-                                 ToolTip="ادخل أي ملاحظات"
-                                 Style="{StaticResource InputControl}"
-                                 Height="60"
-                                 TextWrapping="Wrap"
-                                 AcceptsReturn="True"/>
+              ToolTip="ادخل أي ملاحظات"
+              Style="{StaticResource InputControl}"
+              Height="80"
+              TextWrapping="Wrap"
+              AcceptsReturn="True"
+              VerticalScrollBarVisibility="Auto"/>
                     </StackPanel>
 
                     <!-- Buttons -->
@@ -199,9 +233,6 @@
      
                         <DataGridTextColumn Header="اسم الجهة" 
                                             Binding="{Binding EntityName}" 
-                                            Width="*"/>
-                        <DataGridTextColumn Header="المبلغ" 
-                                            Binding="{Binding Amount, StringFormat=C}" 
                                             Width="*"/>
                         <DataGridTextColumn Header="التاريخ" 
                                             Binding="{Binding TransactionDate, StringFormat=d}" 

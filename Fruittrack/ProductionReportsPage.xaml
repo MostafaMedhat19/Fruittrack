@@ -41,14 +41,40 @@
             <Border Grid.Row="0" Background="#6CB6FF" CornerRadius="6" Padding="15" Margin="0,0,0,20"
                     BorderThickness="0" BorderBrush="Transparent"
                     Effect="{StaticResource CardShadow}">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Rectangle Width="5" Height="30" Fill="White" Margin="0,0,10,0" RadiusX="2" RadiusY="2"/>
-                    <TextBlock Text="تقارير الإنتاج والتوزيع" 
-                               FontSize="24" FontWeight="SemiBold" 
-                               Foreground="White" VerticalAlignment="Center"/>
-                    <Path Data="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" 
-                          Fill="White" Width="28" Height="28" Margin="15,0,0,0"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Rectangle Width="5" Height="30" Fill="White" Margin="0,0,10,0" RadiusX="2" RadiusY="2"/>
+                        <TextBlock Text="تقارير الإنتاج والتوزيع" 
+                                   FontSize="24" FontWeight="SemiBold" 
+                                   Foreground="White" VerticalAlignment="Center"/>
+                        <Path Data="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" 
+                              Fill="White" Width="28" Height="28" Margin="15,0,0,0"/>
+                    </StackPanel>
+
+                    <!-- Export Buttons -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="طباعة" 
+                                Click="PrintButton_Click"
+                                Background="#FF9800" Foreground="White"
+                                Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
+                                MinWidth="100" Margin="5,0" Cursor="Hand"/>
+                        <Button Content="PDF" 
+                                Click="PdfButton_Click"
+                                Background="#F44336" Foreground="White"
+                                Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
+                                MinWidth="100" Margin="5,0" Cursor="Hand"/>
+                        <Button Content="Excel" 
+                                Click="ExcelButton_Click"
+                                Background="#4CAF50" Foreground="White"
+                                Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
+                                MinWidth="100" Margin="5,0" Cursor="Hand"/>
+                    </StackPanel>
+                </Grid>
             </Border>
 
             <!-- Summary Statistics Cards -->

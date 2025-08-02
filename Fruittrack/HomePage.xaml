@@ -1,25 +1,66 @@
 ﻿<Page x:Class="Fruittrack.HomePage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Fruittrack"
-        mc:Ignorable="d"
-        Title="Makkah Traders - Point of Sale" 
-  
-        Background="#F8F9FA">
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:local="clr-namespace:Fruittrack"
+      mc:Ignorable="d"
+      Title="Makkah Traders - Point of Sale" 
+      Background="#F8F9FA">
 
     <Page.Resources>
-        <Style TargetType="TextBlock">
-            <Setter Property="FontFamily" Value="Montserrat"/>
-            <Setter Property="Foreground" Value="#1F2937"/>
+        <!-- Font Resources -->
+        <FontFamily x:Key="PrimaryFont">Segoe UI</FontFamily>
+
+        <!-- Color Resources -->
+        <Color x:Key="PrimaryColor">#1F2937</Color>
+        <Color x:Key="SecondaryColor">#6B7280</Color>
+        <Color x:Key="AccentColor">#3B82F6</Color>
+        <Color x:Key="SuccessColor">#10B981</Color>
+        <Color x:Key="ErrorColor">#EF4444</Color>
+        <Color x:Key="LightBackground">#F8F9FA</Color>
+        <Color x:Key="WhiteColor">#FFFFFF</Color>
+        <Color x:Key="BorderColor">#E5E7EB</Color>
+        <Color x:Key="ImageBorderColor">#E5E7EB</Color>
+
+        <!-- Brush Resources -->
+        <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
+        <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+        <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+        <SolidColorBrush x:Key="LightBackgroundBrush" Color="{StaticResource LightBackground}"/>
+        <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource WhiteColor}"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+        <SolidColorBrush x:Key="ImageBorderBrush" Color="{StaticResource ImageBorderColor}"/>
+
+        <!-- Text Styles -->
+        <Style x:Key="TitleText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,30"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
         </Style>
 
-        <!-- Updated Gradient Backgrounds to Soft Theme -->
+        <Style x:Key="SubtitleText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,30"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+
+        <Style x:Key="StatusText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
+        </Style>
+
+        <!-- Gradient Backgrounds -->
         <LinearGradientBrush x:Key="PrimaryGradient" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#E3F2FD" Offset="0"/>
-            <GradientStop Color="#BBDEFB" Offset="0.5"/>
-            <GradientStop Color="#90CAF9" Offset="1"/>
+            <GradientStop Color="#EFF6FF" Offset="0"/>
+            <GradientStop Color="#DBEAFE" Offset="0.5"/>
+            <GradientStop Color="#BFDBFE" Offset="1"/>
         </LinearGradientBrush>
 
         <LinearGradientBrush x:Key="SecondaryGradient" StartPoint="0,0" EndPoint="1,1">
@@ -27,21 +68,29 @@
             <GradientStop Color="#E3F2FD" Offset="1"/>
         </LinearGradientBrush>
 
-        <!-- Effects - very subtle -->
-        <DropShadowEffect x:Key="CardShadow" BlurRadius="8" ShadowDepth="1" Color="#08000000"/>
+        <!-- Effects -->
+        <DropShadowEffect x:Key="CardShadow" BlurRadius="12" ShadowDepth="2" Color="#12000000" Opacity="0.8"/>
+        <DropShadowEffect x:Key="ImageShadow" BlurRadius="15" ShadowDepth="3" Color="#20000000" Opacity="0.6"/>
 
         <!-- Button Styles -->
         <Style TargetType="Button" x:Key="MenuButtonStyle">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="Background" Value="{StaticResource WhiteBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Padding" Value="20,15"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
             <Setter Property="Margin" Value="0,8,0,0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="MinWidth" Value="300"/>
+            <Setter Property="MaxWidth" Value="400"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Color="#08000000"/>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -49,10 +98,11 @@
                                 Background="{TemplateBinding Background}"
                                 CornerRadius="8"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                BorderBrush="{TemplateBinding BorderBrush}">
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Effect="{TemplateBinding Effect}">
                             <Grid>
                                 <Border x:Name="hoverOverlay" 
-                                        Background="#6CB6FF" 
+                                        Background="{StaticResource AccentBrush}" 
                                         CornerRadius="8"
                                         Opacity="0"/>
                                 <ContentPresenter x:Name="contentPresenter" 
@@ -63,11 +113,16 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.05"/>
+                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.08"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="#9CA3AF"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.1"/>
+                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.15"/>
+                                <Setter TargetName="border" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect BlurRadius="4" ShadowDepth="1" Color="#08000000"/>
+                                    </Setter.Value>
+                                </Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -77,22 +132,21 @@
 
         <!-- Icon Styles -->
         <Style TargetType="Path" x:Key="MenuIconStyle">
-            <Setter Property="Fill" Value="#6B7280"/>
+            <Setter Property="Fill" Value="CadetBlue"/>
             <Setter Property="Stretch" Value="Uniform"/>
             <Setter Property="Width" Value="24"/>
             <Setter Property="Height" Value="24"/>
             <Setter Property="Margin" Value="0,0,15,0"/>
         </Style>
 
-        <!-- Notification Badge Style -->
-        <Style TargetType="Border" x:Key="NotificationBadge">
-            <Setter Property="Background" Value="#FB7185"/>
-            <Setter Property="CornerRadius" Value="9"/>
-            <Setter Property="Width" Value="18"/>
-            <Setter Property="Height" Value="18"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="Margin" Value="0,-5,-5,0"/>
+        <!-- Image Container Style -->
+        <Style x:Key="ImageContainerStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource WhiteBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ImageBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Effect" Value="{StaticResource ImageShadow}"/>
         </Style>
 
         <!-- Animation Resources -->
@@ -106,216 +160,172 @@
     </Page.Resources>
 
     <Grid>
-        <!-- Soft Background -->
-        <Grid Background="#F8F9FA">
-            <!-- Subtle accent pattern -->
-            <Canvas>
-                <Ellipse Canvas.Left="15" Canvas.Top="20" Width="4" Height="4" Fill="#D1D5DB" Opacity="0.3">
-                    <Ellipse.RenderTransform>
-                        <TranslateTransform X="0" Y="0"/>
-                    </Ellipse.RenderTransform>
-                    <Ellipse.Triggers>
-                        <EventTrigger RoutedEvent="Loaded">
-                            <BeginStoryboard>
-                                <Storyboard RepeatBehavior="Forever">
-                                    <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" 
-                                                     From="20" To="80" Duration="0:0:8" AutoReverse="True"/>
-                                    <DoubleAnimation Storyboard.TargetProperty="(Canvas.Left)" 
-                                                     From="15" To="25" Duration="0:0:5" AutoReverse="True"/>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </Ellipse.Triggers>
-                </Ellipse>
-            </Canvas>
-
-            <!-- Soft Wave Effect Bottom -->
-            <Path HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
-                  Stretch="Fill" Height="180"
-                  Fill="{StaticResource SecondaryGradient}" Opacity="0.4">
-                <Path.Data>
-                    <PathGeometry>
-                        <PathFigure StartPoint="0,180">
-                            <BezierSegment Point1="0,120" Point2="300,80" Point3="600,100"/>
-                            <BezierSegment Point1="900,120" Point2="1200,100" Point3="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
-
-                            <LineSegment Point="0,180"/>
-                        </PathFigure>
-                    </PathGeometry>
-                </Path.Data>
-            </Path>
-        </Grid>
+        <!-- Responsive layout container -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
         <!-- Top Bar -->
-        <Border Background="#FFFFFF" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1" Height="50" VerticalAlignment="Top">
+        <Border Grid.Row="0" 
+                Background="{StaticResource WhiteBrush}" 
+                BorderBrush="{StaticResource BorderBrush}" 
+                BorderThickness="0,0,0,1" 
+                Height="60"
+                Effect="{StaticResource CardShadow}">
             <Grid>
-                <!-- Notification Button -->
-                <Button Width="40" Height="40" HorizontalAlignment="Left" 
-                        Margin="20,0,0,0" VerticalAlignment="Center"
-                        Background="Transparent" BorderThickness="0">
-                    <Grid  MouseLeftButtonUp="NotificationBadge_Click">
-                        <Path Data="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" 
-                              Fill="#6B7280" Stretch="Uniform" Width="24" Height="24"/>
-                            <Border Style="{StaticResource NotificationBadge}"
-                            Cursor="Hand" Background="Red">
-                                  <TextBlock x:Name="InvalidCountTextBlock"
-                                   Text="3"
-                                   Foreground="White"
-                                   FontSize="10"
-                                   FontWeight="Bold"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/> 
-                        </Border>
-
-                    </Grid>
-                </Button>
-
-                <!-- Date/Time Display -->
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock x:Name="DateTextBlock" Foreground="#6B7280" FontSize="14"/>
-                    <TextBlock x:Name="TimeTextBlock" Foreground="#1F2937" FontSize="18" FontWeight="Bold"/>
-                </StackPanel>
-            </Grid>
-        </Border>
-        <Grid>
-            <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
-        </Grid>
-        <!-- Main Content -->
-        <Grid Margin="40" VerticalAlignment="Center">
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" 
-                  Width="1200" Height="600">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Left Side: Branding -->
-                <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Height="334" Width="260">
-                    <!-- Logo -->
-                    <Image x:Name="LogoImage"
-                           Source="pack://application:,,,/Images/support-icon.jpg"
-                           Width="245" Height="210"
-                           Stretch="Uniform" 
-                           Margin="0,0,0,20" 
-                           HorizontalAlignment="Center"
-                           RenderOptions.BitmapScalingMode="HighQuality">
-                        <Image.Triggers>
-                            <EventTrigger RoutedEvent="Loaded">
-                                <BeginStoryboard>
-                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" 
-                                                         From="0.9" To="1" Duration="0:0:3"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </Image.Triggers>
-                    </Image>
-
-                    <!-- Brand Name -->
-
-                    <TextBlock Text="Future Company" FontSize="20" 
-                               Foreground="#6B7280" Margin="0,0,0,30"
-                               HorizontalAlignment="Center"/>
-
-                    <!-- Status Indicators -->
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                        <Border Width="12" Height="12" CornerRadius="6" Background="#10B981" 
-                                Margin="0,0,10,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="System Status: Operational" Foreground="#6B7280" FontSize="14"/>
+                <!-- Date/Time Display -->
+                <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" >
+                    <StackPanel>
+                        <TextBlock x:Name="DateTextBlock" Foreground="{StaticResource SecondaryBrush}" FontSize="14"/>
+                        <TextBlock x:Name="TimeTextBlock" Foreground="{StaticResource PrimaryBrush}" FontSize="18" FontWeight="Bold"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Border Width="12" Height="12" CornerRadius="6" Background="#10B981" 
-                                Margin="0,0,10,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="Database: Connected" Foreground="#6B7280" FontSize="14"/>
-                    </StackPanel>
-                </StackPanel>
-
-                <!-- Right Side: Menu Buttons -->
-                <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
-                            Width="400" Margin="40,0,0,0">
-                    <TextBlock Text="القائمة الرئسية " FontSize="24" FontWeight="Bold"
-                               Foreground="#1F2937" Margin="0,0,0,30"
-                               HorizontalAlignment="Center"/>
-
-                    <!-- Sales Button -->
-                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" 
-                                  Style="{StaticResource MenuIconStyle}"/>
-                            <TextBlock Text="صفحة تسجيل عملية التوريد" FontSize="18" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Inventory Button -->
-                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_1">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4l16-.02V7z" 
-                                  Style="{StaticResource MenuIconStyle}"/>
-                            <TextBlock Text="صفحة عرض كل التوريدات" FontSize="18" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Reports Button -->
-                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_2">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" 
-                                  Style="{StaticResource MenuIconStyle}"/>
-                            <TextBlock Text="صفحة التوريدات المفقودة أو بها أخطاء" FontSize="18" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Production Reports Button -->
-                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_3">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" 
-                                  Style="{StaticResource MenuIconStyle}"/>
-                            <TextBlock Text="تقارير الإنتاج والتوزيع" FontSize="18" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Settings Button -->
-                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_5">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" 
-                                  Style="{StaticResource MenuIconStyle}"/>
-                            <TextBlock Text="صفحة هامش الربح الإجمالي" FontSize="18" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Additional Buttons -->
-            
-
-                    <!-- Cash Receipt Page Button -->
-                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_CashReceipt">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z" 
-                                  Style="{StaticResource MenuIconStyle}"/>
-                            <TextBlock Text="صفحة استلام نقدية" FontSize="18" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Navigation Button 4: Production Reports -->
-                    <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_4">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
-10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm1.31-7.9l-.95.95C12.9 12.45
-12 13.5 12 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41
-0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.69 1.9z"
-              Style="{StaticResource MenuIconStyle}"/>
-                            <TextBlock Text="تسجيل صرف نقدي" FontSize="18" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Navigation Button 5: Total Profit Summary -->
+                    <!-- Company Logo Mini -->
+              
                 </StackPanel>
             </Grid>
-        </Grid>
+        </Border>
+
+        <!-- Main Content Area -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                      Padding="20" Background="{StaticResource LightBackgroundBrush}">
+            <Grid>
+                <!-- Main Content Container -->
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxWidth="1200">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Center: Branding -->
+                    <StackPanel x:Name="BrandPanel" Grid.Column="1" 
+                                HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <!-- Logo Container -->
+                        <Border Style="{StaticResource ImageContainerStyle}">
+                            <Image x:Name="LogoImage"
+                                   Source="pack://application:,,,/Images/support-icon.jpg"
+                                   Width="190" Height="120"
+                                   Stretch="UniformToFill" 
+                                   Margin="0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   RenderOptions.BitmapScalingMode="HighQuality">
+                                <Image.Clip>
+                                    <RectangleGeometry Rect="0,0,280,240" RadiusX="-8" RadiusY="-8"/>
+                                </Image.Clip>
+                            </Image>
+                        </Border>
+
+                        <!-- Brand Name -->
+                        <TextBlock Text="Future Company" Style="{StaticResource SubtitleText}" Margin="0,20,0,10"/>
+
+                        <!-- Status Indicators -->
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="0,20,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="12" Height="12" CornerRadius="6" Background="{StaticResource SuccessBrush}" 
+                                        Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="System Status: Operational" Style="{StaticResource StatusText}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="12" Height="12" CornerRadius="6" Background="{StaticResource SuccessBrush}" 
+                                        Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Database: Connected" Style="{StaticResource StatusText}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Right Side: Menu Buttons -->
+                    <StackPanel x:Name="MenuPanel" Grid.Column="2" 
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Margin="40,0,0,0">
+                        <TextBlock Text="القائمة الرئسية" Style="{StaticResource TitleText}"/>
+
+                        <!-- Sales Button -->
+                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" 
+                                      Style="{StaticResource MenuIconStyle}"/>
+                                <TextBlock Text="صفحة تسجيل عملية التوريد" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Inventory Button -->
+                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_1">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4l16-.02V7z" 
+                                      Style="{StaticResource MenuIconStyle}"/>
+                                <TextBlock Text="صفحة عرض كل التوريدات" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Reports Button -->
+                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_2">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" 
+                                      Style="{StaticResource MenuIconStyle}"/>
+                                <TextBlock Text="صفحة التوريدات المفقودة أو بها أخطاء" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Production Reports Button -->
+                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_3">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" 
+                                      Style="{StaticResource MenuIconStyle}"/>
+                                <TextBlock Text="تقارير الإنتاج والتوزيع" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Settings Button -->
+                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_5">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" 
+                                      Style="{StaticResource MenuIconStyle}"/>
+                                <TextBlock Text="صفحة هامش الربح الإجمالي" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Cash Receipt Page Button -->
+                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_CashReceipt">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z" 
+                                      Style="{StaticResource MenuIconStyle}"/>
+                                <TextBlock Text="صفحة استلام نقدية" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Navigation Button 4: Production Reports -->
+                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_4">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm1.31-7.9l-.95.95C12.9 12.45 12 13.5 12 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.69 1.9z"
+                                      Style="{StaticResource MenuIconStyle}"/>
+                                <TextBlock Text="تسجيل صرف نقدي" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
 
         <!-- Bottom Status Bar -->
-        <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="0,1,0,0" Height="30" VerticalAlignment="Bottom">
+        <Border Grid.Row="2" 
+                Background="{StaticResource WhiteBrush}" 
+                BorderBrush="{StaticResource BorderBrush}" 
+                BorderThickness="0,1,0,0" 
+                Height="40"
+                Effect="{StaticResource CardShadow}">
             <TextBlock Text="Version 2.1.5 | © 2025 Makkah Traders | All rights reserved" 
-                       Foreground="#6B7280" FontSize="12"
+                       Foreground="{StaticResource SecondaryBrush}" FontSize="12"
                        VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0"/>
         </Border>
     </Grid>

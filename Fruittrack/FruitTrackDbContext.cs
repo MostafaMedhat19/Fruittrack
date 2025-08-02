@@ -97,7 +97,6 @@ namespace Fruittrack
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.EntityName).IsRequired();
-                entity.Property(e => e.Amount).IsRequired();
                 entity.Property(e => e.TransactionDate).IsRequired();
                 entity.Property(e => e.Credit).HasDefaultValue(0);
                 entity.Property(e => e.Debit).HasDefaultValue(0);

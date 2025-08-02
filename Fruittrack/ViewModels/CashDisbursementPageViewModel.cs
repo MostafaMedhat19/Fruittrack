@@ -22,28 +22,29 @@ namespace Fruittrack.ViewModels
         public CashDisbursementPageViewModel(FruitTrackDbContext dbContext)
         {
             _dbContext = dbContext;
-
-            // Load transactions from database
             _transactionsViewSource = new CollectionViewSource();
+
+            // Load transactions
             Transactions = new ObservableCollection<CashDisbursementTransaction>(
-                _dbContext.CashDisbursementTransactions.OrderByDescending(t => t.TransactionDate).ToList());
+                _dbContext.CashDisbursementTransactions
+                    .OrderByDescending(t => t.TransactionDate)
+                    .ToList());
+
             _transactionsViewSource.Source = Transactions;
             _transactionsViewSource.Filter += ApplyFilter;
-            
+
             LoadEntityNames();
-            
+
             // Initialize commands
             AddDisbursementCommand = new RelayCommand(AddDisbursement, CanAddDisbursement);
             DeleteTransactionCommand = new RelayCommand<CashDisbursementTransaction>(DeleteTransaction);
             ViewStatementCommand = new RelayCommand(ViewStatement, CanViewStatement);
-            
-            // Set default date
+
             TransactionDate = DateTime.Now;
         }
 
         private async void LoadEntityNames()
         {
-            // Get unique entity names from both receipt and disbursement transactions
             var receiptNames = await _dbContext.CashReceiptTransactions
                 .Select(t => t.SourceName)
                 .Distinct()
@@ -54,8 +55,11 @@ namespace Fruittrack.ViewModels
                 .Distinct()
                 .ToListAsync();
 
-            var allNames = receiptNames.Union(disbursementNames).Distinct().OrderBy(n => n).ToList();
-            EntityNames = new ObservableCollection<string>(allNames);
+            EntityNames = new ObservableCollection<string>(
+                receiptNames.Union(disbursementNames)
+                    .Distinct()
+                    .OrderBy(n => n)
+                    .ToList());
         }
 
         private ObservableCollection<string> _entityNames = new();
@@ -69,14 +73,14 @@ namespace Fruittrack.ViewModels
             }
         }
 
-        // Form fields
+        // Form properties
         private string _entityName = string.Empty;
         public string EntityName
         {
             get => _entityName;
-            set 
-            { 
-                _entityName = value; 
+            set
+            {
+                _entityName = value;
                 OnPropertyChanged(nameof(EntityName));
                 OnPropertyChanged(nameof(SelectedEntityName));
             }
@@ -99,6 +103,32 @@ namespace Fruittrack.ViewModels
         {
             get => _amount;
             set { _amount = value; OnPropertyChanged(nameof(Amount)); }
+        }
+
+        private decimal _credit;
+        public decimal Credit
+        {
+            get => _credit;
+            set
+            {
+                _credit = value;
+                if (value > 0) Debit = 0;
+                OnPropertyChanged(nameof(Credit));
+                OnPropertyChanged(nameof(Debit));
+            }
+        }
+
+        private decimal _debit;
+        public decimal Debit
+        {
+            get => _debit;
+            set
+            {
+                _debit = value;
+                if (value > 0) Credit = 0;
+                OnPropertyChanged(nameof(Debit));
+                OnPropertyChanged(nameof(Credit));
+            }
         }
 
         private DateTime _transactionDate = DateTime.Now;
@@ -127,24 +157,7 @@ namespace Fruittrack.ViewModels
         }
 
         public ICollectionView FilteredTransactions => _transactionsViewSource.View;
-
-        // DataGrid collection
         public ObservableCollection<CashDisbursementTransaction> Transactions { get; set; }
-
-        // Selected transaction for editing
-        private void ApplyFilter(object sender, FilterEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(SearchText))
-            {
-                e.Accepted = true;
-                return;
-            }
-
-            var transaction = e.Item as CashDisbursementTransaction;
-            if (transaction == null) return;
-
-            e.Accepted = transaction.EntityName?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true;
-        }
 
         public CashDisbursementTransaction? SelectedTransaction
         {
@@ -161,7 +174,21 @@ namespace Fruittrack.ViewModels
         public ICommand DeleteTransactionCommand { get; }
         public ICommand ViewStatementCommand { get; }
 
-        // Add new disbursement
+        private void ApplyFilter(object sender, FilterEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                e.Accepted = true;
+                return;
+            }
+
+            if (e.Item is CashDisbursementTransaction transaction)
+            {
+                e.Accepted = transaction.EntityName?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true ||
+                              transaction.Notes?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true;
+            }
+        }
+
         private void AddDisbursement(object obj)
         {
             try
@@ -169,12 +196,12 @@ namespace Fruittrack.ViewModels
                 var transaction = new CashDisbursementTransaction
                 {
                     EntityName = EntityName,
-                    Amount = Amount,
                     TransactionDate = TransactionDate,
                     Notes = Notes,
-                    Debit = Amount, // Disbursement is a debit (عليه كام)
-                    Credit = 0,     // No credit for disbursement
-                    Balance = -Amount // Negative balance for disbursement
+                    Amount = Credit > 0 ? Credit : Debit,
+                    Credit = Credit,
+                    Debit = Debit,
+                    Balance = CalculateNetBalance(EntityName)
                 };
 
                 _dbContext.CashDisbursementTransactions.Add(transaction);
@@ -182,7 +209,7 @@ namespace Fruittrack.ViewModels
 
                 Transactions.Insert(0, transaction);
                 ClearForm();
-                
+
                 MessageBox.Show("تم حفظ عملية الصرف بنجاح", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -191,13 +218,25 @@ namespace Fruittrack.ViewModels
             }
         }
 
-        // Delete transaction
+        private decimal CalculateNetBalance(string entityName)
+        {
+            var totalCredit = _dbContext.CashReceiptTransactions
+                .Where(t => t.SourceName == entityName)
+                .Sum(t => (decimal?)t.ReceivedAmount) ?? 0;
+
+            var totalDebit = _dbContext.CashDisbursementTransactions
+                .Where(t => t.EntityName == entityName)
+                .Sum(t => (decimal?)t.Debit) ?? 0;
+
+            return totalCredit - totalDebit;
+        }
+
         private void DeleteTransaction(CashDisbursementTransaction transaction)
         {
             if (transaction == null) return;
 
             var result = MessageBox.Show(
-                $"هل انت متأكد من أنك تريد حذف معاملة {transaction.EntityName} بقيمة {transaction.Amount:C}؟",
+                $"هل انت متأكد من أنك تريد حذف معاملة {transaction.EntityName} بقيمة {transaction.Debit:C}؟",
                 "تأكيد الحذف",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -217,7 +256,6 @@ namespace Fruittrack.ViewModels
             }
         }
 
-        // View account statement
         private void ViewStatement(object obj)
         {
             if (SelectedTransaction == null)
@@ -228,13 +266,10 @@ namespace Fruittrack.ViewModels
 
             try
             {
-                var entityName = SelectedTransaction.EntityName;
-                var accountStatement = GenerateAccountStatement(entityName);
-                
-                // Open account statement page
-                var statementPage = new AccountStatementPage(accountStatement);
-                var mainWindow = Application.Current.MainWindow;
-                if (mainWindow is NavigationWindow navigationWindow)
+                var accountStatement = GenerateAccountStatement(SelectedTransaction.EntityName);
+                var statementPage = new AccountStatementPage(accountStatement, _dbContext);
+
+                if (Application.Current.MainWindow is NavigationWindow navigationWindow)
                 {
                     navigationWindow.Navigate(statementPage);
                 }
@@ -248,49 +283,48 @@ namespace Fruittrack.ViewModels
         private AccountStatement GenerateAccountStatement(string entityName)
         {
             var statement = new AccountStatement { EntityName = entityName };
+            decimal runningBalance = 0;
 
-            // Get all receipt transactions for this entity
-            var receiptTransactions = _dbContext.CashReceiptTransactions
+            // Process receipts (credits)
+            var receipts = _dbContext.CashReceiptTransactions
                 .Where(t => t.SourceName == entityName)
                 .OrderBy(t => t.Date)
                 .ToList();
 
-            // Get all disbursement transactions for this entity
-            var disbursementTransactions = _dbContext.CashDisbursementTransactions
-                .Where(t => t.EntityName == entityName)
-                .OrderBy(t => t.TransactionDate)
-                .ToList();
-
-            decimal runningBalance = 0;
-
-            // Add receipt transactions (credits)
-            foreach (var receipt in receiptTransactions)
+            foreach (var receipt in receipts)
             {
                 runningBalance += receipt.ReceivedAmount;
                 statement.Transactions.Add(new TransactionDetail
                 {
                     TransactionDate = receipt.Date,
-                    Amount = receipt.ReceivedAmount,
                     TransactionType = "استلام",
-                    Notes = "استلام نقدية",
-                    RunningBalance = runningBalance
+                    Credit = receipt.ReceivedAmount,
+                    Debit = 0,
+                    Balance = runningBalance,
+                    Notes =  "استلام نقدية"
                 });
                 statement.TotalCredit += receipt.ReceivedAmount;
             }
 
-            // Add disbursement transactions (debits)
-            foreach (var disbursement in disbursementTransactions)
+            // Process disbursements (debits)
+            var disbursements = _dbContext.CashDisbursementTransactions
+                .Where(t => t.EntityName == entityName)
+                .OrderBy(t => t.TransactionDate)
+                .ToList();
+
+            foreach (var disbursement in disbursements)
             {
-                runningBalance -= disbursement.Amount;
+                runningBalance -= disbursement.Debit;
                 statement.Transactions.Add(new TransactionDetail
                 {
                     TransactionDate = disbursement.TransactionDate,
-                    Amount = disbursement.Amount,
                     TransactionType = "صرف",
-                    Notes = disbursement.Notes ?? "صرف نقدية",
-                    RunningBalance = runningBalance
+                    Credit = 0,
+                    Debit = disbursement.Debit,
+                    Balance = runningBalance,
+                    Notes = disbursement.Notes ?? "صرف نقدية"
                 });
-                statement.TotalDebit += disbursement.Amount;
+                statement.TotalDebit += disbursement.Debit;
             }
 
             statement.FinalBalance = runningBalance;
@@ -300,7 +334,7 @@ namespace Fruittrack.ViewModels
         private bool CanAddDisbursement(object obj)
         {
             return !string.IsNullOrWhiteSpace(EntityName) &&
-                   Amount > 0 &&
+                   (Credit > 0 || Debit > 0) &&
                    TransactionDate != default;
         }
 
@@ -314,21 +348,22 @@ namespace Fruittrack.ViewModels
             EntityName = string.Empty;
             SelectedEntityName = string.Empty;
             Amount = 0;
+            Credit = 0;
+            Debit = 0;
             TransactionDate = DateTime.Now;
             Notes = string.Empty;
         }
 
-        // Calculated properties for summary
+        // Summary properties
         public decimal TotalCredit => Transactions?.Sum(t => t.Credit) ?? 0;
         public decimal TotalDebit => Transactions?.Sum(t => t.Debit) ?? 0;
         public decimal NetBalance => TotalCredit - TotalDebit;
         public Brush NetBalanceColor => NetBalance >= 0 ? Brushes.Green : Brushes.Red;
 
-        // INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        // IDataErrorInfo for validation
+        // IDataErrorInfo implementation
         public string Error => string.Empty;
         public string this[string columnName]
         {
@@ -339,15 +374,16 @@ namespace Fruittrack.ViewModels
                     case nameof(EntityName):
                         if (string.IsNullOrWhiteSpace(EntityName)) return "اسم الجهة مطلوب";
                         break;
-                    case nameof(Amount):
-                        if (Amount <= 0) return "المبلغ يجب أن يكون أكبر من صفر";
+                    case nameof(Credit):
+                    case nameof(Debit):
+                        if (Credit <= 0 && Debit <= 0) return "يجب إدخال مبلغ إما له أو عليه";
                         break;
                     case nameof(TransactionDate):
                         if (TransactionDate == default) return "التاريخ مطلوب";
                         break;
                 }
-                return null;
+                return string.Empty;
             }
         }
     }
-} 
+}

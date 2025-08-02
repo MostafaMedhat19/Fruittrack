@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Fruittrack.Models;
+using Fruittrack.Utilities;
 
 namespace Fruittrack
 {
@@ -57,6 +58,29 @@ namespace Fruittrack
             
             // Set default profit type to "الكل"
             ProfitTypeFilter.SelectedIndex = 0;
+        }
+
+        private void PrintButton_Click(object sender, RoutedEventArgs e)
+        {
+            ExportUtilities.PrintPage(this, "نظرة عامة على كل التوريدات");
+        }
+
+        private void PdfButton_Click(object sender, RoutedEventArgs e)
+        {
+            var filePath = ExportUtilities.GetSaveFilePath("نظرة_عامة_التوريدات.pdf", "PDF files (*.pdf)|*.pdf");
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                ExportUtilities.ExportToPdf(this, filePath, "نظرة عامة على كل التوريدات");
+            }
+        }
+
+        private void ExcelButton_Click(object sender, RoutedEventArgs e)
+        {
+            var filePath = ExportUtilities.GetSaveFilePath("نظرة_عامة_التوريدات.xlsx", "Excel files (*.xlsx)|*.xlsx");
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                ExportUtilities.ExportDataGridToExcel(SuppliesDataGrid, filePath, "نظرة عامة على كل التوريدات");
+            }
         }
         
         private async void SuppliesOverview_Loaded(object sender, RoutedEventArgs e)

@@ -6,8 +6,6 @@
       FlowDirection="RightToLeft">
 
     <Page.Resources>
-
-
         <!-- Modern TextBox Style -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
             <Setter Property="Background" Value="White"/>
@@ -81,31 +79,63 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- Header -->
-            <RowDefinition Height="Auto"/>  <!-- Summary Cards -->
-            <RowDefinition Height="Auto"/>  <!-- Filter Section -->
-            <RowDefinition Height="*"/>     <!-- DataGrid -->
-            <RowDefinition Height="Auto"/>  <!-- Status Bar -->
-            <RowDefinition Height="Auto"/>  <!-- Action Buttons -->
+            <RowDefinition Height="Auto"/>
+            <!-- Header -->
+            <RowDefinition Height="Auto"/>
+            <!-- Summary Cards -->
+            <RowDefinition Height="Auto"/>
+            <!-- Filter Section -->
+            <RowDefinition Height="*"/>
+            <!-- DataGrid -->
+            <RowDefinition Height="Auto"/>
+            <!-- Status Bar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Action Buttons -->
         </Grid.RowDefinitions>
 
         <!-- Header Section -->
         <Border Grid.Row="0" Background="White" Padding="20" Margin="0,0,0,10">
-            <StackPanel Orientation="Horizontal">
-                <Rectangle Width="5" Height="30" Fill="White" Margin="0,0,10,0" RadiusX="2" RadiusY="2"/>
-                <Path Data="M12 2C13.1 2 14 2.9 14 4V6H16C16.55 6 17 6.45 17 7S16.55 8 16 8H14V10C14 11.1 13.1 12 12 12S10 11.1 10 10V8H8C7.45 8 7 7.55 7 7S7.45 6 8 6H10V4C10 2.9 10.9 2 12 2M7 13H12.5L11 14.5L12.5 16H7C5.9 16 5 15.1 5 14S5.9 13 7 13Z"
-                      Fill="White" Width="28" Height="28" Margin="15,0,0,0"/>
-                <StackPanel Margin="15,0,0,0">
-                    <TextBlock Text="ملخص الربح الإجمالي" 
-                               FontSize="24" 
-                               FontWeight="Bold" 
-                               Foreground="#1F2937" 
-                               Margin="0,0,0,5"/>
-                    <TextBlock Text="عرض ملخص شامل للأرباح والخسائر حسب الفترة الزمنية" 
-                               FontSize="14" 
-                               Foreground="#6B7280"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Rectangle Width="5" Height="30" Fill="White" Margin="0,0,10,0" RadiusX="2" RadiusY="2"/>
+                    <Path Data="M12 2C13.1 2 14 2.9 14 4V6H16C16.55 6 17 6.45 17 7S16.55 8 16 8H14V10C14 11.1 13.1 12 12 12S10 11.1 10 10V8H8C7.45 8 7 7.55 7 7S7.45 6 8 6H10V4C10 2.9 10.9 2 12 2M7 13H12.5L11 14.5L12.5 16H7C5.9 16 5 15.1 5 14S5.9 13 7 13Z"
+                          Fill="White" Width="28" Height="28" Margin="15,0,0,0"/>
+                    <StackPanel Margin="15,0,0,0">
+                        <TextBlock Text="ملخص الربح الإجمالي" 
+                                   FontSize="24" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#1F2937"/>
+                        <TextBlock Text="عرض إجمالي الأرباح والخسائر" 
+                                   FontSize="14" 
+                                   Foreground="#6B7280" 
+                                   Margin="0,5,0,0"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+
+                <!-- Export Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="طباعة" 
+                            Click="PrintButton_Click"
+                            Background="#FF9800" Foreground="White"
+                            Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
+                            MinWidth="100" Margin="5,0" Cursor="Hand"/>
+                    <Button Content="PDF" 
+                            Click="PdfButton_Click"
+                            Background="#F44336" Foreground="White"
+                            Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
+                            MinWidth="100" Margin="5,0" Cursor="Hand"/>
+                    <Button Content="Excel" 
+                            Click="ExcelButton_Click"
+                            Background="#4CAF50" Foreground="White"
+                            Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
+                            MinWidth="100" Margin="5,0" Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
         </Border>
 
         <!-- Summary Cards -->
@@ -147,7 +177,7 @@
         <Border Grid.Row="2" Background="White" Padding="20" Margin="0,0,0,10">
             <StackPanel>
                 <TextBlock Text="الفلاتر والبحث" FontSize="16" FontWeight="SemiBold" Foreground="#1F2937" Margin="0,0,0,15"/>
-                
+
                 <WrapPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <StackPanel Orientation="Horizontal" Margin="0,0,15,0">
                         <TextBlock Text="من تاريخ:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Medium"/>
@@ -347,13 +377,13 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <TextBlock x:Name="StatusText" Grid.Column="0" 
                            Text="جاهز لعرض الملخص" 
                            Foreground="White" 
                            FontSize="14" 
                            VerticalAlignment="Center"/>
-                           
+
                 <TextBlock x:Name="RecordCountText" Grid.Column="1" 
                            Text="0 سجل" 
                            Foreground="#D1D5DB" 
@@ -374,4 +404,4 @@
             </StackPanel>
         </Border>
     </Grid>
-</Page> 
+</Page>

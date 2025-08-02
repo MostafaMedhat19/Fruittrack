@@ -28,6 +28,17 @@
                 <Setter Property="MinWidth" Value="120"/>
             </Style>
 
+            <Style TargetType="Button" x:Key="ExportButton">
+                <Setter Property="Background" Value="#4CAF50"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Padding" Value="12,8"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="MinWidth" Value="100"/>
+                <Setter Property="Margin" Value="5,0"/>
+            </Style>
+
             <Style TargetType="Border" x:Key="CardStyle">
                 <Setter Property="Background" Value="White"/>
                 <Setter Property="CornerRadius" Value="8"/>
@@ -57,6 +68,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0">
@@ -74,7 +86,23 @@
                                Margin="0,5,0,0"/>
                 </StackPanel>
 
-                <Button Grid.Column="1" 
+                <!-- Export Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
+                    <Button Content="طباعة" 
+                            Click="PrintButton_Click"
+                            Style="{StaticResource ExportButton}"
+                            Background="#FF9800"/>
+                    <Button Content="PDF" 
+                            Click="PdfButton_Click"
+                            Style="{StaticResource ExportButton}"
+                            Background="#F44336"/>
+                    <Button Content="Excel" 
+                            Click="ExcelButton_Click"
+                            Style="{StaticResource ExportButton}"
+                            Background="#4CAF50"/>
+                </StackPanel>
+
+                <Button Grid.Column="2" 
                         Content="رجوع" 
                         Command="{Binding GoBackCommand}" 
                         Style="{StaticResource PrimaryButton}"
@@ -135,6 +163,7 @@
 
                 <!-- Transactions DataGrid -->
                 <DataGrid Grid.Row="1"
+                         x:Name="TransactionsDataGrid"
                          ItemsSource="{Binding Transactions}"
                          AutoGenerateColumns="False"
                          CanUserAddRows="False"
@@ -160,20 +189,23 @@
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="التاريخ" 
-                                            Binding="{Binding TransactionDate, StringFormat=dd/MM/yyyy}" 
-                                            Width="120"/>
+                        Binding="{Binding TransactionDate, StringFormat=dd/MM/yyyy}" 
+                        Width="120"/>
                         <DataGridTextColumn Header="نوع المعاملة" 
-                                            Binding="{Binding TransactionType}" 
-                                            Width="100"/>
-                        <DataGridTextColumn Header="المبلغ" 
-                                            Binding="{Binding Amount, StringFormat=C}" 
-                                            Width="120"/>
+                        Binding="{Binding TransactionType}" 
+                        Width="100"/>
+                        <DataGridTextColumn Header="المبلغ اللي عليه" 
+                        Binding="{Binding FormattedDebit}" 
+                        Width="120"/>
+                        <DataGridTextColumn Header="المبلغ اللي له" 
+                        Binding="{Binding FormattedCredit}" 
+                        Width="120"/>
                         <DataGridTextColumn Header="الملاحظات" 
-                                            Binding="{Binding Notes}" 
-                                            Width="*"/>
-                        <DataGridTextColumn Header="الرصيد الجاري" 
-                                            Binding="{Binding RunningBalance, StringFormat=C}" 
-                                            Width="120"/>
+                        Binding="{Binding Notes}" 
+                        Width="*"/>
+                        <DataGridTextColumn Header="الصافي" 
+                        Binding="{Binding FormattedBalance}" 
+                        Width="120"/>
                     </DataGrid.Columns>
 
                     <DataGrid.CellStyle>
