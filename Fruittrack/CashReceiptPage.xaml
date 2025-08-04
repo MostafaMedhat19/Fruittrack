@@ -330,7 +330,7 @@
                                    />
 
                             <DataGridTextColumn Header="المبلغ المستلم" 
-                                    Binding="{Binding ReceivedAmount, StringFormat=C}" 
+                                    Binding="{Binding ReceivedAmount, StringFormat=N2}" 
                                     Width="*"
                                    />
 
@@ -340,12 +340,12 @@
                                    />
 
                             <DataGridTextColumn Header="المبلغ المسدد" 
-                                    Binding="{Binding PaidBackAmount, StringFormat=C}" 
+                                    Binding="{Binding PaidBackAmount, StringFormat=N2}" 
                                     Width="*"
                                   />
 
                             <DataGridTextColumn Header="المتبقي عليه سداده" 
-                                    Binding="{Binding RemainingAmount, StringFormat=C}" 
+                                    Binding="{Binding RemainingAmount, StringFormat=N2}" 
                                     Width="*"
                                    />
 

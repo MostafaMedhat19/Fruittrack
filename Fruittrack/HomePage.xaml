@@ -168,28 +168,66 @@
         </Grid.RowDefinitions>
 
         <!-- Top Bar -->
+        <!-- Top Bar -->
         <Border Grid.Row="0" 
-                Background="{StaticResource WhiteBrush}" 
-                BorderBrush="{StaticResource BorderBrush}" 
-                BorderThickness="0,0,0,1" 
-                Height="60"
-                Effect="{StaticResource CardShadow}">
+        Background="{StaticResource WhiteBrush}" 
+        BorderBrush="{StaticResource BorderBrush}" 
+        BorderThickness="0,0,0,1" 
+        Height="60"
+        Effect="{StaticResource CardShadow}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <!-- For support button -->
                     <ColumnDefinition Width="*"/>
+                    <!-- Left spacer -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- For date/time -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- Right spacer -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- For any future elements -->
                 </Grid.ColumnDefinitions>
 
-                <!-- Date/Time Display -->
-                <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" >
-                    <StackPanel>
-                        <TextBlock x:Name="DateTextBlock" Foreground="{StaticResource SecondaryBrush}" FontSize="14"/>
-                        <TextBlock x:Name="TimeTextBlock" Foreground="{StaticResource PrimaryBrush}" FontSize="18" FontWeight="Bold"/>
+                <!-- Support Icon Button - Left side -->
+                <Button x:Name="SupportButton"
+        Grid.Column="0"
+        Style="{StaticResource MenuButtonStyle2}"
+        Height="40"
+        Padding="5,0"
+        Margin="10,0,0,0"
+        VerticalAlignment="Center"
+        ToolTip="الدعم الفني"
+        Click="SupportButton_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Path Data="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M13,19h-2v-2h2V19z M15.31,12.1
+                l-0.95,0.95C13.9,12.45,13,13.5,13,15h-2v-0.5c0-1.1,0.45-2.1,1.17-2.83l1.24-1.26c0.37-0.36,0.59-0.86,0.59-1.41
+                c0-1.1-0.9-2-2-2s-2,0.9-2,2H8c0-2.21,1.79-4,4-4s4,1.79,4,4C16,11.32,15.64,12.12,15.31,12.1z"
+              Fill="{StaticResource AccentBrush}"
+              Width="16"
+              Height="16"
+              Stretch="Uniform"
+              Margin="10,0,5,0"/>
+                        <TextBlock Text="الدعم الفني"
+                   FontSize="16"
+                   />
                     </StackPanel>
+                </Button>
 
-                    <!-- Company Logo Mini -->
-              
+
+                <!-- Date/Time Display - Centered -->
+                <StackPanel Grid.Column="2" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center">
+                    <TextBlock x:Name="DateTextBlock" 
+                       Foreground="{StaticResource SecondaryBrush}" 
+                       FontSize="14"
+                       HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="TimeTextBlock" 
+                       Foreground="{StaticResource PrimaryBrush}" 
+                       FontSize="18" 
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -324,9 +362,19 @@
                 BorderThickness="0,1,0,0" 
                 Height="40"
                 Effect="{StaticResource CardShadow}">
-            <TextBlock Text="Version 2.1.5 | © 2025 Makkah Traders | All rights reserved" 
-                       Foreground="{StaticResource SecondaryBrush}" FontSize="12"
-                       VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0"/>
+            <TextBlock FontSize="12"
+           VerticalAlignment="Center" 
+           HorizontalAlignment="Right" 
+           Margin="0,0,20,0"
+           Foreground="{StaticResource SecondaryBrush}">
+    <Hyperlink Click="LicenseInfoHyperlink_Click"
+               Foreground="{StaticResource SecondaryBrush}"
+               TextDecorations="None"
+               Cursor="Hand">
+        Version 2.1.5 | All rights reserved
+    </Hyperlink>
+            </TextBlock>
+
         </Border>
     </Grid>
 </Page>

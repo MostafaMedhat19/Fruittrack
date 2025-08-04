@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Globalization;
 using System.Windows.Data;
+using Fruittrack.Services;
 
 namespace Fruittrack
 {
@@ -20,6 +21,15 @@ namespace Fruittrack
         {
             base.OnStartup(e); // Call base first
 
+            // Check license before starting the application
+            var licenseManager = new LicenseManager();
+            if (!licenseManager.CheckLicense())
+            {
+                // License check failed, exit the application
+                Shutdown();
+                return;
+            }
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
@@ -30,7 +40,7 @@ namespace Fruittrack
             {
                 builder.AddJsonFile($"appsettings.{environment}.json", optional: true);
             }
-
+          
             var configuration = builder.Build();
 
             var services = new ServiceCollection();
@@ -48,6 +58,10 @@ namespace Fruittrack
 
             // Register your main window
             services.AddSingleton<MainWindow>(); // Or whatever your main window is
+
+            // Register licensing services
+            services.AddSingleton<LicenseManager>();
+            services.AddSingleton<LicensingService>();
 
             ServiceProvider = services.BuildServiceProvider();
 

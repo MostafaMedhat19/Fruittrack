@@ -74,5 +74,14 @@ namespace Fruittrack
         {
             NavigationService.Navigate(new CashDisbursementPage());
         }
+        private void LicenseInfoHyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new LicenseManagementPage());
+        }
+
+        private void SupportButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new TechnicalSupportPage());
+        }
     }
 }

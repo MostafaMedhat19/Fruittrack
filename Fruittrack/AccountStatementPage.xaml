@@ -141,7 +141,7 @@
                                FontWeight="Bold"
                                HorizontalAlignment="Center"
                                Foreground="#2196F3"/>
-
+                    
                     <TextBlock Text="{Binding EntityName}" 
                                FontSize="18" 
                                FontWeight="SemiBold"
@@ -176,12 +176,12 @@
 
         <!-- Summary Cards Section -->
         <Grid Grid.Row="1" Margin="0,0,0,20">
-            <Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
             <!-- Total Credit Card -->
             <Border Grid.Column="0" Style="{StaticResource SummaryCardStyle}">
@@ -214,7 +214,7 @@
                     <TextBlock Text="الصافي النهائي" 
                                Style="{StaticResource SummaryLabelStyle}"/>
                 </StackPanel>
-            </Border>
+        </Border>
 
             <!-- Remaining Amount Card -->
             <Border Grid.Column="3" Style="{StaticResource SummaryCardStyle}">
@@ -230,7 +230,7 @@
 
         <!-- Section Title -->
         <TextBlock Grid.Row="2" 
-                   Text="تفاصيل المعاملات" 
+                           Text="تفاصيل المعاملات" 
                    Style="{StaticResource SectionTitleStyle}"/>
 
         <!-- Transactions Table Section -->
@@ -239,25 +239,25 @@
                 Padding="0">
             <DataGrid x:Name="TransactionsDataGrid"
                       AutoGenerateColumns="False"
-                      ItemsSource="{Binding Transactions}"
+                         ItemsSource="{Binding Transactions}"
                       Style="{StaticResource ModernDataGridStyle}"
                      
                       CellStyle="{StaticResource ModernCellStyle}"
                       Margin="20">
 
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="التاريخ" 
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="التاريخ" 
                                         Binding="{Binding TransactionDate}" 
-                                        Width="120"/>
-                    <DataGridTextColumn Header="نوع المعاملة" 
-                                        Binding="{Binding TransactionType}" 
-                                        Width="120"/>
+                        Width="120"/>
+                        <DataGridTextColumn Header="نوع المعاملة" 
+                        Binding="{Binding TransactionType}" 
+                        Width="120"/>
                     <DataGridTextColumn Header="المصدر / الكيان" 
                                         Binding="{Binding DataContext.EntityName, RelativeSource={RelativeSource AncestorType=Page}}"     
                                         Width="150"/>
-                    <DataGridTextColumn Header="الملاحظات" 
-                                        Binding="{Binding Notes}" 
-                                        Width="*"/>
+                        <DataGridTextColumn Header="الملاحظات" 
+                        Binding="{Binding Notes}" 
+                        Width="*"/>
                     <DataGridTextColumn Header="المبلغ اللي له" 
                                         Binding="{Binding FormattedCredit}" 
                                         Width="130"/>
@@ -277,8 +277,8 @@
                                         Binding="{Binding FormattedRemainingAmount}" 
                                         Width="140"/>
                
-                </DataGrid.Columns>
-            </DataGrid>
+                    </DataGrid.Columns>
+                </DataGrid>
         </Border>
     </Grid>
 </Page> 

@@ -234,13 +234,13 @@
                                             Binding="{Binding TransactionDate, StringFormat=d}" 
                                             Width="*"/>
                         <DataGridTextColumn Header="له كام" 
-                                            Binding="{Binding Credit, StringFormat=C}" 
+                                            Binding="{Binding Credit, StringFormat=N2}" 
                                             Width="*"/>
                         <DataGridTextColumn Header="عليه كام" 
-                                            Binding="{Binding Debit, StringFormat=C}" 
+                                            Binding="{Binding Debit, StringFormat=N2}" 
                                             Width="*"/>
                         <DataGridTextColumn Header="الصافي" 
-                                            Binding="{Binding Balance, StringFormat=C}" 
+                                            Binding="{Binding Balance,StringFormat=N2}" 
                                             Width="*"/>
                         <DataGridTextColumn Header="ملاحظات" 
                                             Binding="{Binding Notes}" 
@@ -299,17 +299,17 @@
 
                         <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="إجمالي له كام: " FontWeight="Bold" Margin="0,0,5,0"/>
-                            <TextBlock Text="{Binding TotalCredit, StringFormat=C}" Foreground="#4CAF50" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding TotalCredit, StringFormat=N2}" Foreground="#4CAF50" FontWeight="Bold"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="إجمالي عليه كام: " FontWeight="Bold" Margin="0,0,5,0"/>
-                            <TextBlock Text="{Binding TotalDebit, StringFormat=C}" Foreground="#F44336" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding TotalDebit, StringFormat=N2}" Foreground="#F44336" FontWeight="Bold"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="الصافي: " FontWeight="Bold" Margin="0,0,5,0"/>
-                            <TextBlock Text="{Binding NetBalance, StringFormat=C}" 
+                            <TextBlock Text="{Binding NetBalance,StringFormat=N2}" 
                                        Foreground="{Binding NetBalanceColor}" 
                                        FontWeight="Bold"/>
                         </StackPanel>
