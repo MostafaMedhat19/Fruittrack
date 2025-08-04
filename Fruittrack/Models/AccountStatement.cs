@@ -27,6 +27,9 @@ namespace Fruittrack.Models
         public decimal Balance { get; set; }
 
         // These are for display only
+        public string FormattedReceivedAmount { get; set; }
+        public string FormattedPaidBackAmount { get; set; }
+        public string FormattedRemainingAmount { get; set; }
         public string FormattedCredit { get; set; }
         public string FormattedDebit { get; set; }
         public string FormattedBalance { get; set; }

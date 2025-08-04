@@ -341,57 +341,7 @@ namespace Fruittrack
             }
         }
 
-        private void ExportSummaryButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (FilteredSummaries?.Any() != true)
-                {
-                    MessageBox.Show("لا توجد بيانات للتصدير", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                var saveFileDialog = new SaveFileDialog
-                {
-                    Filter = "CSV files (*.csv)|*.csv",
-                    DefaultExt = "csv",
-                    FileName = $"ملخص_الربح_الإجمالي_{DateTime.Now:yyyy-MM-dd}.csv"
-                };
-
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    var lines = new List<string>
-                    {
-                        "التاريخ,اسم المزرعة,اسم المصنع,رقم العربية,وزن المزرعة (كجم),وزن المصنع (كجم),إجمالي النولون (جنيه),إجمالي أسعار المزرعة (جنيه),إجمالي أسعار المصنع (جنيه),الربح/الخسارة (جنيه),هامش الربح %"
-                    };
-
-                    foreach (var summary in FilteredSummaries)
-                    {
-                        lines.Add($"{summary.Date:dd/MM/yyyy},{summary.FarmName},{summary.FactoryName},{summary.TruckNumber},{summary.TotalFarmWeight:N1},{summary.TotalFactoryWeight:N1},{summary.TotalFreightCost:N2},{summary.TotalFarmCost:N2},{summary.TotalFactoryRevenue:N2},{summary.ProfitLoss:N2},{summary.ProfitMargin:N1}%");
-                    }
-
-                    // Add summary totals
-                    lines.Add("");
-                    lines.Add("=== الملخص الإجمالي ===");
-                    lines.Add($"إجمالي وزن المزرعة:,{FilteredSummaries.Sum(x => x.TotalFarmWeight):N1} كجم,,,,,,,");
-                    lines.Add($"إجمالي وزن المصنع:,{FilteredSummaries.Sum(x => x.TotalFactoryWeight):N1} كجم,,,,,,,");
-                    lines.Add($"إجمالي النولون:,{FilteredSummaries.Sum(x => x.TotalFreightCost):N2} جنيه,,,,,,,");
-                    lines.Add($"إجمالي أسعار المزرعة:,{FilteredSummaries.Sum(x => x.TotalFarmCost):N2} جنيه,,,,,,,");
-                    lines.Add($"إجمالي أسعار المصنع:,{FilteredSummaries.Sum(x => x.TotalFactoryRevenue):N2} جنيه,,,,,,,");
-                    lines.Add($"الربح/الخسارة النهائية:,{FilteredSummaries.Sum(x => x.ProfitLoss):N2} جنيه,,,,,,,");
-
-                    File.WriteAllLines(saveFileDialog.FileName, lines, System.Text.Encoding.UTF8);
-
-                    StatusText.Text = "تم تصدير الملخص بنجاح";
-                    MessageBox.Show($"تم تصدير الملخص بنجاح إلى:\n{saveFileDialog.FileName}", "تم التصدير", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                StatusText.Text = $"خطأ في التصدير: {ex.Message}";
-                MessageBox.Show($"حدث خطأ أثناء تصدير الملخص:\n{ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+   
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {

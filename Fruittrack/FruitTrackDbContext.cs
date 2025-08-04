@@ -18,6 +18,8 @@ namespace Fruittrack
         {
         }
 
+    
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Truck
@@ -100,7 +102,8 @@ namespace Fruittrack
                 entity.Property(e => e.TransactionDate).IsRequired();
                 entity.Property(e => e.Credit).HasDefaultValue(0);
                 entity.Property(e => e.Debit).HasDefaultValue(0);
-                entity.Property(e => e.Balance).HasDefaultValue(0);
+                entity.Ignore(e => e.Balance);
+
             });
         }
     }

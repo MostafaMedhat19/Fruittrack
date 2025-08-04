@@ -210,12 +210,11 @@
                         <TextBox x:Name="TruckNumberFilter" Width="140" Height="30" Style="{StaticResource ModernTextBox}"/>
                     </StackPanel>
 
-                    <Button x:Name="GenerateSummaryButton" Content="إنشاء الملخص" Width="120" Height="35" FontSize="14" FontWeight="SemiBold"
+                    <Button x:Name="GenerateSummaryButton" Content="إنشاء الملخص" Width="120" Height="45" FontSize="14" FontWeight="SemiBold"
                             Style="{StaticResource AccentButtonStyle}" Click="GenerateSummaryButton_Click" Margin="0,0,10,0"/>
-                    <Button x:Name="ClearFiltersButton" Content="مسح الفلاتر" Width="120" Height="35" FontSize="14" FontWeight="SemiBold"
+                    <Button x:Name="ClearFiltersButton" Content="مسح الفلاتر" Width="120" Height="45" FontSize="14" FontWeight="SemiBold"
                             Style="{StaticResource AccentButtonStyle}" Click="ClearFiltersButton_Click" Margin="0,0,10,0"/>
-                    <Button x:Name="ExportSummaryButton" Content="تصدير الملخص" Width="120" Height="35" FontSize="14" FontWeight="SemiBold"
-                            Style="{StaticResource AccentButtonStyle}" Click="ExportSummaryButton_Click"/>
+                   
                 </WrapPanel>
             </StackPanel>
         </Border>

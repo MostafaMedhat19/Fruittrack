@@ -27,7 +27,7 @@ namespace Fruittrack.Models
         [Required(ErrorMessage = "المبلغ المدفوع مطلوب")]
         [Range(0.00, double.MaxValue, ErrorMessage = "المبلغ المدفوع لا يمكن أن يكون سالبًا")]
         public decimal Debit { get; set; }  // عليه كام (How much the party owes)
-        public decimal Balance { get; set; } // الصافي (Net balance)
-     // الصافي (Net balance)
+        public decimal Balance => Math.Abs(Credit - Debit);
+        // الصافي (Net balance)
     }
 } 

@@ -104,6 +104,10 @@ namespace Fruittrack.ViewModels
                 _transactionsViewSource.View.Refresh(); // Refresh filter when search text changes
             }
         }
+        public decimal TotalRemainingAmount
+        {
+            get => Transactions?.Sum(t => t.RemainingAmount) ?? 0;
+        }
 
         public decimal RemainingAmount => ReceivedAmount - PaidBackAmount;
         public ICollectionView FilteredTransactions => _transactionsViewSource.View;
@@ -200,9 +204,11 @@ namespace Fruittrack.ViewModels
             };
 
             _dbContext.CashReceiptTransactions.Add(transaction);
+
             _dbContext.SaveChanges();
 
             Transactions.Insert(0, transaction); // Add at beginning of list
+            OnPropertyChanged(nameof(TotalRemainingAmount));
             ClearForm();
         }
         // Update existing transaction
@@ -230,7 +236,7 @@ namespace Fruittrack.ViewModels
 
             // إعادة تحميل البيانات من قاعدة البيانات
             LoadTransactions();
-
+            OnPropertyChanged(nameof(TotalRemainingAmount));
             // رسالة نجاح
             MessageBox.Show("تم تحديث البيانات", "نجاح", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -245,6 +251,7 @@ namespace Fruittrack.ViewModels
             {
                 Transactions.Add(transaction);
             }
+            OnPropertyChanged(nameof(TotalRemainingAmount));
         }
 
         // Edit transaction (populate form)
@@ -270,6 +277,7 @@ namespace Fruittrack.ViewModels
                 {
                     _dbContext.CashReceiptTransactions.Remove(transaction);
                     _dbContext.SaveChanges();
+                    OnPropertyChanged(nameof(TotalRemainingAmount));
                     Transactions.Remove(transaction);
                 }
                 catch (Exception ex)

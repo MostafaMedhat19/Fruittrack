@@ -85,11 +85,7 @@
                                 Background="#F44336" Foreground="White"
                                 Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
                                 MinWidth="100" Margin="5,0" Cursor="Hand"/>
-                        <Button Content="Excel" 
-                                Click="ExcelButton_Click"
-                                Background="#4CAF50" Foreground="White"
-                                Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
-                                MinWidth="100" Margin="5,0" Cursor="Hand"/>
+                     
                     </StackPanel>
                 </Grid>
 

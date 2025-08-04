@@ -197,6 +197,25 @@
                 BorderThickness="1"
                 >
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" 
+               Text="اجمالي المتبقي سداده : " 
+               FontSize="16"
+               VerticalAlignment="Center"/>
+
+                                <TextBlock Grid.Column="1" 
+               Text="{Binding TotalRemainingAmount}" 
+               FontSize="16"
+               FontWeight="Bold"
+               Foreground="Blue"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Center"/>
+                            </Grid>
                             <!-- Search Box -->
                             <Grid Width="250" Height="40" Margin="0,0,15,0">
                                 <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"

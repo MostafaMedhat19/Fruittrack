@@ -11,14 +11,88 @@
 
     <Grid Margin="15">
         <Grid.Resources>
-            <!-- Shared Styles -->
-            <Style TargetType="TextBlock" x:Key="HeaderText">
-                <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Margin" Value="0,0,0,5"/>
-                <Setter Property="Foreground" Value="#444"/>
+            <!-- Modern Card Style -->
+            <Style TargetType="Border" x:Key="SummaryCardStyle">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="CornerRadius" Value="12"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="20"/>
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="#000000"/>
+                    </Setter.Value>
+                </Setter>
             </Style>
 
-            <Style TargetType="Button" x:Key="PrimaryButton">
+            <!-- Summary Value Style -->
+            <Style TargetType="TextBlock" x:Key="SummaryValueStyle">
+                <Setter Property="FontSize" Value="24"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="0,0,0,5"/>
+            </Style>
+
+            <!-- Summary Label Style -->
+            <Style TargetType="TextBlock" x:Key="SummaryLabelStyle">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="#666666"/>
+            </Style>
+
+            <!-- Section Title Style -->
+            <Style TargetType="TextBlock" x:Key="SectionTitleStyle">
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="#2196F3"/>
+                <Setter Property="Margin" Value="0,0,0,20"/>
+            </Style>
+
+            <!-- DataGrid Styles -->
+            <Style TargetType="DataGrid" x:Key="ModernDataGridStyle">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="GridLinesVisibility" Value="None"/>
+                <Setter Property="HeadersVisibility" Value="Column"/>
+                <Setter Property="CanUserAddRows" Value="False"/>
+                <Setter Property="IsReadOnly" Value="True"/>
+                <Setter Property="RowHeight" Value="50"/>
+                <Setter Property="ColumnHeaderHeight" Value="50"/>
+                <Setter Property="AlternatingRowBackground" Value="#F8F9FA"/>
+                <Setter Property="RowBackground" Value="White"/>
+                <Setter Property="SelectionMode" Value="Single"/>
+                <Setter Property="SelectionUnit" Value="FullRow"/>
+            </Style>
+
+            <Style TargetType="DataGridColumnHeader" x:Key="ModernColumnHeaderStyle">
+                <Setter Property="Background" Value="#F5F5F5"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="15,0"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Foreground" Value="#444444"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+            </Style>
+
+            <Style TargetType="DataGridCell" x:Key="ModernCellStyle">
+                <Setter Property="Padding" Value="15,0"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="DataGridCell">
+                            <Grid Background="{TemplateBinding Background}">
+                                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Button Styles -->
+            <Style TargetType="Button" x:Key="ModernButtonStyle">
                 <Setter Property="Background" Value="#2196F3"/>
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="Padding" Value="16,10"/>
@@ -26,9 +100,11 @@
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="MinWidth" Value="120"/>
+
+                <Setter Property="Margin" Value="5"/>
             </Style>
 
-            <Style TargetType="Button" x:Key="ExportButton">
+            <Style TargetType="Button" x:Key="ExportButtonStyle">
                 <Setter Property="Background" Value="#4CAF50"/>
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="Padding" Value="12,8"/>
@@ -36,23 +112,13 @@
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="MinWidth" Value="100"/>
-                <Setter Property="Margin" Value="5,0"/>
-            </Style>
+                <Setter Property="Margin" Value="5"/>
 
-            <Style TargetType="Border" x:Key="CardStyle">
-                <Setter Property="Background" Value="White"/>
-                <Setter Property="CornerRadius" Value="8"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="BorderBrush" Value="#E0E0E0"/>
-                <Setter Property="Effect">
-                    <Setter.Value>
-                        <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
-                    </Setter.Value>
-                </Setter>
             </Style>
         </Grid.Resources>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -60,10 +126,8 @@
 
         <!-- Header Section -->
         <Border Grid.Row="0" 
-                Style="{StaticResource CardStyle}"
-                Padding="20" 
-                Margin="0,0,0,15">
-
+                Style="{StaticResource SummaryCardStyle}"
+                Margin="0,0,0,20">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -73,16 +137,16 @@
 
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="كشف حساب" 
-                               FontSize="24" 
+                               FontSize="28" 
                                FontWeight="Bold"
                                HorizontalAlignment="Center"
                                Foreground="#2196F3"/>
-                    
+
                     <TextBlock Text="{Binding EntityName}" 
                                FontSize="18" 
                                FontWeight="SemiBold"
                                HorizontalAlignment="Center"
-                               Foreground="#666"
+                               Foreground="#666666"
                                Margin="0,5,0,0"/>
                 </StackPanel>
 
@@ -90,142 +154,131 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
                     <Button Content="طباعة" 
                             Click="PrintButton_Click"
-                            Style="{StaticResource ExportButton}"
+                            Style="{StaticResource ExportButtonStyle}"
                             Background="#FF9800"/>
                     <Button Content="PDF" 
                             Click="PdfButton_Click"
-                            Style="{StaticResource ExportButton}"
+                            Style="{StaticResource ExportButtonStyle}"
                             Background="#F44336"/>
                     <Button Content="Excel" 
                             Click="ExcelButton_Click"
-                            Style="{StaticResource ExportButton}"
+                            Style="{StaticResource ExportButtonStyle}"
                             Background="#4CAF50"/>
                 </StackPanel>
 
                 <Button Grid.Column="2" 
                         Content="رجوع" 
                         Command="{Binding GoBackCommand}" 
-                        Style="{StaticResource PrimaryButton}"
+                        Style="{StaticResource ModernButtonStyle}"
                         Background="#FF9800"/>
             </Grid>
         </Border>
 
-        <!-- Summary Section -->
-        <Border Grid.Row="1" 
-                Style="{StaticResource CardStyle}"
-                Padding="20" 
-                Margin="0,0,0,15">
+        <!-- Summary Cards Section -->
+        <Grid Grid.Row="1" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="إجمالي المبالغ اللي ليه: " FontWeight="Bold" Margin="0,0,5,0"/>
-                    <TextBlock Text="{Binding TotalCredit, StringFormat=C}" Foreground="#4CAF50" FontWeight="Bold"/>
+            <!-- Total Credit Card -->
+            <Border Grid.Column="0" Style="{StaticResource SummaryCardStyle}">
+                <StackPanel>
+                    <TextBlock Text="{Binding FormattedTotalCredit}" 
+                               Style="{StaticResource SummaryValueStyle}"
+                               Foreground="#4CAF50"/>
+                    <TextBlock Text="إجمالي المبالغ اللي له" 
+                               Style="{StaticResource SummaryLabelStyle}"/>
                 </StackPanel>
+            </Border>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="إجمالي المبالغ اللي عليه: " FontWeight="Bold" Margin="0,0,5,0"/>
-                    <TextBlock Text="{Binding TotalDebit, StringFormat=C}" Foreground="#F44336" FontWeight="Bold"/>
+            <!-- Total Debit Card -->
+            <Border Grid.Column="1" Style="{StaticResource SummaryCardStyle}">
+                <StackPanel>
+                    <TextBlock Text="{Binding FormattedTotalDebit}" 
+                               Style="{StaticResource SummaryValueStyle}"
+                               Foreground="#F44336"/>
+                    <TextBlock Text="إجمالي المبالغ اللي عليه" 
+                               Style="{StaticResource SummaryLabelStyle}"/>
                 </StackPanel>
+            </Border>
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="الصافي النهائي: " FontWeight="Bold" Margin="0,0,5,0"/>
-                    <TextBlock Text="{Binding FinalBalance, StringFormat=C}" 
-                               Foreground="{Binding FinalBalanceColor}" 
-                               FontWeight="Bold"/>
+            <!-- Final Balance Card -->
+            <Border Grid.Column="2" Style="{StaticResource SummaryCardStyle}">
+                <StackPanel>
+                    <TextBlock Text="{Binding FormattedFinalBalance}" 
+                               Style="{StaticResource SummaryValueStyle}"
+                               Foreground="{Binding FinalBalanceColor}"/>
+                    <TextBlock Text="الصافي النهائي" 
+                               Style="{StaticResource SummaryLabelStyle}"/>
                 </StackPanel>
-            </Grid>
-        </Border>
+            </Border>
 
-        <!-- Transactions Section -->
-        <Border Grid.Row="2" 
-                Style="{StaticResource CardStyle}">
+            <!-- Remaining Amount Card -->
+            <Border Grid.Column="3" Style="{StaticResource SummaryCardStyle}">
+                <StackPanel>
+                    <TextBlock Text="{Binding FormattedTotalRemainingAmount}" 
+                               Style="{StaticResource SummaryValueStyle}"
+                               Foreground="#FF9800"/>
+                    <TextBlock Text="إجمالي المتبقي عليه سداده" 
+                               Style="{StaticResource SummaryLabelStyle}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+        <!-- Section Title -->
+        <TextBlock Grid.Row="2" 
+                   Text="تفاصيل المعاملات" 
+                   Style="{StaticResource SectionTitleStyle}"/>
 
-                <!-- Header -->
-                <TextBlock Grid.Row="0" 
-                           Text="تفاصيل المعاملات" 
-                           Margin="20,20,20,10"
-                           FontSize="18" 
-                           FontWeight="Bold" 
-                           HorizontalAlignment="Center"
-                           Foreground="#2196F3"/>
+        <!-- Transactions Table Section -->
+        <Border Grid.Row="3" 
+                Style="{StaticResource SummaryCardStyle}"
+                Padding="0">
+            <DataGrid x:Name="TransactionsDataGrid"
+                      AutoGenerateColumns="False"
+                      ItemsSource="{Binding Transactions}"
+                      Style="{StaticResource ModernDataGridStyle}"
+                     
+                      CellStyle="{StaticResource ModernCellStyle}"
+                      Margin="20">
 
-                <!-- Transactions DataGrid -->
-                <DataGrid Grid.Row="1"
-                         x:Name="TransactionsDataGrid"
-                         ItemsSource="{Binding Transactions}"
-                         AutoGenerateColumns="False"
-                         CanUserAddRows="False"
-                         IsReadOnly="True"
-                         Margin="10,0,10,10"
-                         GridLinesVisibility="None"
-                         HeadersVisibility="Column"
-                         AlternatingRowBackground="#F8F9FA"
-                         RowBackground="White"
-                         BorderThickness="0"
-                         ColumnHeaderHeight="40"
-                         RowHeight="40">
-
-                    <DataGrid.ColumnHeaderStyle>
-                        <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="#F5F5F5"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="Padding" Value="15,0"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
-                            <Setter Property="Foreground" Value="#444"/>
-                        </Style>
-                    </DataGrid.ColumnHeaderStyle>
-
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="التاريخ" 
-                        Binding="{Binding TransactionDate, StringFormat=dd/MM/yyyy}" 
-                        Width="120"/>
-                        <DataGridTextColumn Header="نوع المعاملة" 
-                        Binding="{Binding TransactionType}" 
-                        Width="100"/>
-                        <DataGridTextColumn Header="المبلغ اللي عليه" 
-                        Binding="{Binding FormattedDebit}" 
-                        Width="120"/>
-                        <DataGridTextColumn Header="المبلغ اللي له" 
-                        Binding="{Binding FormattedCredit}" 
-                        Width="120"/>
-                        <DataGridTextColumn Header="الملاحظات" 
-                        Binding="{Binding Notes}" 
-                        Width="*"/>
-                        <DataGridTextColumn Header="الصافي" 
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="التاريخ" 
+                                        Binding="{Binding TransactionDate}" 
+                                        Width="120"/>
+                    <DataGridTextColumn Header="نوع المعاملة" 
+                                        Binding="{Binding TransactionType}" 
+                                        Width="120"/>
+                    <DataGridTextColumn Header="المصدر / الكيان" 
+                                        Binding="{Binding DataContext.EntityName, RelativeSource={RelativeSource AncestorType=Page}}"     
+                                        Width="150"/>
+                    <DataGridTextColumn Header="الملاحظات" 
+                                        Binding="{Binding Notes}" 
+                                        Width="*"/>
+                    <DataGridTextColumn Header="المبلغ اللي له" 
+                                        Binding="{Binding FormattedCredit}" 
+                                        Width="130"/>
+                    <DataGridTextColumn Header="المبلغ اللي عليه" 
+                                        Binding="{Binding FormattedDebit}" 
+                                        Width="130"/>
+                    <DataGridTextColumn Header=" الصافي" 
                         Binding="{Binding FormattedBalance}" 
-                        Width="120"/>
-                    </DataGrid.Columns>
-
-                    <DataGrid.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="15,0"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="DataGridCell">
-                                        <Grid Background="{TemplateBinding Background}">
-                                            <ContentPresenter VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </DataGrid.CellStyle>
-                </DataGrid>
-            </Grid>
+                        Width="130"/>
+                    <DataGridTextColumn Header="المبلغ المستلم" 
+                      Binding="{Binding FormattedReceivedAmount}" 
+                      Width="130"/>
+                    <DataGridTextColumn Header="المبلغ المسدد" 
+                      Binding="{Binding FormattedPaidBackAmount}" 
+                      Width="130"/>
+                    <DataGridTextColumn Header="المتبقي عليه سداده" 
+                                        Binding="{Binding FormattedRemainingAmount}" 
+                                        Width="140"/>
+               
+                </DataGrid.Columns>
+            </DataGrid>
         </Border>
     </Grid>
 </Page> 
