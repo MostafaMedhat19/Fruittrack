@@ -153,11 +153,24 @@ namespace Fruittrack.Utilities
             try
             {
                 var dataTable = new DataTable();
+                var usedColumnNames = new HashSet<string>();
 
-                // Add columns
+                // Add columns with duplicate handling
                 foreach (var column in dataGrid.Columns)
                 {
-                    dataTable.Columns.Add(column.Header?.ToString() ?? $"Column{column.DisplayIndex}");
+                    var columnName = column.Header?.ToString() ?? $"Column{column.DisplayIndex}";
+                    
+                    // Handle duplicate column names
+                    var originalName = columnName;
+                    var counter = 1;
+                    while (usedColumnNames.Contains(columnName))
+                    {
+                        columnName = $"{originalName}_{counter}";
+                        counter++;
+                    }
+                    
+                    usedColumnNames.Add(columnName);
+                    dataTable.Columns.Add(columnName);
                 }
 
                 // Add rows

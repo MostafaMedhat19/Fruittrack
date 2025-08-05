@@ -212,7 +212,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="خصم%" Binding="{Binding FarmDiscountPercentage, StringFormat={}{0}%}" 
+                        <DataGridTextColumn Header="خصم المزرعة%" Binding="{Binding FarmDiscountPercentage, StringFormat={}{0}%}" 
                                    Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -222,7 +222,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="الوزن المسموح" Binding="{Binding AllowedWeightFromFarm, StringFormat={}{0:N1}}" 
+                        <DataGridTextColumn Header="الوزن المسموح من المزرعة" Binding="{Binding AllowedWeightFromFarm, StringFormat={}{0:N1}}" 
                                    Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -268,7 +268,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="خصم%" Binding="{Binding FactoryDiscountPercentage, StringFormat={}{0}%}" 
+                        <DataGridTextColumn Header="خصم المصنع%" Binding="{Binding FactoryDiscountPercentage, StringFormat={}{0}%}" 
                                    Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -278,7 +278,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="الوزن المسموح" Binding="{Binding AllowedWeightFromFactory, StringFormat={}{0:N1}}" 
+                        <DataGridTextColumn Header="الوزن المسموح من المصنع" Binding="{Binding AllowedWeightFromFactory, StringFormat={}{0:N1}}" 
                                    Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
