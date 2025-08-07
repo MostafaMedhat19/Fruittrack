@@ -449,7 +449,23 @@ namespace Fruittrack
                                     var factoryDialog = new FactorySelectionDialog(_context);
                                     if (factoryDialog.ShowDialog() == true)
                                     {
-                                        supply.FactoryId = factoryDialog.SelectedFactoryId;
+                                        if (factoryDialog.IsNewFactory)
+                                        {
+                                            // Create new factory
+                                            var newFactory = new Factory
+                                            {
+                                                FactoryName = factoryDialog.NewFactoryName
+                                            };
+                                            _context.Factories.Add(newFactory);
+                                            await _context.SaveChangesAsync();
+                                            supply.FactoryId = newFactory.FactoryId;
+                                        }
+                                        else
+                                        {
+                                            // Use existing factory
+                                            supply.FactoryId = factoryDialog.SelectedFactoryId;
+                                        }
+                                        
                                         await _context.SaveChangesAsync();
                                         MessageBox.Show("تم إصلاح المشكلة بنجاح", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
                                         LoadData(); // Refresh data
@@ -461,7 +477,23 @@ namespace Fruittrack
                                     var farmDialog = new FarmSelectionDialog(_context);
                                     if (farmDialog.ShowDialog() == true)
                                     {
-                                        supply.FarmId = farmDialog.SelectedFarmId;
+                                        if (farmDialog.IsNewFarm)
+                                        {
+                                            // Create new farm
+                                            var newFarm = new Farm
+                                            {
+                                                FarmName = farmDialog.NewFarmName
+                                            };
+                                            _context.Farms.Add(newFarm);
+                                            await _context.SaveChangesAsync();
+                                            supply.FarmId = newFarm.FarmId;
+                                        }
+                                        else
+                                        {
+                                            // Use existing farm
+                                            supply.FarmId = farmDialog.SelectedFarmId;
+                                        }
+                                        
                                         await _context.SaveChangesAsync();
                                         MessageBox.Show("تم إصلاح المشكلة بنجاح", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
                                         LoadData(); // Refresh data
@@ -767,33 +799,65 @@ namespace Fruittrack
         }
     }
 
-    // Dialog for factory selection
+    // Enhanced dialog for factory selection/creation
     public partial class FactorySelectionDialog : Window
     {
-        public int SelectedFactoryId { get; private set; }
+        public int? SelectedFactoryId { get; private set; }
+        public string NewFactoryName { get; private set; }
+        public bool IsNewFactory { get; private set; }
         private readonly FruitTrackDbContext _context;
 
         public FactorySelectionDialog(FruitTrackDbContext context)
         {
             _context = context;
-            Title = "اختيار المصنع الصحيح";
-            Width = 400;
-            Height = 300;
+            Title = "إصلاح اسم المصنع";
+            Width = 500;
+            Height = 400;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
             FlowDirection = FlowDirection.RightToLeft;
             
             var grid = new Grid();
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            var label = new TextBlock { 
-                Text = "اختر المصنع الصحيح:", 
+            // Title
+            var titleLabel = new TextBlock { 
+                Text = "اختر مصنع موجود أو أدخل اسم مصنع جديد:", 
                 Margin = new Thickness(10),
                 FontSize = 14,
+                FontWeight = FontWeights.Bold,
                 HorizontalAlignment = HorizontalAlignment.Center
             };
-            Grid.SetRow(label, 0);
+            Grid.SetRow(titleLabel, 0);
+
+            // New factory name input
+            var newFactoryPanel = new StackPanel { Margin = new Thickness(10) };
+            var newFactoryLabel = new TextBlock { 
+                Text = "أو أدخل اسم مصنع جديد:", 
+                FontSize = 12,
+                Margin = new Thickness(0, 0, 0, 5)
+            };
+            var newFactoryTextBox = new TextBox { 
+                Name = "NewFactoryTextBox",
+                Height = 30,
+                FontSize = 14,
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+            newFactoryPanel.Children.Add(newFactoryLabel);
+            newFactoryPanel.Children.Add(newFactoryTextBox);
+            Grid.SetRow(newFactoryPanel, 1);
+            
+            // Existing factories list
+            var existingLabel = new TextBlock { 
+                Text = "المصانع الموجودة:", 
+                Margin = new Thickness(10, 0, 10, 5),
+                FontSize = 12,
+                FontWeight = FontWeights.SemiBold
+            };
+            Grid.SetRow(existingLabel, 2);
             
             var listBox = new ListBox { 
                 Name = "FactoryListBox", 
@@ -801,8 +865,9 @@ namespace Fruittrack
                 FontSize = 14
             };
             LoadFactories(listBox);
-            Grid.SetRow(listBox, 1);
+            Grid.SetRow(listBox, 3);
             
+            // Buttons
             var buttonPanel = new StackPanel { 
                 Orientation = Orientation.Horizontal, 
                 HorizontalAlignment = HorizontalAlignment.Center, 
@@ -810,33 +875,46 @@ namespace Fruittrack
             };
             var okButton = new Button { 
                 Content = "موافق", 
-                Width = 80, 
-                Height = 30,
+                Width = 100, 
+                Height = 35,
                 Margin = new Thickness(5),
                 Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(108, 182, 255)),
                 Foreground = System.Windows.Media.Brushes.White,
-                BorderThickness = new Thickness(0)
+                BorderThickness = new Thickness(0),
+                FontWeight = FontWeights.SemiBold
             };
             var cancelButton = new Button { 
                 Content = "إلغاء", 
-                Width = 80, 
-                Height = 30,
+                Width = 100, 
+                Height = 35,
                 Margin = new Thickness(5),
                 Background = System.Windows.Media.Brushes.Gray,
                 Foreground = System.Windows.Media.Brushes.White,
-                BorderThickness = new Thickness(0)
+                BorderThickness = new Thickness(0),
+                FontWeight = FontWeights.SemiBold
             };
             
             okButton.Click += (s, e) =>
             {
                 if (listBox.SelectedItem is Factory factory)
                 {
+                    // Selected existing factory
                     SelectedFactoryId = factory.FactoryId;
+                    NewFactoryName = null;
+                    IsNewFactory = false;
+                    DialogResult = true;
+                }
+                else if (!string.IsNullOrWhiteSpace(newFactoryTextBox.Text))
+                {
+                    // Creating new factory
+                    SelectedFactoryId = null;
+                    NewFactoryName = newFactoryTextBox.Text.Trim();
+                    IsNewFactory = true;
                     DialogResult = true;
                 }
                 else
                 {
-                    MessageBox.Show("يرجى اختيار مصنع", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("يرجى اختيار مصنع موجود أو إدخال اسم مصنع جديد", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             };
             
@@ -844,9 +922,11 @@ namespace Fruittrack
             
             buttonPanel.Children.Add(okButton);
             buttonPanel.Children.Add(cancelButton);
-            Grid.SetRow(buttonPanel, 2);
+            Grid.SetRow(buttonPanel, 4);
             
-            grid.Children.Add(label);
+            grid.Children.Add(titleLabel);
+            grid.Children.Add(newFactoryPanel);
+            grid.Children.Add(existingLabel);
             grid.Children.Add(listBox);
             grid.Children.Add(buttonPanel);
             
@@ -857,7 +937,7 @@ namespace Fruittrack
         {
             try
             {
-                var factories = await _context.Factories.ToListAsync();
+                var factories = await _context.Factories.OrderBy(f => f.FactoryName).ToListAsync();
                 listBox.ItemsSource = factories;
                 listBox.DisplayMemberPath = "FactoryName";
             }
@@ -868,33 +948,65 @@ namespace Fruittrack
         }
     }
 
-    // Dialog for farm selection
+    // Enhanced dialog for farm selection/creation
     public partial class FarmSelectionDialog : Window
     {
-        public int SelectedFarmId { get; private set; }
+        public int? SelectedFarmId { get; private set; }
+        public string NewFarmName { get; private set; }
+        public bool IsNewFarm { get; private set; }
         private readonly FruitTrackDbContext _context;
 
         public FarmSelectionDialog(FruitTrackDbContext context)
         {
             _context = context;
-            Title = "اختيار المزرعة الصحيحة";
-            Width = 400;
-            Height = 300;
+            Title = "إصلاح اسم المزرعة";
+            Width = 500;
+            Height = 400;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
             FlowDirection = FlowDirection.RightToLeft;
             
             var grid = new Grid();
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            var label = new TextBlock { 
-                Text = "اختر المزرعة الصحيحة:", 
+            // Title
+            var titleLabel = new TextBlock { 
+                Text = "اختر مزرعة موجودة أو أدخل اسم مزرعة جديدة:", 
                 Margin = new Thickness(10),
                 FontSize = 14,
+                FontWeight = FontWeights.Bold,
                 HorizontalAlignment = HorizontalAlignment.Center
             };
-            Grid.SetRow(label, 0);
+            Grid.SetRow(titleLabel, 0);
+
+            // New farm name input
+            var newFarmPanel = new StackPanel { Margin = new Thickness(10) };
+            var newFarmLabel = new TextBlock { 
+                Text = "أو أدخل اسم مزرعة جديدة:", 
+                FontSize = 12,
+                Margin = new Thickness(0, 0, 0, 5)
+            };
+            var newFarmTextBox = new TextBox { 
+                Name = "NewFarmTextBox",
+                Height = 30,
+                FontSize = 14,
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+            newFarmPanel.Children.Add(newFarmLabel);
+            newFarmPanel.Children.Add(newFarmTextBox);
+            Grid.SetRow(newFarmPanel, 1);
+            
+            // Existing farms list
+            var existingLabel = new TextBlock { 
+                Text = "المزارع الموجودة:", 
+                Margin = new Thickness(10, 0, 10, 5),
+                FontSize = 12,
+                FontWeight = FontWeights.SemiBold
+            };
+            Grid.SetRow(existingLabel, 2);
             
             var listBox = new ListBox { 
                 Name = "FarmListBox", 
@@ -902,8 +1014,9 @@ namespace Fruittrack
                 FontSize = 14
             };
             LoadFarms(listBox);
-            Grid.SetRow(listBox, 1);
+            Grid.SetRow(listBox, 3);
             
+            // Buttons
             var buttonPanel = new StackPanel { 
                 Orientation = Orientation.Horizontal, 
                 HorizontalAlignment = HorizontalAlignment.Center, 
@@ -911,33 +1024,46 @@ namespace Fruittrack
             };
             var okButton = new Button { 
                 Content = "موافق", 
-                Width = 80, 
-                Height = 30,
+                Width = 100, 
+                Height = 35,
                 Margin = new Thickness(5),
                 Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(108, 182, 255)),
                 Foreground = System.Windows.Media.Brushes.White,
-                BorderThickness = new Thickness(0)
+                BorderThickness = new Thickness(0),
+                FontWeight = FontWeights.SemiBold
             };
             var cancelButton = new Button { 
                 Content = "إلغاء", 
-                Width = 80, 
-                Height = 30,
+                Width = 100, 
+                Height = 35,
                 Margin = new Thickness(5),
                 Background = System.Windows.Media.Brushes.Gray,
                 Foreground = System.Windows.Media.Brushes.White,
-                BorderThickness = new Thickness(0)
+                BorderThickness = new Thickness(0),
+                FontWeight = FontWeights.SemiBold
             };
             
             okButton.Click += (s, e) =>
             {
                 if (listBox.SelectedItem is Farm farm)
                 {
+                    // Selected existing farm
                     SelectedFarmId = farm.FarmId;
+                    NewFarmName = null;
+                    IsNewFarm = false;
+                    DialogResult = true;
+                }
+                else if (!string.IsNullOrWhiteSpace(newFarmTextBox.Text))
+                {
+                    // Creating new farm
+                    SelectedFarmId = null;
+                    NewFarmName = newFarmTextBox.Text.Trim();
+                    IsNewFarm = true;
                     DialogResult = true;
                 }
                 else
                 {
-                    MessageBox.Show("يرجى اختيار مزرعة", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("يرجى اختيار مزرعة موجودة أو إدخال اسم مزرعة جديدة", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             };
             
@@ -945,9 +1071,11 @@ namespace Fruittrack
             
             buttonPanel.Children.Add(okButton);
             buttonPanel.Children.Add(cancelButton);
-            Grid.SetRow(buttonPanel, 2);
+            Grid.SetRow(buttonPanel, 4);
             
-            grid.Children.Add(label);
+            grid.Children.Add(titleLabel);
+            grid.Children.Add(newFarmPanel);
+            grid.Children.Add(existingLabel);
             grid.Children.Add(listBox);
             grid.Children.Add(buttonPanel);
             
@@ -958,7 +1086,7 @@ namespace Fruittrack
         {
             try
             {
-                var farms = await _context.Farms.ToListAsync();
+                var farms = await _context.Farms.OrderBy(f => f.FarmName).ToListAsync();
                 listBox.ItemsSource = farms;
                 listBox.DisplayMemberPath = "FarmName";
             }

@@ -5,15 +5,22 @@ using System.IO;
 using System.Linq;
 using System.Printing;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
+using A = DocumentFormat.OpenXml.Drawing;
+using Wp = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Fruittrack.Utilities
 {
@@ -23,6 +30,7 @@ namespace Fruittrack.Utilities
         {
             try
             {
+                // Direct printing without preview
                 var printDialog = new PrintDialog();
                 if (printDialog.ShowDialog() == true)
                 {
@@ -63,13 +71,25 @@ namespace Fruittrack.Utilities
         {
             try
             {
-                // Create PDF document
-                using var document = new Document(PageSize.A4, 50, 50, 50, 50);
+                // Create PDF document with RTL support
+                using var document = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4, 50, 50, 50, 50);
                 using var writer = PdfWriter.GetInstance(document, new FileStream(filePath, FileMode.Create));
                 document.Open();
 
-                // Add title
-                var titleFont = FontFactory.GetFont("Arial", 18, Font.BOLD);
+                // Try to use Arabic font, fallback to Arial if not available
+                BaseFont baseFont;
+                try
+                {
+                    // Try to use a system Arabic font
+                    baseFont = BaseFont.CreateFont("C:\\Windows\\Fonts\\arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                }
+                catch
+                {
+                    // Fallback to default font
+                    baseFont = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.EMBEDDED);
+                }
+
+                var titleFont = new iTextSharp.text.Font(baseFont, 18, iTextSharp.text.Font.BOLD);
                 var titleParagraph = new iTextSharp.text.Paragraph(title, titleFont)
                 {
                     Alignment = Element.ALIGN_CENTER,
@@ -77,8 +97,8 @@ namespace Fruittrack.Utilities
                 };
                 document.Add(titleParagraph);
 
-                // Add date
-                var dateFont = FontFactory.GetFont("Arial", 12, Font.NORMAL);
+                // Add date with RTL alignment
+                var dateFont = new iTextSharp.text.Font(baseFont, 12, iTextSharp.text.Font.NORMAL);
                 var dateParagraph = new iTextSharp.text.Paragraph($"التاريخ: {DateTime.Now:dd/MM/yyyy}", dateFont)
                 {
                     Alignment = Element.ALIGN_RIGHT,
@@ -88,13 +108,13 @@ namespace Fruittrack.Utilities
 
                 // Convert element to image and add to PDF
                 var bitmap = RenderElementToBitmap(element);
-                using var stream = new MemoryStream();
+                using var imageStream = new MemoryStream();
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                encoder.Save(stream);
-                stream.Position = 0;
+                encoder.Save(imageStream);
+                imageStream.Position = 0;
 
-                var image = iTextSharp.text.Image.GetInstance(stream.ToArray());
+                var image = iTextSharp.text.Image.GetInstance(imageStream.ToArray());
                 image.ScaleToFit(500, 700);
                 image.Alignment = Element.ALIGN_CENTER;
                 document.Add(image);
@@ -106,6 +126,162 @@ namespace Fruittrack.Utilities
             {
                 MessageBox.Show($"خطأ في حفظ ملف PDF: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private static DataTable ExtractDataFromElement(FrameworkElement element)
+        {
+            try
+            {
+                // Try to extract data from DataGrid
+                if (element is DataGrid dataGrid)
+                {
+                    var dataTable = new DataTable();
+                    var usedColumnNames = new HashSet<string>();
+
+                    // Add columns with duplicate handling
+                    foreach (var column in dataGrid.Columns)
+                    {
+                        var columnName = column.Header?.ToString() ?? $"Column{column.DisplayIndex}";
+                        
+                        // Handle duplicate column names
+                        var originalName = columnName;
+                        var counter = 1;
+                        while (usedColumnNames.Contains(columnName))
+                        {
+                            columnName = $"{originalName}_{counter}";
+                            counter++;
+                        }
+                        
+                        usedColumnNames.Add(columnName);
+                        dataTable.Columns.Add(columnName);
+                    }
+
+                    // Add rows - improved data extraction
+                    foreach (var item in dataGrid.Items)
+                    {
+                        var row = dataTable.NewRow();
+                        for (int i = 0; i < dataGrid.Columns.Count; i++)
+                        {
+                            var column = dataGrid.Columns[i];
+                            var cellValue = column.GetCellContent(item);
+                            
+                            string cellText = "";
+                            
+                            // Try multiple approaches to get cell text
+                            if (cellValue is TextBlock textBlock)
+                            {
+                                cellText = textBlock.Text;
+                            }
+                            else if (cellValue is ContentPresenter contentPresenter)
+                            {
+                                // Try to get content from ContentPresenter
+                                if (contentPresenter.Content is TextBlock tb)
+                                {
+                                    cellText = tb.Text;
+                                }
+                                else
+                                {
+                                    cellText = contentPresenter.Content?.ToString() ?? "";
+                                }
+                            }
+                            else if (cellValue is FrameworkElement fe)
+                            {
+                                // Try to find TextBlock within the element
+                                var foundTextBlock = FindVisualChild<TextBlock>(fe);
+                                if (foundTextBlock != null)
+                                {
+                                    cellText = foundTextBlock.Text;
+                                }
+                                else
+                                {
+                                    cellText = fe.ToString();
+                                }
+                            }
+                            else
+                            {
+                                cellText = cellValue?.ToString() ?? "";
+                            }
+                            
+                            // If we still don't have text, try to get it from the binding
+                            if (string.IsNullOrEmpty(cellText) && column is DataGridBoundColumn boundColumn)
+                            {
+                                try
+                                {
+                                    var binding = boundColumn.Binding as System.Windows.Data.Binding;
+                                    if (binding != null && item != null)
+                                    {
+                                        var property = item.GetType().GetProperty(binding.Path.Path);
+                                        if (property != null)
+                                        {
+                                            var value = property.GetValue(item);
+                                            cellText = value?.ToString() ?? "";
+                                        }
+                                    }
+                                }
+                                catch
+                                {
+                                    // Ignore binding errors
+                                }
+                            }
+                            
+                            row[i] = cellText;
+                        }
+                        dataTable.Rows.Add(row);
+                    }
+
+                    return dataTable;
+                }
+
+                // Try to extract data from other common controls
+                if (element is Grid grid)
+                {
+                    // Look for DataGrid within the grid
+                    var gridDataGrid = FindVisualChild<DataGrid>(grid);
+                    if (gridDataGrid != null)
+                    {
+                        return ExtractDataFromElement(gridDataGrid);
+                    }
+                }
+
+                // Try to extract data from ScrollViewer (common container for DataGrid)
+                if (element is ScrollViewer scrollViewer)
+                {
+                    var scrollDataGrid = FindVisualChild<DataGrid>(scrollViewer);
+                    if (scrollDataGrid != null)
+                    {
+                        return ExtractDataFromElement(scrollDataGrid);
+                    }
+                }
+
+                // Try to extract data from any container
+                var containerDataGrid = FindVisualChild<DataGrid>(element);
+                if (containerDataGrid != null)
+                {
+                    return ExtractDataFromElement(containerDataGrid);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطأ في استخراج البيانات: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
+            }
+        }
+
+        private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T result)
+                    return result;
+                
+                var descendant = FindVisualChild<T>(child);
+                if (descendant != null)
+                    return descendant;
+            }
+            return null;
         }
 
         public static void ExportToExcel(DataTable dataTable, string filePath, string sheetName = "Sheet1")
