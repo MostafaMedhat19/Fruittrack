@@ -455,6 +455,18 @@ namespace Fruittrack
                                         LoadData(); // Refresh data
                                     }
                                     break;
+
+                                case "مزرعة غير محددة":
+                                    // Open a dialog to select correct farm
+                                    var farmDialog = new FarmSelectionDialog(_context);
+                                    if (farmDialog.ShowDialog() == true)
+                                    {
+                                        supply.FarmId = farmDialog.SelectedFarmId;
+                                        await _context.SaveChangesAsync();
+                                        MessageBox.Show("تم إصلاح المشكلة بنجاح", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
+                                        LoadData(); // Refresh data
+                                    }
+                                    break;
                             }
                         }
                     }
@@ -852,6 +864,107 @@ namespace Fruittrack
             catch (Exception ex)
             {
                 MessageBox.Show($"خطأ في تحميل المصانع: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+
+    // Dialog for farm selection
+    public partial class FarmSelectionDialog : Window
+    {
+        public int SelectedFarmId { get; private set; }
+        private readonly FruitTrackDbContext _context;
+
+        public FarmSelectionDialog(FruitTrackDbContext context)
+        {
+            _context = context;
+            Title = "اختيار المزرعة الصحيحة";
+            Width = 400;
+            Height = 300;
+            WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            FlowDirection = FlowDirection.RightToLeft;
+            
+            var grid = new Grid();
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var label = new TextBlock { 
+                Text = "اختر المزرعة الصحيحة:", 
+                Margin = new Thickness(10),
+                FontSize = 14,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            Grid.SetRow(label, 0);
+            
+            var listBox = new ListBox { 
+                Name = "FarmListBox", 
+                Margin = new Thickness(10),
+                FontSize = 14
+            };
+            LoadFarms(listBox);
+            Grid.SetRow(listBox, 1);
+            
+            var buttonPanel = new StackPanel { 
+                Orientation = Orientation.Horizontal, 
+                HorizontalAlignment = HorizontalAlignment.Center, 
+                Margin = new Thickness(10) 
+            };
+            var okButton = new Button { 
+                Content = "موافق", 
+                Width = 80, 
+                Height = 30,
+                Margin = new Thickness(5),
+                Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(108, 182, 255)),
+                Foreground = System.Windows.Media.Brushes.White,
+                BorderThickness = new Thickness(0)
+            };
+            var cancelButton = new Button { 
+                Content = "إلغاء", 
+                Width = 80, 
+                Height = 30,
+                Margin = new Thickness(5),
+                Background = System.Windows.Media.Brushes.Gray,
+                Foreground = System.Windows.Media.Brushes.White,
+                BorderThickness = new Thickness(0)
+            };
+            
+            okButton.Click += (s, e) =>
+            {
+                if (listBox.SelectedItem is Farm farm)
+                {
+                    SelectedFarmId = farm.FarmId;
+                    DialogResult = true;
+                }
+                else
+                {
+                    MessageBox.Show("يرجى اختيار مزرعة", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            };
+            
+            cancelButton.Click += (s, e) => DialogResult = false;
+            
+            buttonPanel.Children.Add(okButton);
+            buttonPanel.Children.Add(cancelButton);
+            Grid.SetRow(buttonPanel, 2);
+            
+            grid.Children.Add(label);
+            grid.Children.Add(listBox);
+            grid.Children.Add(buttonPanel);
+            
+            Content = grid;
+        }
+
+        private async void LoadFarms(ListBox listBox)
+        {
+            try
+            {
+                var farms = await _context.Farms.ToListAsync();
+                listBox.ItemsSource = farms;
+                listBox.DisplayMemberPath = "FarmName";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطأ في تحميل المزارع: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

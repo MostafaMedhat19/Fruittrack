@@ -134,10 +134,23 @@ namespace Fruittrack
             // Calculation methods
             private void UpdateFarmAllowedWeight()
             {
-                if (FarmWeight.HasValue && FarmDiscountPercentage.HasValue)
-                    FarmAllowedWeight = FarmWeight.Value * (1 - (FarmDiscountPercentage.Value / 100m));
+                if (FarmWeight.HasValue)
+                {
+                    if (FarmDiscountPercentage.HasValue)
+                    {
+                        // Calculate with discount
+                        FarmAllowedWeight = FarmWeight.Value * (1 - (FarmDiscountPercentage.Value / 100m));
+                    }
+                    else
+                    {
+                        // No discount applied, allowed weight equals farm weight
+                        FarmAllowedWeight = FarmWeight.Value;
+                    }
+                }
                 else
+                {
                     FarmAllowedWeight = null;
+                }
             }
             private void UpdateFarmTotal()
             {
@@ -149,11 +162,23 @@ namespace Fruittrack
             }
             private void UpdateFactoryAllowedWeight()
             {
-                // Calculate allowed weight with discount
-                if (FactoryWeight.HasValue && FactoryDiscount.HasValue)
-                    FactoryAllowedWeight = FactoryWeight.Value * (1 - (FactoryDiscount.Value / 100m));
+                if (FactoryWeight.HasValue)
+                {
+                    if (FactoryDiscount.HasValue)
+                    {
+                        // Calculate with discount
+                        FactoryAllowedWeight = FactoryWeight.Value * (1 - (FactoryDiscount.Value / 100m));
+                    }
+                    else
+                    {
+                        // No discount applied, allowed weight equals factory weight
+                        FactoryAllowedWeight = FactoryWeight.Value;
+                    }
+                }
                 else
-                    FactoryAllowedWeight = FactoryWeight;
+                {
+                    FactoryAllowedWeight = null;
+                }
 
                 UpdateFactoryTotal();
             }
