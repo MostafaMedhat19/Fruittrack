@@ -65,21 +65,8 @@
             <!-- Contact Methods -->
             <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,10">
                 <StackPanel Margin="10,5,0,0">
-                    <TextBlock FontSize="13" Margin="0,3">
-                        <Run Text="📧" FontSize="14"/>
-                        <Run Text="Email:" FontWeight="SemiBold"/>
-                        <Run Text="support@example.com"/>
-                    </TextBlock>
-                    <TextBlock FontSize="13" Margin="0,3">
-                        <Run Text="📞" FontSize="15"/>
-                        <Run Text="Phone:" FontWeight="SemiBold"/>
-                        <Run Text="+20 100 000 0000"/>
-                    </TextBlock>
-                    <TextBlock FontSize="13" Margin="0,3">
-                        <Run Text="💬" FontSize="15"/>
-                        <Run Text="WhatsApp:" FontWeight="SemiBold"/>
-                        <Run Text="+20 100 000 0000"/>
-                    </TextBlock>
+                    <TextBlock FontSize="13" Margin="0,3"><Run FontSize="15" Text="📞"/><Run Text=" "/><Run Text="Phone:"/><Run Text=" "/><Run Text="+20 1124370080"/></TextBlock>
+                    <TextBlock FontSize="13" Margin="0,3"><Run FontSize="15" Text="💬"/><Run Text=" "/><Run Text="WhatsApp:"/><Run Text=" "/><Run Text="+20 1101099035"/><LineBreak/><Run/></TextBlock>
                 </StackPanel>
             </Border>
 

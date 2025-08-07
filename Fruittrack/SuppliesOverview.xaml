@@ -132,30 +132,38 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <DataGrid x:Name="SuppliesDataGrid" AutoGenerateColumns="False" 
-                  CanUserAddRows="False" CanUserDeleteRows="False"
-                  ScrollViewer.VerticalScrollBarVisibility="Auto"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  HeadersVisibility="Column"
-                  SelectionMode="Extended"
-                  SelectionUnit="FullRow"
-                  BorderThickness="0"
-                  Background="Transparent"
-                  RowBackground="White"
-                  AlternatingRowBackground="#F9FAFB"
-                  Foreground="#1F2937"
-                  FontSize="13"
-                  ColumnWidth="*"
-                  CanUserResizeColumns="True"
-                  CanUserReorderColumns="True"
-                  CanUserSortColumns="True"
-                  IsReadOnly="True"
-                  RowHeaderWidth="0">
+                <ScrollViewer Grid.Row="0" 
+                              HorizontalScrollBarVisibility="Auto" 
+                              VerticalScrollBarVisibility="Auto"
+                              CanContentScroll="True">
+                    <DataGrid x:Name="SuppliesDataGrid" 
+                              AutoGenerateColumns="False" 
+                              CanUserAddRows="False" 
+                              CanUserDeleteRows="False"
+                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              HeadersVisibility="Column"
+                              SelectionMode="Extended"
+                              SelectionUnit="FullRow"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              RowBackground="White"
+                              AlternatingRowBackground="#F9FAFB"
+                              Foreground="#1F2937"
+                              FontSize="13"
+                              ColumnWidth="Auto"
+                              CanUserResizeColumns="True"
+                              CanUserReorderColumns="True"
+                              CanUserSortColumns="True"
+                              IsReadOnly="True"
+                              RowHeaderWidth="0"
+                              MinWidth="1800"
+                              HorizontalAlignment="Left">
 
                     <DataGrid.Columns>
                         <!-- Date Column -->
                         <DataGridTextColumn Header="التاريخ" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="100" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -167,7 +175,7 @@
 
                         <!-- Truck Info -->
                         <DataGridTextColumn Header="رقم العربية" Binding="{Binding TruckNumber}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="100" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -179,7 +187,7 @@
 
                         <!-- Freight Cost -->
                         <DataGridTextColumn Header="النولون" Binding="{Binding FreightCost, StringFormat={}{0:N0}}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="80" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -191,7 +199,7 @@
 
                         <!-- Farm Section -->
                         <DataGridTextColumn Header="اسم المزرعة" Binding="{Binding FarmName}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="120" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -202,7 +210,7 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="وزن المزرعة (كجم)" Binding="{Binding FarmWeight, StringFormat={}{0:N1}}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="140" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -213,7 +221,7 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="خصم المزرعة%" Binding="{Binding FarmDiscountPercentage, StringFormat={}{0}%}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="100" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -223,7 +231,7 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="الوزن المسموح من المزرعة" Binding="{Binding AllowedWeightFromFarm, StringFormat={}{0:N1}}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="160" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -236,7 +244,7 @@
                         <!-- Farm Price Column -->
                         <DataGridTextColumn Header="سعر المزرعة (جنيه/كجم)" 
                                            Binding="{Binding FarmPrice, StringFormat={}{0:N3}}" 
-                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                           Width="150" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -247,7 +255,7 @@
 
                         <!-- Factory Section -->
                         <DataGridTextColumn Header="اسم المصنع" Binding="{Binding FactoryName}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="120" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -258,7 +266,7 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding FactoryWeight, StringFormat={}{0:N1}}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="140" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -269,7 +277,7 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="خصم المصنع%" Binding="{Binding FactoryDiscountPercentage, StringFormat={}{0}%}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="100" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -279,7 +287,7 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="الوزن المسموح من المصنع" Binding="{Binding AllowedWeightFromFactory, StringFormat={}{0:N1}}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="160" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -292,7 +300,7 @@
                         <!-- Factory Price Column -->
                         <DataGridTextColumn Header="سعر المصنع (جنيه/كجم)" 
                                            Binding="{Binding FactoryPrice, StringFormat={}{0:N3}}" 
-                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                           Width="150" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -303,7 +311,7 @@
 
                         <!-- Profit/Loss -->
                         <DataGridTextColumn Header="الربح/الخسارة" Binding="{Binding ProfitLoss, StringFormat={}{0:N0}}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
+                                   Width="120" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -323,7 +331,7 @@
                         </DataGridTextColumn>
 
                         <!-- Notes -->
-                        <DataGridTemplateColumn Header="الملاحظات" Width="*" HeaderStyle="{StaticResource CenteredHeader}">
+                        <DataGridTemplateColumn Header="الملاحظات" Width="150" HeaderStyle="{StaticResource CenteredHeader}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Notes}" 
@@ -344,6 +352,143 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- Actions Column -->
+                        <DataGridTemplateColumn Header="الإجراءات" Width="140" HeaderStyle="{StaticResource CenteredHeader}">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4">
+                                        <!-- Edit Button -->
+                                        <Button Click="EditButton_Click"
+                                                Background="#10B981" 
+                                                Foreground="White"
+                                                FontSize="12" 
+                                                FontWeight="SemiBold"
+                                                Padding="12,6" 
+                                                Margin="3,2"
+                                                BorderThickness="0"
+                                                Cursor="Hand"
+                                                ToolTip="تعديل هذا السجل"
+                                                Tag="{Binding}"
+                                                MinWidth="50">
+                                            <Button.Content>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBlock Text="✏️" FontSize="10" Margin="0,0,4,0"/>
+                                                    <TextBlock Text="تعديل" FontSize="11"/>
+                                                </StackPanel>
+                                            </Button.Content>
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="border" 
+                                                                        Background="{TemplateBinding Background}" 
+                                                                        CornerRadius="6"
+                                                                        BorderThickness="0"
+                                                                        Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" 
+                                                                                      VerticalAlignment="Center"/>
+                                                                    <Border.Effect>
+                                                                        <DropShadowEffect ShadowDepth="1" 
+                                                                                          BlurRadius="3" 
+                                                                                          Color="#00000030" 
+                                                                                          Direction="270"/>
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="border" Property="Background" Value="#059669"/>
+                                                                        <Setter TargetName="border" Property="RenderTransform">
+                                                                            <Setter.Value>
+                                                                                <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsPressed" Value="True">
+                                                                        <Setter TargetName="border" Property="Background" Value="#047857"/>
+                                                                        <Setter TargetName="border" Property="RenderTransform">
+                                                                            <Setter.Value>
+                                                                                <ScaleTransform ScaleX="0.95" ScaleY="0.95"/>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        
+                                        <!-- Delete Button -->
+                                        <Button Click="DeleteButton_Click"
+                                                Background="#EF4444" 
+                                                Foreground="White"
+                                                FontSize="12" 
+                                                FontWeight="SemiBold"
+                                                Padding="12,6" 
+                                                Margin="3,2"
+                                                BorderThickness="0"
+                                                Cursor="Hand"
+                                                ToolTip="حذف هذا السجل"
+                                                Tag="{Binding}"
+                                                MinWidth="50">
+                                            <Button.Content>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBlock Text="🗑️" FontSize="10" Margin="0,0,4,0"/>
+                                                    <TextBlock Text="حذف" FontSize="11"/>
+                                                </StackPanel>
+                                            </Button.Content>
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="border" 
+                                                                        Background="{TemplateBinding Background}" 
+                                                                        CornerRadius="6"
+                                                                        BorderThickness="0"
+                                                                        Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" 
+                                                                                      VerticalAlignment="Center"/>
+                                                                    <Border.Effect>
+                                                                        <DropShadowEffect ShadowDepth="1" 
+                                                                                          BlurRadius="3" 
+                                                                                          Color="#00000030" 
+                                                                                          Direction="270"/>
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="border" Property="Background" Value="#DC2626"/>
+                                                                        <Setter TargetName="border" Property="RenderTransform">
+                                                                            <Setter.Value>
+                                                                                <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsPressed" Value="True">
+                                                                        <Setter TargetName="border" Property="Background" Value="#B91C1C"/>
+                                                                        <Setter TargetName="border" Property="RenderTransform">
+                                                                            <Setter.Value>
+                                                                                <ScaleTransform ScaleX="0.95" ScaleY="0.95"/>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -403,19 +548,7 @@
                         </Style>
                     </DataGrid.CellStyle>
                 </DataGrid>
-
-                <!-- Scrollbar for horizontal scrolling -->
-                <ScrollBar Grid.Row="1" Orientation="Horizontal" 
-                  Height="15" Margin="0,5,0,0"
-                  Visibility="{Binding ScrollViewer.HorizontalScrollBarVisibility, 
-                             RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                  Value="{Binding HorizontalOffset, Mode=TwoWay, 
-                        RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
-                  Maximum="{Binding ScrollableWidth, 
-                          RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
-                  ViewportSize="{Binding ViewportWidth, 
-                               RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
-                  Style="{StaticResource CustomScrollBar}"/>
+                </ScrollViewer>
             </Grid>
         </Border>
 

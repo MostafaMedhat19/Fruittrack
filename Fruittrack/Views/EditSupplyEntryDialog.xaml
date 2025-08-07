@@ -1,0 +1,265 @@
+<Window x:Class="Fruittrack.Views.EditSupplyEntryDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="تعديل بيانات التوريد"
+        Height="700" Width="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        FlowDirection="RightToLeft"
+        FontFamily="Segoe UI"
+        Background="#F8F9FA">
+
+    <Grid Margin="20">
+        <Grid.Resources>
+            <!-- Styles -->
+            <Style TargetType="TextBlock" x:Key="HeaderStyle">
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="#1F2937"/>
+                <Setter Property="Margin" Value="0,0,0,25"/>
+            </Style>
+
+            <Style TargetType="TextBlock" x:Key="LabelStyle">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Foreground" Value="#374151"/>
+                <Setter Property="Margin" Value="0,0,0,5"/>
+            </Style>
+
+            <Style TargetType="TextBox" x:Key="ModernTextBox">
+                <Setter Property="Padding" Value="8,5"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="#1F2937"/>
+                <Setter Property="Margin" Value="0,0,0,15"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                <Setter Property="TextAlignment" Value="Right"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="BorderBrush" Value="#9CA3AF"/>
+                    </Trigger>
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter Property="BorderBrush" Value="#6CB6FF"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="ComboBox" x:Key="ModernComboBox">
+                <Setter Property="Padding" Value="8,5"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="#1F2937"/>
+                <Setter Property="Margin" Value="0,0,0,15"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="BorderBrush" Value="#9CA3AF"/>
+                    </Trigger>
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter Property="BorderBrush" Value="#6CB6FF"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="DatePicker" x:Key="ModernDatePicker">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="#1F2937"/>
+                <Setter Property="Margin" Value="0,0,0,15"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Padding" Value="8,5"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="BorderBrush" Value="#9CA3AF"/>
+                    </Trigger>
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter Property="BorderBrush" Value="#6CB6FF"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="Button" x:Key="ButtonStyle">
+                <Setter Property="Padding" Value="20,10"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="MinWidth" Value="100"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" 
+                                    Background="{TemplateBinding Background}" 
+                                    CornerRadius="6"
+                                    BorderThickness="0">
+                                <ContentPresenter HorizontalAlignment="Center" 
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" 
+                   Text="تعديل بيانات التوريد" 
+                   Style="{StaticResource HeaderStyle}"/>
+
+        <!-- Form Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Date Section -->
+                <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15"
+                        BorderThickness="1" BorderBrush="#E5E7EB">
+                    <StackPanel>
+                        <TextBlock Text="معلومات التاريخ والعربية" FontWeight="Bold" FontSize="16" 
+                                   Foreground="#1F2937" Margin="0,0,0,15"/>
+                        
+                        <TextBlock Text="تاريخ التوريد:" Style="{StaticResource LabelStyle}"/>
+                        <DatePicker x:Name="EntryDatePicker" Style="{StaticResource ModernDatePicker}"/>
+                        
+                        <TextBlock Text="رقم العربية:" Style="{StaticResource LabelStyle}"/>
+                        <ComboBox x:Name="TruckComboBox" Style="{StaticResource ModernComboBox}" 
+                                  DisplayMemberPath="TruckNumber" SelectedValuePath="TruckId"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Farm Section -->
+                <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15"
+                        BorderThickness="1" BorderBrush="#E5E7EB">
+                    <StackPanel>
+                        <TextBlock Text="بيانات المزرعة" FontWeight="Bold" FontSize="16" 
+                                   Foreground="#1F2937" Margin="0,0,0,15"/>
+                        
+                        <TextBlock Text="اسم المزرعة:" Style="{StaticResource LabelStyle}"/>
+                        <ComboBox x:Name="FarmComboBox" Style="{StaticResource ModernComboBox}" 
+                                  DisplayMemberPath="FarmName" SelectedValuePath="FarmId"/>
+                        
+                        <TextBlock Text="وزن المزرعة (كجم):" Style="{StaticResource LabelStyle}"/>
+                        <TextBox x:Name="FarmWeightTextBox" Style="{StaticResource ModernTextBox}"/>
+                        
+                        <TextBlock Text="خصم المزرعة %:" Style="{StaticResource LabelStyle}"/>
+                        <TextBox x:Name="FarmDiscountTextBox" Style="{StaticResource ModernTextBox}"/>
+                        
+                        <TextBlock Text="سعر المزرعة (جنيه/كجم):" Style="{StaticResource LabelStyle}"/>
+                        <TextBox x:Name="FarmPriceTextBox" Style="{StaticResource ModernTextBox}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Factory Section -->
+                <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15"
+                        BorderThickness="1" BorderBrush="#E5E7EB">
+                    <StackPanel>
+                        <TextBlock Text="بيانات المصنع" FontWeight="Bold" FontSize="16" 
+                                   Foreground="#1F2937" Margin="0,0,0,15"/>
+                        
+                        <TextBlock Text="اسم المصنع:" Style="{StaticResource LabelStyle}"/>
+                        <ComboBox x:Name="FactoryComboBox" Style="{StaticResource ModernComboBox}" 
+                                  DisplayMemberPath="FactoryName" SelectedValuePath="FactoryId"/>
+                        
+                        <TextBlock Text="وزن المصنع (كجم):" Style="{StaticResource LabelStyle}"/>
+                        <TextBox x:Name="FactoryWeightTextBox" Style="{StaticResource ModernTextBox}"/>
+                        
+                        <TextBlock Text="خصم المصنع %:" Style="{StaticResource LabelStyle}"/>
+                        <TextBox x:Name="FactoryDiscountTextBox" Style="{StaticResource ModernTextBox}"/>
+                        
+                        <TextBlock Text="سعر المصنع (جنيه/كجم):" Style="{StaticResource LabelStyle}"/>
+                        <TextBox x:Name="FactoryPriceTextBox" Style="{StaticResource ModernTextBox}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Transport and Notes Section -->
+                <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15"
+                        BorderThickness="1" BorderBrush="#E5E7EB">
+                    <StackPanel>
+                        <TextBlock Text="النقل والملاحظات" FontWeight="Bold" FontSize="16" 
+                                   Foreground="#1F2937" Margin="0,0,0,15"/>
+                        
+                        <TextBlock Text="تكلفة النولون:" Style="{StaticResource LabelStyle}"/>
+                        <TextBox x:Name="FreightCostTextBox" Style="{StaticResource ModernTextBox}"/>
+                        
+                        <TextBlock Text="الملاحظات:" Style="{StaticResource LabelStyle}"/>
+                        <TextBox x:Name="NotesTextBox" 
+                                 Padding="8,8"
+                                 FontSize="14"
+                                 BorderThickness="1"
+                                 BorderBrush="#D1D5DB"
+                                 Background="White"
+                                 Foreground="#1F2937"
+                                 Margin="0,0,0,15"
+                                 Height="90" 
+                                 TextWrapping="Wrap" 
+                                 AcceptsReturn="True"
+                                 VerticalContentAlignment="Top"
+                                 HorizontalContentAlignment="Right"
+                                 TextAlignment="Right"
+                                 VerticalScrollBarVisibility="Auto">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="BorderBrush" Value="#9CA3AF"/>
+                                        </Trigger>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#6CB6FF"/>
+                                            <Setter Property="BorderThickness" Value="2"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center" 
+                    Margin="0,20,0,0">
+            <Button Content="حفظ التغييرات" 
+                    Click="SaveButton_Click"
+                    Style="{StaticResource ButtonStyle}"
+                    Background="#4CAF50"
+                    Foreground="White"/>
+            <Button Content="إلغاء" 
+                    Click="CancelButton_Click"
+                    Style="{StaticResource ButtonStyle}"
+                    Background="#6B7280"
+                    Foreground="White"/>
+        </StackPanel>
+    </Grid>
+</Window>

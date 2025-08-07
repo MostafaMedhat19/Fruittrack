@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Fruittrack.Models;
 using Fruittrack.Utilities;
+using Fruittrack.Views;
 
 namespace Fruittrack
 {
@@ -93,8 +94,12 @@ namespace Fruittrack
         {
             try
             {
-                // Load all supply entries with related data
+                // Ensure we do not reuse stale tracked entities
+                _context.ChangeTracker.Clear();
+
+                // Load all supply entries with related data, always fresh from DB
                 var supplies = await _context.SupplyEntries
+                    .AsNoTracking()
                     .Include(s => s.Truck)
                     .Include(s => s.Farm)
                     .Include(s => s.Factory)
@@ -107,6 +112,7 @@ namespace Fruittrack
                 {
                     var item = new SupplyOverviewItem
                     {
+                        SupplyEntryId = supply.SupplyEntryId, // Include ID for edit/delete operations
                         Date = supply.EntryDate,
                         TruckNumber = supply.Truck?.TruckNumber ?? "غير محدد",
                         FreightCost = supply.FreightCost ?? 0,
@@ -139,8 +145,9 @@ namespace Fruittrack
                     _allSupplies.Add(item);
                 }
                 
-                // Apply current filters
+                // Apply current filters and refresh grid
                 ApplyFilters();
+                SuppliesDataGrid.Items.Refresh();
                 
                 // Update status
                 LastUpdateText.Text = $"آخر تحديث: {DateTime.Now:dd/MM/yyyy HH:mm}";
@@ -272,6 +279,9 @@ namespace Fruittrack
                     _filteredSupplies.Add(item);
                 }
                 
+                // Force DataGrid to show changes
+                SuppliesDataGrid.Items.Refresh();
+                
                 // Update record count
                 RecordCountText.Text = $"إجمالي السجلات: {_filteredSupplies.Count}";
             }
@@ -280,11 +290,123 @@ namespace Fruittrack
                 MessageBox.Show($"خطأ في تطبيق الفلاتر: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private async void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is Button button && button.Tag is SupplyOverviewItem item)
+                {
+                    var editDialog = new EditSupplyEntryDialog(item.SupplyEntryId);
+                    if (editDialog.ShowDialog() == true)
+                    {
+                        // Show loading indicator
+                        SuppliesDataGrid.IsEnabled = false;
+                        
+                        // Refresh the data grid after successful edit
+                        await LoadDataAsync();
+
+                        // Try to focus the edited row if it matches current filters
+                        FocusEditedRow(item.SupplyEntryId);
+                        
+                        // Re-enable grid
+                        SuppliesDataGrid.IsEnabled = true;
+                        
+                        // Show success message
+                        MessageBox.Show("تم تحديث البيانات بنجاح", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SuppliesDataGrid.IsEnabled = true;
+                MessageBox.Show($"خطأ في فتح نافذة التعديل: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void FocusEditedRow(int supplyEntryId)
+        {
+            try
+            {
+                var edited = _filteredSupplies.FirstOrDefault(x => x.SupplyEntryId == supplyEntryId);
+                if (edited != null)
+                {
+                    SuppliesDataGrid.SelectedItem = edited;
+                    SuppliesDataGrid.UpdateLayout();
+                    SuppliesDataGrid.ScrollIntoView(edited);
+                }
+                else
+                {
+                    // If not found in current filter, inform user once
+                    MessageBox.Show("تم حفظ التغييرات، لكن قد لا يظهر السجل بسبب الفلاتر الحالية.", "تم الحفظ", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch
+            {
+                // Ignore focus errors
+            }
+        }
+
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is Button button && button.Tag is SupplyOverviewItem item)
+                {
+                    // Show confirmation dialog
+                    var result = MessageBox.Show(
+                        $"هل أنت متأكد من حذف سجل التوريد بتاريخ {item.Date:dd/MM/yyyy} للعربية رقم {item.TruckNumber}؟\n\nلا يمكن التراجع عن هذا الإجراء.",
+                        "تأكيد الحذف",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning,
+                        MessageBoxResult.No);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        await DeleteSupplyEntry(item.SupplyEntryId);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطأ في حذف السجل: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async Task DeleteSupplyEntry(int supplyEntryId)
+        {
+            try
+            {
+                var supplyEntry = await _context.SupplyEntries
+                    .Include(s => s.FinancialSettlement)
+                    .FirstOrDefaultAsync(s => s.SupplyEntryId == supplyEntryId);
+
+                if (supplyEntry == null)
+                {
+                    MessageBox.Show("لم يتم العثور على السجل المطلوب حذفه", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Remove the supply entry (cascading delete will handle related financial settlement)
+                _context.SupplyEntries.Remove(supplyEntry);
+                await _context.SaveChangesAsync();
+
+                MessageBox.Show("تم حذف السجل بنجاح", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Refresh the data grid
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطأ في حذف السجل: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
     
     // Data model for the overview grid
     public class SupplyOverviewItem
     {
+        public int SupplyEntryId { get; set; } // Add ID for edit/delete operations
         public DateTime Date { get; set; }
         public string TruckNumber { get; set; } = "";
         public decimal FreightCost { get; set; }
