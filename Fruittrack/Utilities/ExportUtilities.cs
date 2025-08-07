@@ -12,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using OfficeOpenXml;
@@ -21,6 +22,8 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using A = DocumentFormat.OpenXml.Drawing;
 using Wp = DocumentFormat.OpenXml.Wordprocessing;
+// Add draw for line separator
+using iTextSharp.text.pdf.draw;
 
 namespace Fruittrack.Utilities
 {
@@ -67,64 +70,252 @@ namespace Fruittrack.Utilities
             }
         }
 
-        public static void ExportToPdf(FrameworkElement element, string filePath, string title = "تقرير")
+        public static void ExportToPdf(
+            FrameworkElement element,
+            string filePath,
+            string title = "تقرير",
+            string companyName = "شركة فروت تراك",
+            string logoPath = null)
         {
             try
             {
-                // Create PDF document with RTL support
-                using var document = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4, 50, 50, 50, 50);
-                using var writer = PdfWriter.GetInstance(document, new FileStream(filePath, FileMode.Create));
-                document.Open();
-
-                // Try to use Arabic font, fallback to Arial if not available
-                BaseFont baseFont;
-                try
+                using (var document = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4, 36, 36, 48, 48))
+                using (var fs = new FileStream(filePath, FileMode.Create))
                 {
-                    // Try to use a system Arabic font
-                    baseFont = BaseFont.CreateFont("C:\\Windows\\Fonts\\arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                    var writer = PdfWriter.GetInstance(document, fs);
+                    writer.PageEvent = new SimpleFooterEvent();
+
+                    document.Open();
+
+                    // 1) Build an Arabic-correct header as a WPF visual and add as image
+                    var header = BuildHeaderVisual(companyName, title, logoPath);
+                    var headerBitmap = RenderOffscreenElementToBitmap(header);
+                    using (var headerStream = new MemoryStream())
+                    {
+                        var headerEncoder = new PngBitmapEncoder();
+                        headerEncoder.Frames.Add(BitmapFrame.Create(headerBitmap));
+                        headerEncoder.Save(headerStream);
+                        headerStream.Position = 0;
+                        var headerImg = iTextSharp.text.Image.GetInstance(headerStream.ToArray());
+                        headerImg.ScaleToFit((float)(document.PageSize.Width - document.LeftMargin - document.RightMargin), 120f);
+                        headerImg.Alignment = Element.ALIGN_CENTER;
+                        document.Add(headerImg);
+                    }
+
+                    document.Add(new Chunk(new LineSeparator(0.5f, 100f, BaseColor.LIGHT_GRAY, Element.ALIGN_CENTER, -2)));
+                    document.Add(Chunk.NEWLINE);
+
+                    // 2) If there is a DataGrid inside the element, try to export as real PDF table (Arabic-safe)
+                    var dataGrid = FindVisualChild<DataGrid>(element);
+                    List<(DataGridColumn column, Visibility originalVisibility)> modifiedColumns = new List<(DataGridColumn, Visibility)>();
+                    if (dataGrid != null)
+                    {
+                        foreach (var col in dataGrid.Columns)
+                        {
+                            var headerText = col.Header != null ? col.Header.ToString() : string.Empty;
+                            if (!string.IsNullOrWhiteSpace(headerText) && headerText.Trim() == "الإجراءات")
+                            {
+                                modifiedColumns.Add((col, col.Visibility));
+                                col.Visibility = Visibility.Collapsed;
+                            }
+                        }
+                        dataGrid.UpdateLayout();
+                    }
+
+                    // 3) Prefer real table export with Arabic font; fallback to image capture if extraction fails
+                    bool tableAdded = false;
+                    if (dataGrid != null)
+                    {
+                        var dataTable = ExtractDataFromElement(dataGrid);
+                        if (dataTable != null && dataTable.Columns.Count > 0)
+                        {
+                            var bf = TryLoadArabicBaseFont();
+                            var fontHeader = new iTextSharp.text.Font(bf, 11, iTextSharp.text.Font.BOLD, BaseColor.WHITE);
+                            var fontCell = new iTextSharp.text.Font(bf, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
+
+                            var pdfTable = new PdfPTable(dataTable.Columns.Count)
+                            {
+                                WidthPercentage = 100
+                            };
+                            pdfTable.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                            // Headers
+                            foreach (DataColumn col in dataTable.Columns)
+                            {
+                                var headerCell = new PdfPCell(new Phrase(col.ColumnName, fontHeader))
+                                {
+                                    BackgroundColor = new BaseColor(23, 42, 58), // dark header
+                                    HorizontalAlignment = Element.ALIGN_CENTER,
+                                    VerticalAlignment = Element.ALIGN_MIDDLE,
+                                    PaddingTop = 6f,
+                                    PaddingBottom = 6f
+                                };
+                                headerCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+                                pdfTable.AddCell(headerCell);
+                            }
+
+                            // Rows
+                            bool odd = false;
+                            foreach (DataRow row in dataTable.Rows)
+                            {
+                                odd = !odd;
+                                for (int i = 0; i < dataTable.Columns.Count; i++)
+                                {
+                                    string text = row[i] != null ? row[i].ToString() : string.Empty;
+                                    var cell = new PdfPCell(new Phrase(text, fontCell))
+                                    {
+                                        BackgroundColor = odd ? new BaseColor(247, 250, 252) : BaseColor.WHITE,
+                                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                                        VerticalAlignment = Element.ALIGN_MIDDLE,
+                                        PaddingTop = 4f,
+                                        PaddingBottom = 4f,
+                                        PaddingLeft = 4f,
+                                        PaddingRight = 4f
+                                    };
+                                    cell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+                                    pdfTable.AddCell(cell);
+                                }
+                            }
+
+                            document.Add(pdfTable);
+                            tableAdded = true;
+                        }
+                    }
+
+                    if (!tableAdded)
+                    {
+                        // Fallback: capture image(s)
+                        BitmapSource contentBitmap;
+                        if (dataGrid != null)
+                        {
+                            contentBitmap = CaptureDataGridAllColumns(dataGrid);
+                        }
+                        else
+                        {
+                            contentBitmap = RenderElementToBitmap(element);
+                        }
+
+                        // Available content area in points
+                        double contentWidthPt = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+                        double contentHeightPt = document.PageSize.Height - document.TopMargin - document.BottomMargin - 140; // leave space for header
+                        // Convert to pixels at 96 DPI (1pt = 1/72 inch)
+                        int pageWidthPx = (int)Math.Max(1, Math.Round(contentWidthPt / 72.0 * 96.0));
+
+                        int totalSegments = (int)Math.Ceiling((double)contentBitmap.PixelWidth / pageWidthPx);
+                        for (int seg = 0; seg < Math.Max(1, totalSegments); seg++)
+                        {
+                            if (seg > 0)
+                            {
+                                document.NewPage();
+                                // Re-add header for each subsequent page (Arabic-safe WPF header)
+                                var header2 = BuildHeaderVisual(companyName, title, logoPath);
+                                var headerBitmap2 = RenderOffscreenElementToBitmap(header2);
+                                using (var headerStream2 = new MemoryStream())
+                                {
+                                    var headerEncoder2 = new PngBitmapEncoder();
+                                    headerEncoder2.Frames.Add(BitmapFrame.Create(headerBitmap2));
+                                    headerEncoder2.Save(headerStream2);
+                                    headerStream2.Position = 0;
+                                    var headerImg2 = iTextSharp.text.Image.GetInstance(headerStream2.ToArray());
+                                    headerImg2.ScaleToFit((float)contentWidthPt, 120f);
+                                    headerImg2.Alignment = Element.ALIGN_CENTER;
+                                    document.Add(headerImg2);
+                                    document.Add(new Chunk(new LineSeparator(0.5f, 100f, BaseColor.LIGHT_GRAY, Element.ALIGN_CENTER, -2)));
+                                    document.Add(Chunk.NEWLINE);
+                                }
+                            }
+
+                            int x = seg * pageWidthPx;
+                            int width = Math.Min(pageWidthPx, contentBitmap.PixelWidth - x);
+                            if (width <= 0)
+                            {
+                                break;
+                            }
+                            var cropped = new CroppedBitmap(contentBitmap as BitmapSource, new Int32Rect(x, 0, width, contentBitmap.PixelHeight));
+                            using (var contentStream = new MemoryStream())
+                            {
+                                var encoder = new PngBitmapEncoder();
+                                encoder.Frames.Add(BitmapFrame.Create(cropped));
+                                encoder.Save(contentStream);
+                                contentStream.Position = 0;
+
+                                var image = iTextSharp.text.Image.GetInstance(contentStream.ToArray());
+                                image.ScaleToFit((float)contentWidthPt, (float)contentHeightPt);
+                                image.Alignment = Element.ALIGN_CENTER;
+                                document.Add(image);
+                            }
+                        }
+                    }
+
+                    // 4) Restore any modified columns
+                    if (modifiedColumns.Count > 0)
+                    {
+                        foreach (var pair in modifiedColumns)
+                        {
+                            pair.column.Visibility = pair.originalVisibility;
+                        }
+                        dataGrid.UpdateLayout();
+                    }
+
+                    document.Close();
                 }
-                catch
-                {
-                    // Fallback to default font
-                    baseFont = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.EMBEDDED);
-                }
-
-                var titleFont = new iTextSharp.text.Font(baseFont, 18, iTextSharp.text.Font.BOLD);
-                var titleParagraph = new iTextSharp.text.Paragraph(title, titleFont)
-                {
-                    Alignment = Element.ALIGN_CENTER,
-                    SpacingAfter = 20f
-                };
-                document.Add(titleParagraph);
-
-                // Add date with RTL alignment
-                var dateFont = new iTextSharp.text.Font(baseFont, 12, iTextSharp.text.Font.NORMAL);
-                var dateParagraph = new iTextSharp.text.Paragraph($"التاريخ: {DateTime.Now:dd/MM/yyyy}", dateFont)
-                {
-                    Alignment = Element.ALIGN_RIGHT,
-                    SpacingAfter = 20f
-                };
-                document.Add(dateParagraph);
-
-                // Convert element to image and add to PDF
-                var bitmap = RenderElementToBitmap(element);
-                using var imageStream = new MemoryStream();
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                encoder.Save(imageStream);
-                imageStream.Position = 0;
-
-                var image = iTextSharp.text.Image.GetInstance(imageStream.ToArray());
-                image.ScaleToFit(500, 700);
-                image.Alignment = Element.ALIGN_CENTER;
-                document.Add(image);
-
-                document.Close();
                 MessageBox.Show($"تم حفظ الملف بنجاح في: {filePath}", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"خطأ في حفظ ملف PDF: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Capture the DataGrid showing all columns by scrolling horizontally and stitching images
+        private static BitmapSource CaptureDataGridAllColumns(DataGrid dataGrid)
+        {
+            try
+            {
+                dataGrid.UpdateLayout();
+                var scrollViewer = FindVisualChild<ScrollViewer>(dataGrid) ?? FindVisualParent<ScrollViewer>(dataGrid);
+                if (scrollViewer == null || scrollViewer.ExtentWidth <= scrollViewer.ViewportWidth)
+                {
+                    return RenderElementToBitmap(dataGrid);
+                }
+
+                var originalOffset = scrollViewer.HorizontalOffset;
+                var slices = new List<BitmapSource>();
+
+                // Scroll through the horizontal extent and capture slices
+                double step = Math.Max(1, scrollViewer.ViewportWidth - 2); // small overlap to avoid gaps
+                for (double offset = 0; offset < scrollViewer.ExtentWidth - 0.5; offset += step)
+                {
+                    scrollViewer.ScrollToHorizontalOffset(offset);
+                    // Force layout/render before capture
+                    dataGrid.Dispatcher.Invoke(() => { dataGrid.UpdateLayout(); scrollViewer.UpdateLayout(); }, DispatcherPriority.Render);
+                    slices.Add(RenderElementToBitmap(scrollViewer));
+                }
+
+                // Restore original offset
+                scrollViewer.ScrollToHorizontalOffset(originalOffset);
+                dataGrid.Dispatcher.Invoke(() => { dataGrid.UpdateLayout(); }, DispatcherPriority.Render);
+
+                // Stitch slices horizontally
+                int totalWidth = slices.Sum(s => s.PixelWidth);
+                int maxHeight = slices.Max(s => s.PixelHeight);
+                var dv = new DrawingVisual();
+                using (var dc = dv.RenderOpen())
+                {
+                    double x = 0;
+                    foreach (var slice in slices)
+                    {
+                        dc.DrawImage(slice, new System.Windows.Rect(x, 0, slice.PixelWidth, slice.PixelHeight));
+                        x += slice.PixelWidth;
+                    }
+                }
+                var rtb = new RenderTargetBitmap(totalWidth, maxHeight, 96, 96, PixelFormats.Pbgra32);
+                rtb.Render(dv);
+                return rtb;
+            }
+            catch
+            {
+                return RenderElementToBitmap(dataGrid);
             }
         }
 
@@ -143,6 +334,12 @@ namespace Fruittrack.Utilities
                     {
                         var columnName = column.Header?.ToString() ?? $"Column{column.DisplayIndex}";
                         
+                        // Skip actions column explicitly
+                        if (!string.IsNullOrEmpty(columnName) && columnName.Trim() == "الإجراءات")
+                        {
+                            continue;
+                        }
+
                         // Handle duplicate column names
                         var originalName = columnName;
                         var counter = 1;
@@ -159,72 +356,67 @@ namespace Fruittrack.Utilities
                     // Add rows - improved data extraction
                     foreach (var item in dataGrid.Items)
                     {
+                        // Skip placeholder rows
+                        if (object.ReferenceEquals(item, System.Windows.Data.CollectionView.NewItemPlaceholder))
+                            continue;
+
                         var row = dataTable.NewRow();
+                        int targetColIndex = 0;
                         for (int i = 0; i < dataGrid.Columns.Count; i++)
                         {
                             var column = dataGrid.Columns[i];
-                            var cellValue = column.GetCellContent(item);
-                            
+                            var headerText = column.Header?.ToString() ?? string.Empty;
+                            if (!string.IsNullOrEmpty(headerText) && headerText.Trim() == "الإجراءات")
+                            {
+                                // skip actions column in export
+                                continue;
+                            }
+
                             string cellText = "";
-                            
-                            // Try multiple approaches to get cell text
-                            if (cellValue is TextBlock textBlock)
+
+                            // 1) Prefer bound value via column binding (handles off-screen cells, notes, etc.)
+                            if (column is DataGridBoundColumn boundColumn)
                             {
-                                cellText = textBlock.Text;
-                            }
-                            else if (cellValue is ContentPresenter contentPresenter)
-                            {
-                                // Try to get content from ContentPresenter
-                                if (contentPresenter.Content is TextBlock tb)
+                                var binding = boundColumn.Binding as System.Windows.Data.Binding;
+                                if (binding != null && item != null && binding.Path != null && !string.IsNullOrEmpty(binding.Path.Path))
                                 {
-                                    cellText = tb.Text;
-                                }
-                                else
-                                {
-                                    cellText = contentPresenter.Content?.ToString() ?? "";
+                                    cellText = GetValueByPropertyPath(item, binding.Path.Path) ?? string.Empty;
                                 }
                             }
-                            else if (cellValue is FrameworkElement fe)
+
+                            // 2) Fallback to visual content if needed
+                            if (string.IsNullOrEmpty(cellText))
                             {
-                                // Try to find TextBlock within the element
-                                var foundTextBlock = FindVisualChild<TextBlock>(fe);
-                                if (foundTextBlock != null)
+                                var cellValue = column.GetCellContent(item);
+                                if (cellValue is TextBlock textBlock)
                                 {
-                                    cellText = foundTextBlock.Text;
+                                    cellText = textBlock.Text;
                                 }
-                                else
+                                else if (cellValue is ContentPresenter contentPresenter)
                                 {
-                                    cellText = fe.ToString();
-                                }
-                            }
-                            else
-                            {
-                                cellText = cellValue?.ToString() ?? "";
-                            }
-                            
-                            // If we still don't have text, try to get it from the binding
-                            if (string.IsNullOrEmpty(cellText) && column is DataGridBoundColumn boundColumn)
-                            {
-                                try
-                                {
-                                    var binding = boundColumn.Binding as System.Windows.Data.Binding;
-                                    if (binding != null && item != null)
+                                    var tb = FindVisualChild<TextBlock>(contentPresenter);
+                                    if (tb != null)
                                     {
-                                        var property = item.GetType().GetProperty(binding.Path.Path);
-                                        if (property != null)
-                                        {
-                                            var value = property.GetValue(item);
-                                            cellText = value?.ToString() ?? "";
-                                        }
+                                        cellText = tb.Text;
+                                    }
+                                    else
+                                    {
+                                        // Avoid dumping type name; keep empty fallback
+                                        cellText = string.Empty;
                                     }
                                 }
-                                catch
+                                else if (cellValue is FrameworkElement fe)
                                 {
-                                    // Ignore binding errors
+                                    var foundTextBlock = FindVisualChild<TextBlock>(fe);
+                                    if (foundTextBlock != null)
+                                    {
+                                        cellText = foundTextBlock.Text;
+                                    }
                                 }
                             }
-                            
-                            row[i] = cellText;
+
+                            row[targetColIndex] = cellText;
+                            targetColIndex++;
                         }
                         dataTable.Rows.Add(row);
                     }
@@ -254,10 +446,10 @@ namespace Fruittrack.Utilities
                 }
 
                 // Try to extract data from any container
-                var containerDataGrid = FindVisualChild<DataGrid>(element);
-                if (containerDataGrid != null)
+                var containerDataGrid2 = FindVisualChild<DataGrid>(element);
+                if (containerDataGrid2 != null)
                 {
-                    return ExtractDataFromElement(containerDataGrid);
+                    return ExtractDataFromElement(containerDataGrid2);
                 }
 
                 return null;
@@ -265,6 +457,36 @@ namespace Fruittrack.Utilities
             catch (Exception ex)
             {
                 MessageBox.Show($"خطأ في استخراج البيانات: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
+            }
+        }
+
+        // Helper: get nested property value by path like "Truck.TruckNumber"
+        private static string GetValueByPropertyPath(object source, string path)
+        {
+            try
+            {
+                if (source == null || string.IsNullOrWhiteSpace(path))
+                    return null;
+
+                object current = source;
+                var parts = path.Split('.')
+                                 .Select(p => p.Trim())
+                                 .Where(p => p.Length > 0);
+                foreach (var part in parts)
+                {
+                    var type = current.GetType();
+                    var prop = type.GetProperty(part);
+                    if (prop == null)
+                        return null;
+                    current = prop.GetValue(current, null);
+                    if (current == null)
+                        return null;
+                }
+                return current?.ToString();
+            }
+            catch
+            {
                 return null;
             }
         }
@@ -284,38 +506,52 @@ namespace Fruittrack.Utilities
             return null;
         }
 
+        private static T FindVisualParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject current = VisualTreeHelper.GetParent(child);
+            while (current != null)
+            {
+                if (current is T match)
+                    return match;
+                current = VisualTreeHelper.GetParent(current);
+            }
+            return null;
+        }
+
         public static void ExportToExcel(DataTable dataTable, string filePath, string sheetName = "Sheet1")
         {
             try
             {
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-                using var package = new ExcelPackage();
-                var worksheet = package.Workbook.Worksheets.Add(sheetName);
-
-                // Add headers
-                for (int i = 0; i < dataTable.Columns.Count; i++)
+                using (var package = new ExcelPackage())
                 {
-                    worksheet.Cells[1, i + 1].Value = dataTable.Columns[i].ColumnName;
-                    worksheet.Cells[1, i + 1].Style.Font.Bold = true;
-                    worksheet.Cells[1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
-                }
+                    var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                // Add data
-                for (int row = 0; row < dataTable.Rows.Count; row++)
-                {
-                    for (int col = 0; col < dataTable.Columns.Count; col++)
+                    // Add headers
+                    for (int i = 0; i < dataTable.Columns.Count; i++)
                     {
-                        worksheet.Cells[row + 2, col + 1].Value = dataTable.Rows[row][col];
+                        worksheet.Cells[1, i + 1].Value = dataTable.Columns[i].ColumnName;
+                        worksheet.Cells[1, i + 1].Style.Font.Bold = true;
+                        worksheet.Cells[1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
                     }
+
+                    // Add data
+                    for (int row = 0; row < dataTable.Rows.Count; row++)
+                    {
+                        for (int col = 0; col < dataTable.Columns.Count; col++)
+                        {
+                            worksheet.Cells[row + 2, col + 1].Value = dataTable.Rows[row][col];
+                        }
+                    }
+
+                    // Auto-fit columns
+                    worksheet.Cells.AutoFitColumns();
+
+                    // Save file
+                    package.SaveAs(new FileInfo(filePath));
                 }
-
-                // Auto-fit columns
-                worksheet.Cells.AutoFitColumns();
-
-                // Save file
-                package.SaveAs(new FileInfo(filePath));
                 MessageBox.Show($"تم حفظ الملف بنجاح في: {filePath}", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -363,7 +599,7 @@ namespace Fruittrack.Utilities
                         }
                         else
                         {
-                            row[i] = cellValue?.ToString() ?? "";
+                            row[i] = cellValue != null ? cellValue.ToString() : "";
                         }
                     }
                     dataTable.Rows.Add(row);
@@ -379,11 +615,25 @@ namespace Fruittrack.Utilities
 
         private static RenderTargetBitmap RenderElementToBitmap(FrameworkElement element)
         {
-            var renderTarget = new RenderTargetBitmap(
-                (int)element.ActualWidth,
-                (int)element.ActualHeight,
-                96, 96, PixelFormats.Pbgra32);
+            var width = Math.Max(1, (int)element.ActualWidth);
+            var height = Math.Max(1, (int)element.ActualHeight);
 
+            var renderTarget = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            renderTarget.Render(element);
+            return renderTarget;
+        }
+
+        // Render a newly created off-screen WPF element
+        private static RenderTargetBitmap RenderOffscreenElementToBitmap(FrameworkElement element)
+        {
+            // Default size
+            double width = element.Width > 0 ? element.Width : 800;
+            double height = element.Height > 0 ? element.Height : 120;
+            element.Measure(new Size(width, height));
+            element.Arrange(new Rect(0, 0, width, height));
+            element.UpdateLayout();
+
+            var renderTarget = new RenderTargetBitmap((int)width, (int)height, 96, 96, PixelFormats.Pbgra32);
             renderTarget.Render(element);
             return renderTarget;
         }
@@ -397,6 +647,231 @@ namespace Fruittrack.Utilities
             };
 
             return saveFileDialog.ShowDialog() == true ? saveFileDialog.FileName : null;
+        }
+
+        // -------- Helpers for PDF branding --------
+        private static PdfPTable BuildBrandedHeader(BaseFont baseFont, string title, string companyName, string logoPath)
+        {
+            var headerTable = new PdfPTable(2)
+            {
+                WidthPercentage = 100
+            };
+            headerTable.SetWidths(new float[] { 1f, 5f });
+
+            // Try to load logo image
+            var logoImg = TryLoadLogo(logoPath);
+            PdfPCell logoCell;
+            if (logoImg != null)
+            {
+                logoImg.ScaleToFit(60f, 60f);
+                logoCell = new PdfPCell(logoImg)
+                {
+                    Border = Rectangle.NO_BORDER,
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    VerticalAlignment = Element.ALIGN_MIDDLE,
+                    Padding = 4f
+                };
+            }
+            else
+            {
+                logoCell = new PdfPCell(new Phrase("")) { Border = Rectangle.NO_BORDER };
+            }
+            headerTable.AddCell(logoCell);
+
+            // Right cell with company, title and date
+            var companyFont = new iTextSharp.text.Font(baseFont, 16, iTextSharp.text.Font.BOLD, new BaseColor(16, 185, 129)); // teal
+            var titleFont = new iTextSharp.text.Font(baseFont, 14, iTextSharp.text.Font.BOLD, BaseColor.BLACK);
+            var infoFont = new iTextSharp.text.Font(baseFont, 11, iTextSharp.text.Font.NORMAL, BaseColor.GRAY);
+
+            var paragraph = new iTextSharp.text.Paragraph { Alignment = Element.ALIGN_RIGHT };
+            paragraph.Add(new Chunk(companyName + "\n", companyFont));
+            paragraph.Add(new Chunk(title + "\n", titleFont));
+            paragraph.Add(new Chunk($"تاريخ التصدير: {DateTime.Now:dd/MM/yyyy HH:mm}", infoFont));
+
+            var rightCell = new PdfPCell(paragraph)
+            {
+                Border = Rectangle.NO_BORDER,
+                HorizontalAlignment = Element.ALIGN_RIGHT,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                Padding = 4f
+            };
+            headerTable.AddCell(rightCell);
+
+            return headerTable;
+        }
+
+        // Build a WPF visual header (Arabic-correct) to render as image
+        private static FrameworkElement BuildHeaderVisual(string companyName, string title, string logoPath)
+        {
+            var grid = new Grid
+            {
+                Width = 800,
+                Height = 120,
+                Background = Brushes.Transparent,
+                FlowDirection = FlowDirection.RightToLeft
+            };
+
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) });
+
+            // Logo (right in RTL)
+            var img = new System.Windows.Controls.Image
+            {
+                Width = 60,
+                Height = 60,
+                Margin = new Thickness(8),
+                Stretch = Stretch.Uniform
+            };
+            var logo = TryLoadLogo(logoPath);
+            if (logo != null)
+            {
+                // Convert iText image source file into BitmapImage for WPF
+                try
+                {
+                    var bmp = new BitmapImage();
+                    bmp.BeginInit();
+                    bmp.CacheOption = BitmapCacheOption.OnLoad;
+                    // Try fallback paths again for WPF image
+                    string[] candidates = new[]
+                    {
+                        logoPath,
+                        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "support-icon.jpg"),
+                        Path.Combine(Directory.GetCurrentDirectory(), "Fruittrack", "Images", "support-icon.jpg"),
+                        Path.Combine(Directory.GetCurrentDirectory(), "Images", "support-icon.jpg")
+                    };
+                    var found = candidates.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p) && File.Exists(p));
+                    if (!string.IsNullOrEmpty(found))
+                    {
+                        bmp.UriSource = new Uri(found, UriKind.Absolute);
+                        bmp.EndInit();
+                        img.Source = bmp;
+                    }
+                }
+                catch { }
+            }
+            Grid.SetColumn(img, 0);
+            grid.Children.Add(img);
+
+            // Texts
+            var stack = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(8)
+            };
+            var companyText = new TextBlock
+            {
+                Text = companyName,
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(16, 185, 129))
+            };
+            var titleText = new TextBlock
+            {
+                Text = title,
+                FontSize = 18,
+                FontWeight = FontWeights.Bold,
+                Foreground = Brushes.Black
+            };
+            var dateText = new TextBlock
+            {
+                Text = $"تاريخ التصدير: {DateTime.Now:dd/MM/yyyy HH:mm}",
+                FontSize = 13,
+                Foreground = Brushes.Gray
+            };
+            stack.Children.Add(companyText);
+            stack.Children.Add(titleText);
+            stack.Children.Add(dateText);
+            Grid.SetColumn(stack, 1);
+            grid.Children.Add(stack);
+
+            return grid;
+        }
+
+        private static iTextSharp.text.Image TryLoadLogo(string logoPath)
+        {
+            try
+            {
+                // If explicit path provided
+                if (!string.IsNullOrWhiteSpace(logoPath) && File.Exists(logoPath))
+                {
+                    return iTextSharp.text.Image.GetInstance(logoPath);
+                }
+
+                // Common fallbacks: relative to current dir or base dir
+                string[] candidates = new[]
+                {
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "support-icon.jpg"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "Fruittrack", "Images", "support-icon.jpg"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "Images", "support-icon.jpg")
+                };
+
+                var found = candidates.FirstOrDefault(File.Exists);
+                if (found != null)
+                {
+                    return iTextSharp.text.Image.GetInstance(found);
+                }
+            }
+            catch
+            {
+                // ignore logo load errors
+            }
+            return null;
+        }
+
+        // Load an Arabic-capable BaseFont from common Windows fonts
+        private static BaseFont TryLoadArabicBaseFont()
+        {
+            string fontsDir = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
+            string[] candidates = new[]
+            {
+                Path.Combine(fontsDir, "trado.ttf"),        // Traditional Arabic
+                Path.Combine(fontsDir, "arial.ttf"),        // Arial with Arabic
+                Path.Combine(fontsDir, "segoeui.ttf"),      // Segoe UI
+                Path.Combine(fontsDir, "Tahoma.ttf")        // Tahoma
+            };
+            foreach (var path in candidates)
+            {
+                try
+                {
+                    if (File.Exists(path))
+                    {
+                        return BaseFont.CreateFont(path, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                    }
+                }
+                catch { }
+            }
+            // Fallback: built-in Helvetica (may not shape Arabic correctly, but better than failing)
+            return BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+        }
+
+        private class SimpleFooterEvent : PdfPageEventHelper
+        {
+            public override void OnEndPage(PdfWriter writer, iTextSharp.text.Document document)
+            {
+                base.OnEndPage(writer, document);
+                try
+                {
+                    var cb = writer.DirectContent;
+                    cb.SaveState();
+
+                    var footerText = $"صفحة {writer.PageNumber}";
+                    var bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                    cb.BeginText();
+                    cb.SetFontAndSize(bf, 9);
+                    // Center bottom
+                    float x = (document.Left + document.Right) / 2;
+                    float y = document.Bottom - 10;
+                    cb.ShowTextAligned(Element.ALIGN_CENTER, footerText, x, y, 0);
+                    cb.EndText();
+
+                    cb.RestoreState();
+                }
+                catch
+                {
+                    // ignore footer errors
+                }
+            }
         }
     }
 } 
