@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using System.Globalization;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using OfficeOpenXml;
@@ -126,7 +127,7 @@ namespace Fruittrack.Utilities
                     bool tableAdded = false;
                     if (dataGrid != null)
                     {
-                        var dataTable = ExtractDataFromElement(dataGrid);
+                    var dataTable = ExtractDataFromElement(dataGrid);
                         if (dataTable != null && dataTable.Columns.Count > 0)
                         {
                             var bf = TryLoadArabicBaseFont();
@@ -380,7 +381,41 @@ namespace Fruittrack.Utilities
                                 var binding = boundColumn.Binding as System.Windows.Data.Binding;
                                 if (binding != null && item != null && binding.Path != null && !string.IsNullOrEmpty(binding.Path.Path))
                                 {
-                                    cellText = GetValueByPropertyPath(item, binding.Path.Path) ?? string.Empty;
+                                    // Try to get raw value to apply StringFormat if present
+                                    object rawValue = GetObjectByPropertyPath(item, binding.Path.Path);
+                                    if (rawValue != null)
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(binding.StringFormat))
+                                        {
+                                            try
+                                            {
+                                                // If it's a DateTime and StringFormat is a plain custom format (e.g., dd/MM/yyyy)
+                                                if (rawValue is DateTime dt && !binding.StringFormat.Contains("{") && !binding.StringFormat.Contains("}"))
+                                                {
+                                                    cellText = dt.ToString(binding.StringFormat, CultureInfo.CurrentCulture);
+                                                }
+                                                else
+                                                {
+                                                    // Generic formatting fallback
+                                                    string fmt = binding.StringFormat.Contains("{") ? binding.StringFormat : $"{{0:{binding.StringFormat}}}";
+                                                    cellText = string.Format(CultureInfo.CurrentCulture, fmt, rawValue);
+                                                }
+                                            }
+                                            catch
+                                            {
+                                                cellText = rawValue.ToString();
+                                            }
+                                        }
+                                        else if (!string.IsNullOrEmpty(headerText) && headerText.Trim() == "التاريخ" && rawValue is DateTime dateOnly)
+                                        {
+                                            // Ensure date without time for تاريخ column
+                                            cellText = dateOnly.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture);
+                                        }
+                                        else
+                                        {
+                                            cellText = rawValue.ToString();
+                                        }
+                                    }
                                 }
                             }
 
@@ -401,8 +436,29 @@ namespace Fruittrack.Utilities
                                     }
                                     else
                                     {
-                                        // Avoid dumping type name; keep empty fallback
-                                        cellText = string.Empty;
+                                        // As a robust fallback for Notes template column
+                                        if (!string.IsNullOrEmpty(headerText) && headerText.Trim() == "الملاحظات")
+                                        {
+                                            try
+                                            {
+                                                var notesProp = item.GetType().GetProperty("Notes");
+                                                if (notesProp != null)
+                                                {
+                                                    var value = notesProp.GetValue(item);
+                                                    cellText = value?.ToString() ?? string.Empty;
+                                                }
+                                                else
+                                                {
+                                                    cellText = string.Empty;
+                                                }
+                                            }
+                                            catch { cellText = string.Empty; }
+                                        }
+                                        else
+                                        {
+                                            // Avoid dumping type name; keep empty fallback
+                                            cellText = string.Empty;
+                                        }
                                     }
                                 }
                                 else if (cellValue is FrameworkElement fe)
@@ -491,6 +547,36 @@ namespace Fruittrack.Utilities
             }
         }
 
+        // Helper: get raw object value by property path (without ToString) for formatting
+        private static object GetObjectByPropertyPath(object source, string path)
+        {
+            try
+            {
+                if (source == null || string.IsNullOrWhiteSpace(path))
+                    return null;
+
+                object current = source;
+                var parts = path.Split('.')
+                                 .Select(p => p.Trim())
+                                 .Where(p => p.Length > 0);
+                foreach (var part in parts)
+                {
+                    var type = current.GetType();
+                    var prop = type.GetProperty(part);
+                    if (prop == null)
+                        return null;
+                    current = prop.GetValue(current, null);
+                    if (current == null)
+                        return null;
+                }
+                return current;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
@@ -564,45 +650,33 @@ namespace Fruittrack.Utilities
         {
             try
             {
-                var dataTable = new DataTable();
-                var usedColumnNames = new HashSet<string>();
-
-                // Add columns with duplicate handling
-                foreach (var column in dataGrid.Columns)
+                // Reuse the improved extractor so template columns like "الملاحظات" export real text
+                var dataTable = ExtractDataFromElement(dataGrid);
+                if (dataTable == null || dataTable.Columns.Count == 0)
                 {
-                    var columnName = column.Header?.ToString() ?? $"Column{column.DisplayIndex}";
-                    
-                    // Handle duplicate column names
-                    var originalName = columnName;
-                    var counter = 1;
-                    while (usedColumnNames.Contains(columnName))
-                    {
-                        columnName = $"{originalName}_{counter}";
-                        counter++;
-                    }
-                    
-                    usedColumnNames.Add(columnName);
-                    dataTable.Columns.Add(columnName);
+                    MessageBox.Show("لم يتم العثور على بيانات للتصدير.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
                 }
 
-                // Add rows
-                foreach (var item in dataGrid.Items)
+                // Ensure تاريخ column has only date (in case it slipped through)
+                int dateColIndex = -1;
+                for (int i = 0; i < dataTable.Columns.Count; i++)
                 {
-                    var row = dataTable.NewRow();
-                    for (int i = 0; i < dataGrid.Columns.Count; i++)
+                    if (string.Equals(dataTable.Columns[i].ColumnName?.Trim(), "التاريخ", StringComparison.Ordinal))
                     {
-                        var column = dataGrid.Columns[i];
-                        var cellValue = column.GetCellContent(item);
-                        if (cellValue is TextBlock textBlock)
+                        dateColIndex = i; break;
+                    }
+                }
+                if (dateColIndex >= 0)
+                {
+                    foreach (DataRow r in dataTable.Rows)
+                    {
+                        var txt = r[dateColIndex]?.ToString();
+                        if (DateTime.TryParse(txt, out var dt))
                         {
-                            row[i] = textBlock.Text;
-                        }
-                        else
-                        {
-                            row[i] = cellValue != null ? cellValue.ToString() : "";
+                            r[dateColIndex] = dt.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture);
                         }
                     }
-                    dataTable.Rows.Add(row);
                 }
 
                 ExportToExcel(dataTable, filePath, sheetName);
