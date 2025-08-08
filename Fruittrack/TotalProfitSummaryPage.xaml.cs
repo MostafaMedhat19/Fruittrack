@@ -62,6 +62,9 @@ namespace Fruittrack
             
             LoadFilters();
             LoadData();
+
+            // Live filtering for truck number typing
+            TruckNumberFilter.TextChanged += (_, __) => ApplyFilters();
         }
 
         private void PrintButton_Click(object sender, RoutedEventArgs e)

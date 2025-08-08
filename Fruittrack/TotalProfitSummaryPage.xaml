@@ -9,6 +9,7 @@
         <!-- Modern TextBox Style -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
             <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
             <Setter Property="BorderBrush" Value="#D0D7DE"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="12,8"/>
@@ -22,10 +23,8 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="6">
                             <ScrollViewer x:Name="PART_ContentHost" 
-                                          Focusable="False" 
                                           HorizontalScrollBarVisibility="Hidden" 
                                           VerticalScrollBarVisibility="Hidden"
-                                          VerticalAlignment="Center"
                                           Margin="{TemplateBinding Padding}"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -207,7 +206,7 @@
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,15,0">
                         <TextBlock Text="رقم العربية:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Medium"/>
-                        <TextBox x:Name="TruckNumberFilter" Width="140" Height="30" Style="{StaticResource ModernTextBox}"/>
+                        <TextBox x:Name="TruckNumberFilter" Width="140" Height="30" VerticalContentAlignment="Center"/>
                     </StackPanel>
 
                     <Button x:Name="GenerateSummaryButton" Content="إنشاء الملخص" Width="120" Height="45" FontSize="14" FontWeight="SemiBold"

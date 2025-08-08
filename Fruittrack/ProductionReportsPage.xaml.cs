@@ -46,6 +46,14 @@ namespace Fruittrack
             // Initialize filter comboboxes
             ProfitTypeFilter.SelectedIndex = 0;
             
+            // Apply filters automatically when inputs change
+            FromDatePicker.SelectedDateChanged += (_, __) => ApplyFilters();
+            ToDatePicker.SelectedDateChanged += (_, __) => ApplyFilters();
+            FarmFilter.SelectionChanged += (_, __) => ApplyFilters();
+            FactoryFilter.SelectionChanged += (_, __) => ApplyFilters();
+            ProfitTypeFilter.SelectionChanged += (_, __) => ApplyFilters();
+            TruckNumberFilter.TextChanged += (_, __) => ApplyFilters();
+            
             LoadData();
         }
 
@@ -276,23 +284,30 @@ namespace Fruittrack
                     filtered = filtered.Where(r => r.FactoryName == selectedFactoryItem.Content.ToString());
                 }
 
-                // Profit type filter
+                // Truck number filter
+                if (!string.IsNullOrWhiteSpace(TruckNumberFilter.Text))
+                {
+                    string truckFilter = TruckNumberFilter.Text.Trim();
+                    filtered = filtered.Where(r => !string.IsNullOrEmpty(r.TruckNumber) && r.TruckNumber.Contains(truckFilter, StringComparison.OrdinalIgnoreCase));
+                }
+
+                // Profit type filter (values: الجميع, ربح فقط, خسارة فقط, متعادل)
                 if (ProfitTypeFilter.SelectedItem is ComboBoxItem selectedProfitItem)
                 {
-                    string profitType = selectedProfitItem.Content.ToString();
-                    switch (profitType)
+                    string profitType = selectedProfitItem.Content?.ToString() ?? string.Empty;
+                    if (profitType == "ربح فقط")
                     {
-                        case "ربح":
-                            filtered = filtered.Where(r => r.ProfitLoss > 0);
-                            break;
-                        case "خسارة":
-                            filtered = filtered.Where(r => r.ProfitLoss < 0);
-                            break;
-                        case "تعادل":
-                            filtered = filtered.Where(r => r.ProfitLoss == 0);
-                            break;
-                        // "الكل" shows all records
+                        filtered = filtered.Where(r => r.ProfitLoss > 0);
                     }
+                    else if (profitType == "خسارة فقط")
+                    {
+                        filtered = filtered.Where(r => r.ProfitLoss < 0);
+                    }
+                    else if (profitType == "متعادل")
+                    {
+                        filtered = filtered.Where(r => r.ProfitLoss == 0);
+                    }
+                    // "الجميع" leaves filtered as-is
                 }
 
                 // Update filtered collection
@@ -340,27 +355,6 @@ namespace Fruittrack
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             LoadData();
-        }
-
-        private void ExportReportButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var saveFileDialog = new SaveFileDialog
-                {
-                    Filter = "CSV files (*.csv)|*.csv",
-                    FileName = $"تقرير_الإنتاج_{DateTime.Now:yyyyMMdd}.csv"
-                };
-
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    ExportToCSV(saveFileDialog.FileName);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"خطأ في تصدير التقرير: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
 
         private void ExportToCSV(string fileName)
