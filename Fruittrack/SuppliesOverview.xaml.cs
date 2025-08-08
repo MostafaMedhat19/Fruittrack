@@ -63,7 +63,8 @@ namespace Fruittrack
 
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            ExportUtilities.PrintPage(this, "نظرة عامة على كل التوريدات");
+            // Generate the same designed PDF into a temp file and open it for preview/printing
+            ExportUtilities.ExportToTemporaryPdfAndOpen(this, "نظرة عامة على كل التوريدات");
         }
 
         private void PdfButton_Click(object sender, RoutedEventArgs e)

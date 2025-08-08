@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using System.Globalization;
+using System.Diagnostics;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using OfficeOpenXml;
@@ -76,7 +77,8 @@ namespace Fruittrack.Utilities
             string filePath,
             string title = "تقرير",
             string companyName = "شركة فروت تراك",
-            string logoPath = null)
+            string logoPath = null,
+            bool showSuccessMessage = true)
         {
             try
             {
@@ -260,11 +262,47 @@ namespace Fruittrack.Utilities
 
                     document.Close();
                 }
-                MessageBox.Show($"تم حفظ الملف بنجاح في: {filePath}", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (showSuccessMessage)
+                {
+                    MessageBox.Show($"تم حفظ الملف بنجاح في: {filePath}", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"خطأ في حفظ ملف PDF: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Create a temporary PDF with the same design and open it in the default PDF viewer (preview)
+        public static void ExportToTemporaryPdfAndOpen(
+            FrameworkElement element,
+            string title = "تقرير",
+            string companyName = "شركة فروت تراك",
+            string logoPath = null)
+        {
+            try
+            {
+                var safeTitle = MakeSafeFilename(title);
+                var tempPath = Path.Combine(Path.GetTempPath(), $"{safeTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+                ExportToPdf(element, tempPath, title, companyName, logoPath, showSuccessMessage: false);
+
+                try
+                {
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = tempPath,
+                        UseShellExecute = true
+                    };
+                    Process.Start(psi);
+                }
+                catch (Exception openEx)
+                {
+                    MessageBox.Show($"تم إنشاء ملف المعاينة في: {tempPath}\nلكن تعذر فتحه تلقائيًا: {openEx.Message}", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطأ في إنشاء ملف PDF للمعاينة: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -946,6 +984,13 @@ namespace Fruittrack.Utilities
                     // ignore footer errors
                 }
             }
+        }
+
+        private static string MakeSafeFilename(string name)
+        {
+            var invalid = Path.GetInvalidFileNameChars();
+            var safe = new string(name.Select(ch => invalid.Contains(ch) ? '_' : ch).ToArray());
+            return string.IsNullOrWhiteSpace(safe) ? "تقرير" : safe;
         }
     }
 } 

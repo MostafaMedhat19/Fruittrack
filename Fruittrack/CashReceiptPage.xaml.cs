@@ -26,7 +26,7 @@ namespace Fruittrack
 
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            ExportUtilities.PrintPage(this, "صفحة استلام نقدية");
+            ExportUtilities.ExportToTemporaryPdfAndOpen(this, "صفحة استلام نقدية");
         }
 
         private void PdfButton_Click(object sender, RoutedEventArgs e)
