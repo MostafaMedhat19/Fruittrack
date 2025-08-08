@@ -57,7 +57,7 @@ namespace Fruittrack
                     var dataTable = new System.Data.DataTable();
                     dataTable.Columns.Add("اسم الشخص", typeof(string));
                     dataTable.Columns.Add("المبلغ المستلم", typeof(decimal));
-                    dataTable.Columns.Add("التاريخ", typeof(DateTime));
+                    dataTable.Columns.Add("التاريخ", typeof(string));
                     dataTable.Columns.Add("المبلغ المسدد", typeof(decimal));
                     dataTable.Columns.Add("المتبقي", typeof(decimal));
 
@@ -80,7 +80,7 @@ namespace Fruittrack
                         var row = dataTable.NewRow();
                         row["اسم الشخص"] = transaction.SourceName;
                         row["المبلغ المستلم"] = transaction.ReceivedAmount;
-                        row["التاريخ"] = transaction.Date;
+                        row["التاريخ"] = transaction.Date.ToString("dd/MM/yyyy");
                         row["المبلغ المسدد"] = transaction.PaidBackAmount;
                         row["المتبقي"] = transaction.RemainingAmount;
                         dataTable.Rows.Add(row);
