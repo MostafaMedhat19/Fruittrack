@@ -85,7 +85,6 @@
                                 Background="#F44336" Foreground="White"
                                 Padding="12,8" FontWeight="SemiBold" BorderThickness="0"
                                 MinWidth="100" Margin="5,0" Cursor="Hand"/>
-                     
                     </StackPanel>
                 </Grid>
 
@@ -101,13 +100,10 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Entity Type -->
                     <!-- Entity Name -->
-                    <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,10,10">
+                    <StackPanel Grid.Column="0" Grid.Row="0">
                         <TextBlock Text="اسم الجهة" Style="{StaticResource HeaderText}"/>
                         <ComboBox x:Name="cmbEntityName"
                ItemsSource="{Binding EntityNames}"
@@ -119,58 +115,40 @@
                     </StackPanel>
 
                     <!-- Date -->
-                    <StackPanel Grid.Column="2" Grid.Row="0" Margin="10,0,0,10">
+                    <StackPanel Grid.Column="2" Grid.Row="0">
                         <TextBlock Text="التاريخ" Style="{StaticResource HeaderText}"/>
                         <DatePicker SelectedDate="{Binding TransactionDate, UpdateSourceTrigger=PropertyChanged}" 
                  Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
-                    <!-- Amount Owed -->
-                    <StackPanel Grid.Column="0" Grid.Row="2" Margin="0,0,10,10">
-                        <TextBlock Text="المبلغ اللي عليه" Style="{StaticResource HeaderText}"/>
-                        <TextBox Text="{Binding Debit, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
+                    <!-- Amount -->
+                    <StackPanel Grid.Column="0" Grid.Row="2">
+                        <TextBlock Text="المبلغ" Style="{StaticResource HeaderText}"/>
+                        <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
               ToolTip="ادخل المبلغ المصروف"
               Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
-                    <!-- Amount Owned -->
-                    <StackPanel Grid.Column="2" Grid.Row="2" Margin="10,0,0,10">
-                        <TextBlock Text="المبلغ اللي له" Style="{StaticResource HeaderText}"/>
-                        <TextBox Text="{Binding Credit, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
-              ToolTip="ادخل المبلغ المستلم"
-              Style="{StaticResource InputControl}"/>
-                    </StackPanel>
-
                     <!-- Notes -->
-                    <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="3" Margin="0,10,0,0">
+                    <StackPanel Grid.Column="2" Grid.Row="2">
                         <TextBlock Text="الملاحظات" Style="{StaticResource HeaderText}"/>
-                        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" 
-              ToolTip="ادخل أي ملاحظات"
-              Style="{StaticResource InputControl}"
-              Height="80"
-              TextWrapping="Wrap"
-              AcceptsReturn="True"
-              VerticalScrollBarVisibility="Auto"/>
+                        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="اكتب ملاحظات إن وجدت"
+                                 Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
                     <!-- Buttons -->
-                    <StackPanel Grid.Column="2" Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Left">
+                    <StackPanel Grid.Column="2" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Left">
                         <Button Content="صرف نقدية" 
                                 Command="{Binding AddDisbursementCommand}" 
                                 Style="{StaticResource PrimaryButton}"
-                                Background="#4CAF50"
-                                Margin="0,0,10,0"/>
-
-                        <Button Content="كشف حساب" 
-                                Command="{Binding ViewStatementCommand}" 
-                                Style="{StaticResource PrimaryButton}"
-                                Background="#FF9800"/>
+                                Background="#4CAF50"/>
                     </StackPanel>
                 </Grid>
             </StackPanel>
         </Border>
 
-        <!-- Summary Table Section -->
+        <!-- DataGrid Section -->
         <Border Grid.Row="1" 
                 Style="{StaticResource CardStyle}">
 
@@ -178,25 +156,65 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- Header -->
-                <StackPanel Grid.Row="0">
+                <StackPanel Grid.Row="0" Orientation="Vertical">
                     <TextBlock Text="ملخص المعاملات" 
                                Margin="0,10,10,0"
                                FontSize="20" 
                                FontWeight="Bold" 
                                HorizontalAlignment="Center"
                                Foreground="#2196F3"/>
-                </StackPanel>
 
-                <!-- Search Box -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch">
-                    <Grid Width="245" Height="35" Margin="0,0,15,10">
-                 
+                    <!-- Search Box -->
+                    <Border Background="White" 
+                CornerRadius="8" 
+                Padding="10" 
+                Margin="0,10,0,10"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1">
+                        <Grid Width="250" Height="35" HorizontalAlignment="Left">
+                            <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             Padding="15,5,35,5"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Center"
+                             FontSize="14"
+                             FontFamily="Segoe UI"
+                             Foreground="#333333"
+                             Background="White"
+                             BorderBrush="#E0E0E0"
+                             BorderThickness="1">
+                                <TextBox.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="8"/>
+                                    </Style>
+                                </TextBox.Resources>
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="BorderBrush" Value="#2196F3"/>
+                                            </Trigger>
+                                            <Trigger Property="IsFocused" Value="True">
+                                                <Setter Property="BorderBrush" Value="#2196F3"/>
+                                                <Setter Property="BorderThickness" Value="1.5"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
 
-                    </Grid>
+                            <!-- Search Icon -->
+                            <Path Data="M15.5,14h-0.79l-0.28,-0.27c0.98,-1.14 1.57,-2.62 1.57,-4.23 0,-3.59 -2.91,-6.5 -6.5,-6.5s-6.5,2.91 -6.5,6.5 2.91,6.5 6.5,6.5c1.61,0 3.09,-0.59 4.23,-1.57l0.27,0.28v0.79l5,4.99 1.49,-1.49 -4.99,-5zm-6,0c-2.49,0 -4.5,-2.01 -4.5,-4.5s2.01,-4.5 4.5,-4.5 4.5,2.01 4.5,4.5 -2.01,4.5 -4.5,4.5z"
+                          Fill="#9E9E9E"
+                          Width="16"
+                          Height="16"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Center"
+                          Margin="0,0,15,0"/>
+                        </Grid>
+                    </Border>
                 </StackPanel>
 
                 <!-- Transactions DataGrid -->
@@ -226,25 +244,18 @@
                     </DataGrid.ColumnHeaderStyle>
 
                     <DataGrid.Columns>
-     
                         <DataGridTextColumn Header="اسم الجهة" 
                                             Binding="{Binding EntityName}" 
                                             Width="*"/>
                         <DataGridTextColumn Header="التاريخ" 
                                             Binding="{Binding TransactionDate, StringFormat=d}" 
                                             Width="*"/>
-                        <DataGridTextColumn Header="له كام" 
-                                            Binding="{Binding Credit, StringFormat=N2}" 
+                        <DataGridTextColumn Header="المبلغ" 
+                                            Binding="{Binding Amount, StringFormat=N2}" 
                                             Width="*"/>
-                        <DataGridTextColumn Header="عليه كام" 
-                                            Binding="{Binding Debit, StringFormat=N2}" 
-                                            Width="*"/>
-                        <DataGridTextColumn Header="الصافي" 
-                                            Binding="{Binding Balance,StringFormat=N2}" 
-                                            Width="*"/>
-                        <DataGridTextColumn Header="ملاحظات" 
+                        <DataGridTextColumn Header="الملاحظات" 
                                             Binding="{Binding Notes}" 
-                                            Width="*"/>
+                                            Width="2*"/>
                         <DataGridTemplateColumn Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -281,40 +292,6 @@
                         </Style>
                     </DataGrid.CellStyle>
                 </DataGrid>
-
-                <!-- Summary Totals -->
-                <Border Grid.Row="2" 
-                        Background="#F5F5F5" 
-                        Padding="10" 
-                        Margin="10,0,10,10"
-                        CornerRadius="0,0,8,8"
-                        BorderThickness="0,1,0,0"
-                        BorderBrush="#E0E0E0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Text="إجمالي له كام: " FontWeight="Bold" Margin="0,0,5,0"/>
-                            <TextBlock Text="{Binding TotalCredit, StringFormat=N2}" Foreground="#4CAF50" FontWeight="Bold"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Text="إجمالي عليه كام: " FontWeight="Bold" Margin="0,0,5,0"/>
-                            <TextBlock Text="{Binding TotalDebit, StringFormat=N2}" Foreground="#F44336" FontWeight="Bold"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Text="الصافي: " FontWeight="Bold" Margin="0,0,5,0"/>
-                            <TextBlock Text="{Binding NetBalance,StringFormat=N2}" 
-                                       Foreground="{Binding NetBalanceColor}" 
-                                       FontWeight="Bold"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
             </Grid>
         </Border>
     </Grid>

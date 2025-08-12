@@ -55,18 +55,16 @@ namespace Fruittrack
 
                     // Create DataTable with actual database columns
                     var dataTable = new System.Data.DataTable();
-                    dataTable.Columns.Add("اسم الشخص", typeof(string));
+                    dataTable.Columns.Add("الجهة", typeof(string));
                     dataTable.Columns.Add("المبلغ المستلم", typeof(decimal));
                     dataTable.Columns.Add("التاريخ", typeof(string));
-                    dataTable.Columns.Add("المبلغ المسدد", typeof(decimal));
-                    dataTable.Columns.Add("المتبقي", typeof(decimal));
+                    dataTable.Columns.Add("ملاحظات", typeof(string));
 
                     // Get filtered data from database (respects current filters)
                     var filteredTransactions = viewModel.FilteredTransactions;
                     
                     // Check if there are any filters applied
-                    bool hasFilters = !string.IsNullOrWhiteSpace(viewModel.SearchText) || 
-                                    viewModel.SelectedFilter != "الكل";
+                    bool hasFilters = !string.IsNullOrWhiteSpace(viewModel.SearchText);
                     
                     // Add filter information to the export
                     string sheetName = "صفحة استلام نقدية";
@@ -78,11 +76,10 @@ namespace Fruittrack
                     foreach (CashReceiptTransaction transaction in filteredTransactions)
                     {
                         var row = dataTable.NewRow();
-                        row["اسم الشخص"] = transaction.SourceName;
+                        row["الجهة"] = transaction.SourceName;
                         row["المبلغ المستلم"] = transaction.ReceivedAmount;
                         row["التاريخ"] = transaction.Date.ToString("dd/MM/yyyy");
-                        row["المبلغ المسدد"] = transaction.PaidBackAmount;
-                        row["المتبقي"] = transaction.RemainingAmount;
+                        row["ملاحظات"] = transaction.Notes;
                         dataTable.Rows.Add(row);
                     }
 
@@ -93,8 +90,6 @@ namespace Fruittrack
                         summaryMessage += $"\nمع تطبيق الفلاتر الحالية:";
                         if (!string.IsNullOrWhiteSpace(viewModel.SearchText))
                             summaryMessage += $"\n- البحث: {viewModel.SearchText}";
-                        if (viewModel.SelectedFilter != "الكل")
-                            summaryMessage += $"\n- نوع المعاملة: {viewModel.SelectedFilter}";
                     }
                     else
                     {

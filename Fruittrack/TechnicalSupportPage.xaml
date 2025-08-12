@@ -47,14 +47,14 @@
             <!-- Description -->
             <TextBlock TextAlignment="Center" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,15">
                 This application was developed by 
-                  <Hyperlink NavigateUri="https://github.com/hasan-elbadry" 
+                  <Hyperlink NavigateUri="" 
             RequestNavigate="Hyperlink_RequestNavigate" 
             Cursor="Hand">
       Hasan Ayman El-Badry
   </Hyperlink>.
               
                 and
-                <Hyperlink NavigateUri="https://github.com/MostafaMedhat19" 
+                <Hyperlink NavigateUri="" 
             RequestNavigate="Hyperlink_RequestNavigate" 
             Cursor="Hand">
       Mostafa Medhat Mostafa
@@ -65,8 +65,8 @@
             <!-- Contact Methods -->
             <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,10">
                 <StackPanel Margin="10,5,0,0">
-                    <TextBlock FontSize="13" Margin="0,3"><Run FontSize="15" Text="📞"/><Run Text=" "/><Run Text="Phone:"/><Run Text=" "/><Run Text="+20 1124370080"/></TextBlock>
-                    <TextBlock FontSize="13" Margin="0,3"><Run FontSize="15" Text="💬"/><Run Text=" "/><Run Text="WhatsApp:"/><Run Text=" "/><Run Text="+20 1101099035"/><LineBreak/><Run/></TextBlock>
+                    <TextBlock FontSize="13" Margin="0,3"><Run FontSize="15" Text="📞"/><Run Text=" "/><Run Text="Phone:"/></TextBlock>
+                    <TextBlock FontSize="13" Margin="0,3"><Run FontSize="15" Text="💬"/><Run Text=" "/><Run Text="WhatsApp:"/><Run Text=" "/></TextBlock>
                 </StackPanel>
             </Border>
 

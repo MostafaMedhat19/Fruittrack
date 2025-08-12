@@ -88,6 +88,14 @@ namespace Fruittrack
             public string Notes { get => _notes; set { _notes = value; OnPropertyChanged(nameof(Notes)); } }
             private string _notes;
 
+            // New: Transport contractor name (cash disbursement party)
+            public string TransportContractorName { get => _transportContractorName; set { _transportContractorName = value; OnPropertyChanged(nameof(TransportContractorName)); } }
+            private string _transportContractorName = string.Empty;
+
+            // Farm Special Data Number (for cash disbursement validation)
+            public string FarmSpecialDataNumber { get => _farmSpecialDataNumber; set { _farmSpecialDataNumber = value; OnPropertyChanged(nameof(FarmSpecialDataNumber)); ValidateFarmSpecialData(); } }
+            private string _farmSpecialDataNumber = string.Empty;
+
             // Error message properties
             public string TruckNumberError { get => _truckNumberError; set { _truckNumberError = value; OnPropertyChanged(nameof(TruckNumberError)); OnPropertyChanged(nameof(HasTruckNumberError)); } }
             private string _truckNumberError;
@@ -112,6 +120,10 @@ namespace Fruittrack
             public string FarmPriceError { get => _farmPriceError; set { _farmPriceError = value; OnPropertyChanged(nameof(FarmPriceError)); OnPropertyChanged(nameof(HasFarmPriceError)); } }
             private string _farmPriceError;
             public bool HasFarmPriceError => !string.IsNullOrEmpty(FarmPriceError);
+
+            public string FarmSpecialDataError { get => _farmSpecialDataError; set { _farmSpecialDataError = value; OnPropertyChanged(nameof(FarmSpecialDataError)); OnPropertyChanged(nameof(HasFarmSpecialDataError)); } }
+            private string _farmSpecialDataError;
+            public bool HasFarmSpecialDataError => !string.IsNullOrEmpty(FarmSpecialDataError);
 
             public string FactoryNameError { get => _factoryNameError; set { _factoryNameError = value; OnPropertyChanged(nameof(FactoryNameError)); OnPropertyChanged(nameof(HasFactoryNameError)); } }
             private string _factoryNameError;
@@ -253,6 +265,12 @@ namespace Fruittrack
                     FarmPriceError = "يجب أن يكون السعر أكبر من صفر";
                 else
                     FarmPriceError = "";
+            }
+
+            private void ValidateFarmSpecialData()
+            {
+                // No validation - clear any errors
+                FarmSpecialDataError = "";
             }
 
             private void ValidateFactoryName()
@@ -400,6 +418,48 @@ namespace Fruittrack
             }
         }
 
+
+
+        // Event handler for numeric-only input validation
+        private void NumericOnly_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Allow only digits and decimal point
+            bool isValidInput = true;
+            
+            foreach (char c in e.Text)
+            {
+                if (!char.IsDigit(c) && c != '.' && c != ',')
+                {
+                    isValidInput = false;
+                    break;
+                }
+            }
+
+            e.Handled = !isValidInput;
+        }
+
+        // Prevent paste operations that contain non-numeric characters
+        private void CommandManager_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (e.Command == ApplicationCommands.Paste)
+            {
+                var textBox = sender as TextBox;
+                if (textBox != null)
+                {
+                    string clipboardText = Clipboard.GetText();
+                    if (!string.IsNullOrEmpty(clipboardText))
+                    {
+                        // Check if clipboard contains only numeric characters
+                        bool isNumeric = decimal.TryParse(clipboardText, out _);
+                        if (!isNumeric)
+                        {
+                            e.Handled = true; // Cancel paste operation
+                        }
+                    }
+                }
+            }
+        }
+
         private void FactoryName_LostFocus(object sender, RoutedEventArgs e)
         {
             var comboBox = sender as ComboBox;
@@ -493,6 +553,52 @@ namespace Fruittrack
 
                 context.SupplyEntries.Add(supplyEntry);
                 context.SaveChanges();
+
+                // Auto-create a cash disbursement for the Farm ONLY if special data number is valid
+                if (selectedFarm != null)
+                {
+                    decimal farmTotalAmount = 0m;
+                    if (ViewModel.FarmTotal.HasValue)
+                    {
+                        farmTotalAmount = ViewModel.FarmTotal.Value;
+                    }
+                    else if (ViewModel.FarmAllowedWeight.HasValue && ViewModel.FarmPrice.HasValue)
+                    {
+                        farmTotalAmount = ViewModel.FarmAllowedWeight.Value * ViewModel.FarmPrice.Value;
+                    }
+
+                    // Only create cash disbursement if cash disbursement amount is provided
+                    if (!string.IsNullOrWhiteSpace(ViewModel.FarmSpecialDataNumber))
+                    {
+                        // Parse the cash disbursement amount and use it directly
+                        decimal cashDisbursementAmount = 0m;
+                        if (decimal.TryParse(ViewModel.FarmSpecialDataNumber, out cashDisbursementAmount) && cashDisbursementAmount > 0)
+                        {
+                            // Create cash disbursement with the specified amount only
+                            var disbFarm = new CashDisbursementTransaction
+                            {
+                                EntityName = selectedFarm.FarmName,
+                                TransactionDate = ViewModel.Date ?? DateTime.Today,
+                                Amount = cashDisbursementAmount
+                            };
+                            context.CashDisbursementTransactions.Add(disbFarm);
+                            context.SaveChanges();
+                        }
+                    }
+                }
+
+                // Keep: optional auto disbursement for transport contractor (if provided)
+                if (!string.IsNullOrWhiteSpace(ViewModel.TransportContractorName) && ViewModel.TransportPrice.HasValue && ViewModel.TransportPrice.Value > 0)
+                {
+                    var disb = new CashDisbursementTransaction
+                    {
+                        EntityName = ViewModel.TransportContractorName.Trim(),
+                        TransactionDate = ViewModel.Date ?? DateTime.Today,
+                        Amount = ViewModel.TransportPrice.Value
+                    };
+                    context.CashDisbursementTransactions.Add(disb);
+                    context.SaveChanges();
+                }
                 
                 MessageBox.Show("تم حفظ بيانات التوريد بنجاح!", "نجاح", MessageBoxButton.OK, MessageBoxImage.Information);
                 ClearForm();
@@ -531,6 +637,7 @@ namespace Fruittrack
             ViewModel.FactoryTotal = null;
             ViewModel.ProfitMargin = null;
             ViewModel.Notes = string.Empty;
+            ViewModel.FarmSpecialDataNumber = string.Empty;
 
             ViewModel.TruckNumberError = string.Empty;
             ViewModel.TransportPriceError = string.Empty;
@@ -538,6 +645,7 @@ namespace Fruittrack
             ViewModel.FarmWeightError = string.Empty;
             ViewModel.FarmDiscountError = string.Empty;
             ViewModel.FarmPriceError = string.Empty;
+            ViewModel.FarmSpecialDataError = string.Empty;
             ViewModel.FactoryNameError = string.Empty;
             ViewModel.FactoryWeightError = string.Empty;
             ViewModel.FactoryDiscountError = string.Empty;

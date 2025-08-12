@@ -150,8 +150,15 @@
                                Margin="0,5,0,0"/>
                 </StackPanel>
 
-                <!-- Export Buttons -->
+                <!-- Export Buttons and Filter -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,10,0">
+                        <TextBlock Text="الشخص:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <ComboBox Width="200"
+                                  ItemsSource="{Binding AllEntityNames}"
+                                  SelectedItem="{Binding SelectedEntityFilter, Mode=TwoWay}"
+                                  IsEditable="True"/>
+                    </StackPanel>
                     <Button Content="طباعة" 
                             Click="PrintButton_Click"
                             Style="{StaticResource ExportButtonStyle}"
@@ -176,53 +183,41 @@
 
         <!-- Summary Cards Section -->
         <Grid Grid.Row="1" Margin="0,0,0,20">
-                <Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Total Credit Card -->
+            <!-- Total Received -->
             <Border Grid.Column="0" Style="{StaticResource SummaryCardStyle}">
                 <StackPanel>
-                    <TextBlock Text="{Binding FormattedTotalCredit}" 
+                    <TextBlock Text="{Binding FormattedTotalReceivedAll}" 
                                Style="{StaticResource SummaryValueStyle}"
                                Foreground="#4CAF50"/>
-                    <TextBlock Text="إجمالي المبالغ اللي له" 
+                    <TextBlock Text="إجمالي المبلغ المستلم" 
                                Style="{StaticResource SummaryLabelStyle}"/>
                 </StackPanel>
             </Border>
 
-            <!-- Total Debit Card -->
+            <!-- Total Disbursed -->
             <Border Grid.Column="1" Style="{StaticResource SummaryCardStyle}">
                 <StackPanel>
-                    <TextBlock Text="{Binding FormattedTotalDebit}" 
+                    <TextBlock Text="{Binding FormattedTotalDisbursedAll}" 
                                Style="{StaticResource SummaryValueStyle}"
                                Foreground="#F44336"/>
-                    <TextBlock Text="إجمالي المبالغ اللي عليه" 
+                    <TextBlock Text="إجمالي المبلغ المصروف" 
                                Style="{StaticResource SummaryLabelStyle}"/>
                 </StackPanel>
             </Border>
 
-            <!-- Final Balance Card -->
+            <!-- Treasury Net -->
             <Border Grid.Column="2" Style="{StaticResource SummaryCardStyle}">
                 <StackPanel>
-                    <TextBlock Text="{Binding FormattedFinalBalance}" 
+                    <TextBlock Text="{Binding FormattedTreasuryNet}" 
                                Style="{StaticResource SummaryValueStyle}"
-                               Foreground="{Binding FinalBalanceColor}"/>
-                    <TextBlock Text="الصافي النهائي" 
-                               Style="{StaticResource SummaryLabelStyle}"/>
-                </StackPanel>
-        </Border>
-
-            <!-- Remaining Amount Card -->
-            <Border Grid.Column="3" Style="{StaticResource SummaryCardStyle}">
-                <StackPanel>
-                    <TextBlock Text="{Binding FormattedTotalRemainingAmount}" 
-                               Style="{StaticResource SummaryValueStyle}"
-                               Foreground="#FF9800"/>
-                    <TextBlock Text="إجمالي المتبقي عليه سداده" 
+                               Foreground="#2196F3"/>
+                    <TextBlock Text="صافي الخزنة" 
                                Style="{StaticResource SummaryLabelStyle}"/>
                 </StackPanel>
             </Border>
@@ -246,36 +241,24 @@
                       Margin="20">
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="التاريخ" 
-                                        Binding="{Binding TransactionDate}" 
+                    <DataGridTextColumn Header="التاريخ" 
+                                        Binding="{Binding TransactionDate, StringFormat=d}" 
                         Width="120"/>
                         <DataGridTextColumn Header="نوع المعاملة" 
                         Binding="{Binding TransactionType}" 
                         Width="120"/>
-                    <DataGridTextColumn Header="المصدر / الكيان" 
-                                        Binding="{Binding DataContext.EntityName, RelativeSource={RelativeSource AncestorType=Page}}"     
+                    <DataGridTextColumn Header="الشخص / الجهة" 
+                                        Binding="{Binding PartyName}"     
                                         Width="150"/>
                         <DataGridTextColumn Header="الملاحظات" 
                         Binding="{Binding Notes}" 
                         Width="*"/>
-                    <DataGridTextColumn Header="المبلغ اللي له" 
-                                        Binding="{Binding FormattedCredit}" 
-                                        Width="130"/>
-                    <DataGridTextColumn Header="المبلغ اللي عليه" 
-                                        Binding="{Binding FormattedDebit}" 
-                                        Width="130"/>
-                    <DataGridTextColumn Header=" الصافي" 
-                        Binding="{Binding FormattedBalance}" 
-                        Width="130"/>
                     <DataGridTextColumn Header="المبلغ المستلم" 
                       Binding="{Binding FormattedReceivedAmount}" 
                       Width="130"/>
-                    <DataGridTextColumn Header="المبلغ المسدد" 
-                      Binding="{Binding FormattedPaidBackAmount}" 
+                    <DataGridTextColumn Header="المبلغ المصروف" 
+                      Binding="{Binding FormattedDisbursedAmount}" 
                       Width="130"/>
-                    <DataGridTextColumn Header="المتبقي عليه سداده" 
-                                        Binding="{Binding FormattedRemainingAmount}" 
-                                        Width="140"/>
                
                     </DataGrid.Columns>
                 </DataGrid>

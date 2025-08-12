@@ -20,14 +20,20 @@ namespace Fruittrack.Models
     public class TransactionDetail
     {
         public DateTime TransactionDate { get; set; }
+        public string PartyName { get; set; }
         public string TransactionType { get; set; }
         public string Notes { get; set; }
         public decimal Credit { get; set; }
         public decimal Debit { get; set; }
         public decimal Balance { get; set; }
 
+        // Raw numeric values for totals (new)
+        public decimal ReceivedAmountValue { get; set; }
+        public decimal DisbursedAmountValue { get; set; }
+
         // These are for display only
         public string FormattedReceivedAmount { get; set; }
+        public string FormattedDisbursedAmount { get; set; }
         public string FormattedPaidBackAmount { get; set; }
         public string FormattedRemainingAmount { get; set; }
         public string FormattedCredit { get; set; }

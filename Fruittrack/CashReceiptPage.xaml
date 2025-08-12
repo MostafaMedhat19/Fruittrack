@@ -6,7 +6,7 @@
       mc:Ignorable="d"
       FlowDirection="RightToLeft"
       FontFamily="Segoe UI"
-      Title="صفحة استلام نقدية"
+      Title="استلام نقدية"
       Background="#F5F5F5">
 
     <Grid Margin="15">
@@ -67,7 +67,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     
-                    <TextBlock Grid.Column="0" Text="صفحة استلام نقدية" 
+                    <TextBlock Grid.Column="0" Text="استلام نقدية" 
                                FontSize="22" 
                                FontWeight="Bold"
                                HorizontalAlignment="Center"
@@ -109,13 +109,13 @@
 
                     <!-- Source Name -->
                     <StackPanel Grid.Column="0" Grid.Row="0">
-                        <TextBlock Text="اسم الشخص اللي استلمت منه" Style="{StaticResource HeaderText}"/>
+                        <TextBlock Text="الجهة" Style="{StaticResource HeaderText}"/>
                         <ComboBox x:Name="cmbSourceName"
                                  ItemsSource="{Binding SourceNames}"
                                  SelectedItem="{Binding SelectedSourceName, Mode=TwoWay}"
                                  IsEditable="True"
                                  Text="{Binding SourceName, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="اختر أو اكتب اسم الشخص"
+                                 ToolTip="اختر أو اكتب اسم الجهة"
                                  Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
@@ -134,21 +134,11 @@
                                    Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
-                    <!-- Paid Back Amount -->
+                    <!-- Notes -->
                     <StackPanel Grid.Column="2" Grid.Row="2">
-                        <TextBlock Text="المبلغ المسدد" Style="{StaticResource HeaderText}"/>
-                        <TextBox Text="{Binding PaidBackAmount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
-                                 ToolTip="ادخل المبلغ المسدد"
-                                 Style="{StaticResource InputControl}"/>
-                    </StackPanel>
-
-                    <!-- Remaining Amount -->
-                    <StackPanel Grid.Column="0" Grid.Row="4">
-                        <TextBlock Text="المتبقي عليه سداده" Style="{StaticResource HeaderText}"/>
-                        <TextBox Text="{Binding RemainingAmount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, Mode=OneWay}" 
-                                 ToolTip="المتبقي عليه سداده"
-                                 IsReadOnly="True"
-                                 Background="#F8F9FA"
+                        <TextBlock Text="ملاحظات" Style="{StaticResource HeaderText}"/>
+                        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" 
+                                 ToolTip="ادخل ملاحظات"
                                  Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
@@ -188,14 +178,13 @@
                    Foreground="#2196F3"
                    FontFamily="Segoe UI SemiBold"/>
 
-                    <!-- Search and Filter Bar -->
+                    <!-- Search and Summary Bar -->
                     <Border Background="White" 
                 CornerRadius="8" 
                 Padding="10" 
                 Margin="0,10,0,10"
                 BorderBrush="#E0E0E0"
-                BorderThickness="1"
-                >
+                BorderThickness="1">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                             <Grid Margin="10">
                                 <Grid.ColumnDefinitions>
@@ -204,15 +193,15 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0" 
-               Text="اجمالي المتبقي سداده : " 
+               Text="إجمالي المبلغ المستلم منه: " 
                FontSize="16"
                VerticalAlignment="Center"/>
 
                                 <TextBlock Grid.Column="1" 
-               Text="{Binding TotalRemainingAmount}" 
+               Text="{Binding TotalReceivedAmount, StringFormat=N2}" 
                FontSize="16"
                FontWeight="Bold"
-               Foreground="Blue"
+               Foreground="Green"
                HorizontalAlignment="Right"
                VerticalAlignment="Center"/>
                             </Grid>
@@ -258,28 +247,6 @@
                           VerticalAlignment="Center"
                           Margin="0,0,15,0"/>
                             </Grid>
-
-                            <!-- Filter ComboBox -->
-                            <ComboBox ItemsSource="{Binding FilterOptions}" 
-                          SelectedItem="{Binding SelectedFilter, Mode=TwoWay}"
-                          Width="200" 
-                          Height="30"
-                          VerticalAlignment="Center"
-                          FontSize="14"
-                          FontFamily="Segoe UI"
-                          Foreground="#333333"
-                          BorderBrush="#E0E0E0"
-                          BorderThickness="1"
-                           
-                          >
-                                <ComboBox.ItemContainerStyle>
-                                    <Style TargetType="ComboBoxItem">
-                                        <Setter Property="Padding" Value="10"/>
-                                        <Setter Property="FontFamily" Value="Segoe UI"/>
-                                        <Setter Property="FontSize" Value="14"/>
-                                    </Style>
-                                </ComboBox.ItemContainerStyle>
-                            </ComboBox>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -291,8 +258,7 @@
             Margin="0,10,0,0"
             BorderBrush="#E0E0E0"
             BorderThickness="1"
-            Padding="0"
-            >
+            Padding="0">
                     <DataGrid ItemsSource="{Binding FilteredTransactions}"
                   SelectedItem="{Binding SelectedTransaction}"
                   AutoGenerateColumns="False"
@@ -324,57 +290,73 @@
                         </DataGrid.ColumnHeaderStyle>
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="اسم الشخص" 
+                            <DataGridTextColumn Header="الجهة" 
                                     Binding="{Binding SourceName}" 
-                                    Width="*"
-                                   />
+                                    Width="*"/>
 
                             <DataGridTextColumn Header="المبلغ المستلم" 
                                     Binding="{Binding ReceivedAmount, StringFormat=N2}" 
-                                    Width="*"
-                                   />
+                                    Width="*"/>
 
                             <DataGridTextColumn Header="التاريخ" 
                                     Binding="{Binding Date, StringFormat=d}" 
-                                    Width="*"
-                                   />
+                                    Width="*"/>
 
-                            <DataGridTextColumn Header="المبلغ المسدد" 
-                                    Binding="{Binding PaidBackAmount, StringFormat=N2}" 
-                                    Width="*"
-                                  />
+                            <DataGridTextColumn Header="ملاحظات" 
+                                    Binding="{Binding Notes}" 
+                                    Width="*"/>
 
-                            <DataGridTextColumn Header="المتبقي عليه سداده" 
-                                    Binding="{Binding RemainingAmount, StringFormat=N2}" 
-                                    Width="*"
-                                   />
-
-                            <DataGridTemplateColumn Width="120">
+                            <DataGridTemplateColumn Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="حذف" 
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="تعديل" 
+                                    Command="{Binding DataContext.EditTransactionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}"
+                                    Background="#2196F3"
+                                    Foreground="White"
+                                    Padding="8,5"
+                                    Margin="2,0"
+                                    FontWeight="SemiBold"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    FontFamily="Segoe UI"
+                                    ToolTip="تعديل المعاملة">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Background" Value="#2196F3"/>
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="#1976D2"/>
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                            <Button Content="حذف" 
                                     Command="{Binding DataContext.DeleteTransactionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                     CommandParameter="{Binding}"
                                     Background="#F44336"
                                     Foreground="White"
-                                    Padding="10,5"
-                                    Margin="5,0"
+                                    Padding="8,5"
+                                    Margin="2,0"
                                     FontWeight="SemiBold"
                                     BorderThickness="0"
                                     Cursor="Hand"
                                     FontFamily="Segoe UI"
                                     ToolTip="حذف المعاملة">
-                                            <Button.Style>
-                                                <Style TargetType="Button">
-                                                    <Setter Property="Background" Value="#F44336"/>
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Background" Value="#D32F2F"/>
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Button.Style>
-                                        </Button>
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Background" Value="#F44336"/>
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="#D32F2F"/>
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

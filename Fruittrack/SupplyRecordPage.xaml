@@ -523,7 +523,7 @@
                                        SelectedDateChanged="CalendarControl_SelectedDateChanged"/>
                         </StackPanel>
 
-                        <!-- Truck Number -->
+                        <!-- Truck Number and Contractor Name -->
                         <StackPanel Grid.Column="1" Margin="0,0,20,0">
                             <TextBlock Text="رقم العربية"/>
                             <TextBox x:Name="txtTruckNumber" 
@@ -542,6 +542,11 @@
                             <TextBlock Text="{Binding TruckNumberError}" 
                                        Style="{StaticResource ErrorMessageStyle}"
                                        Visibility="{Binding HasTruckNumberError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
+
+                            <TextBlock Text="اسم مقاول العربيات"/>
+                            <TextBox x:Name="txtTransportContractor" 
+                                     Text="{Binding TransportContractorName, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource ModernTextBox}"/>
                         </StackPanel>
 
                         <!-- Transport Price -->
@@ -589,6 +594,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <!-- Farm Name -->
@@ -614,6 +620,8 @@
                                            Style="{StaticResource ErrorMessageStyle}"
                                            Visibility="{Binding HasFarmNameError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
                             </StackPanel>
+
+
 
                             <!-- Farm Weight -->
                             <StackPanel Grid.Row="1">
@@ -702,6 +710,17 @@
                                 <TextBlock Text="{Binding FarmPriceError}" 
                                            Style="{StaticResource ErrorMessageStyle}"
                                            Visibility="{Binding HasFarmPriceError, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"/>
+                            </StackPanel>
+
+                            <!-- Cash Disbursement Amount -->
+                            <StackPanel Grid.Row="5">
+                                <TextBlock Text="مبلغ صرف نقدية" FontWeight="SemiBold"/>
+                                <TextBox x:Name="txtFarmSpecialDataNumber" 
+                                         Text="{Binding FarmSpecialDataNumber, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource ModernTextBox}"
+                                         Margin="0,5,0,0"
+                                         PreviewTextInput="NumericOnly_PreviewTextInput"
+                                         CommandManager.PreviewExecuted="CommandManager_PreviewExecuted"/>
                             </StackPanel>
                         </Grid>
                     </GroupBox>

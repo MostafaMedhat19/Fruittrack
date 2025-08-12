@@ -7,7 +7,7 @@ namespace Fruittrack.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "اسم الشخص مطلوب")]
+        [Required(ErrorMessage = "اسم الجهة مطلوب")]
         public string SourceName { get; set; }
 
         [Required(ErrorMessage = "المبلغ المستلم مطلوب")]
@@ -17,10 +17,6 @@ namespace Fruittrack.Models
         [Required(ErrorMessage = "التاريخ مطلوب")]
         public DateTime Date { get; set; }
 
-        [Range(0, double.MaxValue, ErrorMessage = "المبلغ المسدد لا يمكن أن يكون سالباً")]
-        public decimal PaidBackAmount { get; set; }
-
-        [Range(0, double.MaxValue, ErrorMessage = "المتبقي لا يمكن أن يكون سالباً")]
-        public decimal RemainingAmount { get; set; }
+        public string Notes { get; set; } = string.Empty;
     }
 } 

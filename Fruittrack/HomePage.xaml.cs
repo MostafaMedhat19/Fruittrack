@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using Fruittrack.Models;
 
 namespace Fruittrack
 {
@@ -73,6 +74,23 @@ namespace Fruittrack
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(new CashDisbursementPage());
+        }
+
+        private void Button_Click_AccountStatement(object sender, RoutedEventArgs e)
+        {
+            var dbContext = ((App)Application.Current).DbContext;
+            var statement = new AccountStatement { EntityName = string.Empty };
+            NavigationService.Navigate(new AccountStatementPage(statement, dbContext));
+        }
+
+        private void Button_Click_FarmReport(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new FarmReportPage());
+        }
+
+        private void Button_Click_FactoryReport(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new FactoryReportPage());
         }
         private void LicenseInfoHyperlink_Click(object sender, RoutedEventArgs e)
         {

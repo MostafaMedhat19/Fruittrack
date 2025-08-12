@@ -14,7 +14,7 @@ namespace Fruittrack.ViewModels
     {
         private readonly FruitTrackDbContext _dbContext;
         private CashReceiptTransaction _selectedTransaction;
-        private string _searchText;
+        private string _searchText = string.Empty;
         private CollectionViewSource _transactionsViewSource;
 
         public CashReceiptPageViewModel(FruitTrackDbContext dbContext)
@@ -28,12 +28,14 @@ namespace Fruittrack.ViewModels
             _transactionsViewSource.Source = Transactions;
             _transactionsViewSource.Filter += ApplyFilter;
             LoadSourceNames();
+            
             // Initialize commands
             AddTransactionCommand = new RelayCommand(AddTransaction, CanAddTransaction);
             UpdateTransactionCommand = new RelayCommand(UpdateTransaction, CanUpdateTransaction);
             EditTransactionCommand = new RelayCommand<CashReceiptTransaction>(EditTransaction);
             DeleteTransactionCommand = new RelayCommand<CashReceiptTransaction>(DeleteTransaction);
         }
+
         private async void LoadSourceNames()
         {
             // تجيب الأسماء الفريدة من قاعدة البيانات
@@ -45,7 +47,7 @@ namespace Fruittrack.ViewModels
             SourceNames = new ObservableCollection<string>(names);
         }
 
-        private ObservableCollection<string> _sourceNames;
+        private ObservableCollection<string> _sourceNames = new();
         public ObservableCollection<string> SourceNames
         {
             get => _sourceNames;
@@ -55,8 +57,9 @@ namespace Fruittrack.ViewModels
                 OnPropertyChanged(nameof(SourceNames));
             }
         }
+
         // Form fields
-        private string _sourceName;
+        private string _sourceName = string.Empty;
         public string SourceName
         {
             get => _sourceName;
@@ -67,7 +70,7 @@ namespace Fruittrack.ViewModels
         public decimal ReceivedAmount
         {
             get => _receivedAmount;
-            set { _receivedAmount = value; OnPropertyChanged(nameof(ReceivedAmount)); OnPropertyChanged(nameof(RemainingAmount)); }
+            set { _receivedAmount = value; OnPropertyChanged(nameof(ReceivedAmount)); }
         }
 
         private DateTime _date = DateTime.Now;
@@ -77,23 +80,25 @@ namespace Fruittrack.ViewModels
             set { _date = value; OnPropertyChanged(nameof(Date)); }
         }
 
-        private decimal _paidBackAmount;
-        public decimal PaidBackAmount
+        private string _notes = string.Empty;
+        public string Notes
         {
-            get => _paidBackAmount;
-            set { _paidBackAmount = value; OnPropertyChanged(nameof(PaidBackAmount)); OnPropertyChanged(nameof(RemainingAmount)); }
+            get => _notes;
+            set { _notes = value; OnPropertyChanged(nameof(Notes)); }
         }
-        private string _selectedFilter = "الكل";
-        public string SelectedFilter
+
+        private string _selectedSourceName = string.Empty;
+        public string SelectedSourceName
         {
-            get => _selectedFilter;
+            get => _selectedSourceName;
             set
             {
-                _selectedFilter = value;
-                OnPropertyChanged(nameof(SelectedFilter));
-                _transactionsViewSource.View.Refresh(); // Refresh filter when selection changes
+                _selectedSourceName = value;
+                SourceName = value;
+                OnPropertyChanged(nameof(SelectedSourceName));
             }
         }
+
         public string SearchText
         {
             get => _searchText;
@@ -102,57 +107,35 @@ namespace Fruittrack.ViewModels
                 _searchText = value;
                 OnPropertyChanged(nameof(SearchText));
                 _transactionsViewSource.View.Refresh(); // Refresh filter when search text changes
+                OnPropertyChanged(nameof(TotalReceivedAmount));
             }
         }
-        public decimal TotalRemainingAmount
+
+        public decimal TotalReceivedAmount
         {
-            get => Transactions?.Sum(t => t.RemainingAmount) ?? 0;
+            get
+            {
+                var view = _transactionsViewSource?.View;
+                if (view == null) return 0;
+
+                decimal total = 0;
+                foreach (var item in view)
+                {
+                    if (item is CashReceiptTransaction t)
+                    {
+                        total += t.ReceivedAmount;
+                    }
+                }
+                return total;
+            }
         }
 
-        public decimal RemainingAmount => ReceivedAmount - PaidBackAmount;
         public ICollectionView FilteredTransactions => _transactionsViewSource.View;
+        
         // DataGrid collection
         public ObservableCollection<CashReceiptTransaction> Transactions { get; set; }
 
         // Selected transaction for editing
-        // Add these properties to your ViewModel
-       
-
-        public ObservableCollection<string> FilterOptions { get; } = new ObservableCollection<string>
-        {
-            "الكل",
-            "المعاملات المدفوعة",
-            "المعاملات الغير مدفوعة"
-        };
-
-        // Modify the ApplyFilter method to include the new filter logic
-        private void ApplyFilter(object sender, FilterEventArgs e)
-        {
-            var transaction = e.Item as CashReceiptTransaction;
-            if (transaction == null) return;
-
-            // Apply search filter
-            bool searchFilter = string.IsNullOrWhiteSpace(SearchText) ||
-                               transaction.SourceName?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true;
-
-            // Apply payment status filter
-            bool paymentFilter = true;
-            switch (SelectedFilter)
-            {
-                case "المعاملات المدفوعة":
-                    paymentFilter = transaction.RemainingAmount == 0;
-                    break;
-                case "المعاملات الغير مدفوعة":
-                    paymentFilter = transaction.RemainingAmount != 0;
-                    break;
-                case "الكل":
-                default:
-                    paymentFilter = true;
-                    break;
-            }
-
-            e.Accepted = searchFilter && paymentFilter;
-        }
         public CashReceiptTransaction SelectedTransaction
         {
             get => _selectedTransaction;
@@ -166,8 +149,8 @@ namespace Fruittrack.ViewModels
                     // Populate form fields when transaction is selected
                     SourceName = value.SourceName;
                     ReceivedAmount = value.ReceivedAmount;
-                    PaidBackAmount = value.PaidBackAmount;
                     Date = value.Date;
+                    Notes = value.Notes;
                 }
             }
         }
@@ -177,66 +160,61 @@ namespace Fruittrack.ViewModels
         public ICommand UpdateTransactionCommand { get; }
         public ICommand EditTransactionCommand { get; }
         public ICommand DeleteTransactionCommand { get; }
+
+        // Apply search filter only
+        private void ApplyFilter(object sender, FilterEventArgs e)
+        {
+            var transaction = e.Item as CashReceiptTransaction;
+            if (transaction == null) return;
+
+            // Apply search filter only
+            bool searchFilter = string.IsNullOrWhiteSpace(SearchText) ||
+                               transaction.SourceName?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true ||
+                               transaction.Notes?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true;
+
+            e.Accepted = searchFilter;
+        }
+
         // Add new transaction
         private void AddTransaction(object obj)
         {
-            // Validate that PaidBackAmount is less than ReceivedAmount
-            if (PaidBackAmount >= ReceivedAmount)
-            {
-                MessageBox.Show("يجب أن يكون المبلغ المدفوع أقل من المبلغ المستلم", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                return;
-            }
-            if (PaidBackAmount < 0)
-            {
-                MessageBox.Show("لا يمكن أن يكون المبلغ المدفوع أقل من الصفر", "خطأ في التحقق", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                return;
-            }
-
             var transaction = new CashReceiptTransaction
             {
                 SourceName = SourceName,
                 ReceivedAmount = ReceivedAmount,
                 Date = Date,
-                PaidBackAmount = PaidBackAmount,
-                RemainingAmount = RemainingAmount
+                Notes = Notes
             };
 
             _dbContext.CashReceiptTransactions.Add(transaction);
-
             _dbContext.SaveChanges();
 
             Transactions.Insert(0, transaction); // Add at beginning of list
-            OnPropertyChanged(nameof(TotalRemainingAmount));
+            _transactionsViewSource.View.Refresh();
+            OnPropertyChanged(nameof(TotalReceivedAmount));
             ClearForm();
+
+            MessageBox.Show("تم إضافة المعاملة بنجاح", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
         // Update existing transaction
         private void UpdateTransaction(object obj)
         {
             if (SelectedTransaction == null) return;
 
-            // Validate that PaidBackAmount is less than ReceivedAmount
-            if (PaidBackAmount >= ReceivedAmount)
-            {
-                MessageBox.Show("يجب أن يكون المبلغ المدفوع أقل من المبلغ المستلم", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                return;
-            }
-
             // تحديث البيانات
             SelectedTransaction.SourceName = SourceName;
             SelectedTransaction.ReceivedAmount = ReceivedAmount;
-            SelectedTransaction.PaidBackAmount = PaidBackAmount;
             SelectedTransaction.Date = Date;
-            SelectedTransaction.RemainingAmount = RemainingAmount;
+            SelectedTransaction.Notes = Notes;
 
             _dbContext.Entry(SelectedTransaction).State = EntityState.Modified;
             _dbContext.SaveChanges();
 
             // إعادة تحميل البيانات من قاعدة البيانات
             LoadTransactions();
-            OnPropertyChanged(nameof(TotalRemainingAmount));
+            OnPropertyChanged(nameof(TotalReceivedAmount));
+            
             // رسالة نجاح
             MessageBox.Show("تم تحديث البيانات", "نجاح", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -244,14 +222,16 @@ namespace Fruittrack.ViewModels
             ClearForm();
             SelectedTransaction = null;
         }
+
         private void LoadTransactions()
         {
             Transactions.Clear();
-            foreach (var transaction in _dbContext.CashReceiptTransactions.ToList())
+            foreach (var transaction in _dbContext.CashReceiptTransactions.OrderByDescending(t => t.Date).ToList())
             {
                 Transactions.Add(transaction);
             }
-            OnPropertyChanged(nameof(TotalRemainingAmount));
+            _transactionsViewSource.View.Refresh();
+            OnPropertyChanged(nameof(TotalReceivedAmount));
         }
 
         // Edit transaction (populate form)
@@ -259,6 +239,7 @@ namespace Fruittrack.ViewModels
         {
             SelectedTransaction = transaction;
         }
+
         //  deleting transactions
         private void DeleteTransaction(CashReceiptTransaction transaction)
         {
@@ -277,8 +258,9 @@ namespace Fruittrack.ViewModels
                 {
                     _dbContext.CashReceiptTransactions.Remove(transaction);
                     _dbContext.SaveChanges();
-                    OnPropertyChanged(nameof(TotalRemainingAmount));
                     Transactions.Remove(transaction);
+                    _transactionsViewSource.View.Refresh();
+                    OnPropertyChanged(nameof(TotalReceivedAmount));
                 }
                 catch (Exception ex)
                 {
@@ -286,6 +268,7 @@ namespace Fruittrack.ViewModels
                 }
             }
         }
+
         private bool CanAddTransaction(object obj)
         {
             return !string.IsNullOrWhiteSpace(SourceName) &&
@@ -305,9 +288,8 @@ namespace Fruittrack.ViewModels
         {
             SourceName = string.Empty;
             ReceivedAmount = 0;
-            PaidBackAmount = 0;
             Date = DateTime.Now;
-            OnPropertyChanged(nameof(RemainingAmount));
+            Notes = string.Empty;
         }
 
         // INotifyPropertyChanged
@@ -323,17 +305,13 @@ namespace Fruittrack.ViewModels
                 switch (columnName)
                 {
                     case nameof(SourceName):
-                        if (string.IsNullOrWhiteSpace(SourceName)) return "اسم الشخص مطلوب";
+                        if (string.IsNullOrWhiteSpace(SourceName)) return "اسم الجهة مطلوب";
                         break;
                     case nameof(ReceivedAmount):
                         if (ReceivedAmount <= 0) return "المبلغ المستلم يجب أن يكون أكبر من صفر";
                         break;
                     case nameof(Date):
                         if (Date == default) return "التاريخ مطلوب";
-                        break;
-                    case nameof(PaidBackAmount):
-                        if (PaidBackAmount < 0) return "المبلغ المسدد لا يمكن أن يكون سالباً";
-                        if (PaidBackAmount > ReceivedAmount) return "المبلغ المسدد لا يمكن أن يكون أكبر من المبلغ المستلم";
                         break;
                 }
                 return null;

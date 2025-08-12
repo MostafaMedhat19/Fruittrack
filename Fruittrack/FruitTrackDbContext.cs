@@ -90,8 +90,7 @@ namespace Fruittrack
                 entity.Property(e => e.SourceName).IsRequired();
                 entity.Property(e => e.ReceivedAmount).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
-                entity.Property(e => e.PaidBackAmount).HasDefaultValue(0);
-                entity.Property(e => e.RemainingAmount).HasDefaultValue(0);
+                entity.Property(e => e.Notes).HasDefaultValue(string.Empty);
             });
 
             // CashDisbursementTransaction
@@ -100,10 +99,7 @@ namespace Fruittrack
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.EntityName).IsRequired();
                 entity.Property(e => e.TransactionDate).IsRequired();
-                entity.Property(e => e.Credit).HasDefaultValue(0);
-                entity.Property(e => e.Debit).HasDefaultValue(0);
-                entity.Ignore(e => e.Balance);
-
+                entity.Property(e => e.Amount).IsRequired();
             });
         }
     }

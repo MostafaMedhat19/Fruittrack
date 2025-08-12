@@ -77,15 +77,15 @@
             <Setter Property="Background" Value="{StaticResource WhiteBrush}"/>
             <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Padding" Value="20,15"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Padding" Value="15,12"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-            <Setter Property="Margin" Value="0,8,0,0"/>
+            <Setter Property="Margin" Value="5,6"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="MinWidth" Value="300"/>
-            <Setter Property="MaxWidth" Value="400"/>
+            <Setter Property="MinWidth" Value="250"/>
+            <Setter Property="MaxWidth" Value="320"/>
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect BlurRadius="8" ShadowDepth="1" Color="#08000000"/>
@@ -237,16 +237,132 @@
                       Padding="20" Background="{StaticResource LightBackgroundBrush}">
             <Grid>
                 <!-- Main Content Container -->
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxWidth="1200">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxWidth="1600">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Center: Branding -->
-                    <StackPanel x:Name="BrandPanel" Grid.Column="1" 
-                                HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <!-- Left Side: Menu Buttons - Two Column Layout -->
+                    <Grid x:Name="MenuPanel" Grid.Column="0" 
+                          HorizontalAlignment="Left" VerticalAlignment="Center"
+                          Margin="20,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Title -->
+                        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="القائمة الرئسية" Style="{StaticResource TitleText}" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                        <!-- Two Column Button Layout -->
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Left Column: Operations & Financial -->
+                            <StackPanel Grid.Column="0" VerticalAlignment="Top">
+                                <!-- Sales Button -->
+                                <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" 
+                                              Style="{StaticResource MenuIconStyle}"/>
+                                        <TextBlock Text="صفحة تسجيل عملية التوريد" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Inventory Button -->
+                                <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_1">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4l16-.02V7z" 
+                                              Style="{StaticResource MenuIconStyle}"/>
+                                        <TextBlock Text="صفحة عرض كل التوريدات" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Cash Receipt Page Button -->
+                                <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_CashReceipt">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z" 
+                                              Style="{StaticResource MenuIconStyle}"/>
+                                        <TextBlock Text="صفحة استلام نقدية" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Cash Expense Button -->
+                                <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_4">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm1.31-7.9l-.95.95C12.9 12.45 12 13.5 12 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.69 1.9z"
+                                              Style="{StaticResource MenuIconStyle}"/>
+                                        <TextBlock Text="تسجيل صرف نقدي" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Profit Margin Button -->
+                                <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_5">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" 
+                                              Style="{StaticResource MenuIconStyle}"/>
+                                        <TextBlock Text="صفحة هامش الربح الإجمالي" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- Right Column: Reports & Analysis -->
+                            <StackPanel Grid.Column="2" VerticalAlignment="Top">
+                                <!-- Error Reports Button -->
+                                <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_2">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" 
+                                              Style="{StaticResource MenuIconStyle}"/>
+                                        <TextBlock Text="صفحة التوريدات المفقودة أو بها أخطاء" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Production Reports Button -->
+                                <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_3">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" 
+                                              Style="{StaticResource MenuIconStyle}"/>
+                                        <TextBlock Text="تقارير الإنتاج والتوزيع" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Account Statement Button -->
+                                <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_AccountStatement">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="M3 13h2v-2H3v2zm0 4h2v-2H3v2zM3 9h2V7H3v2zm4 8h14v-2H7v2zm0-6v2h14v-2H7zm0-6v2h14V5H7z"
+                                              Style="{StaticResource MenuIconStyle}"/>
+                                        <TextBlock Text="كشف حساب" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Farm Report Button -->
+                                <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_FarmReport">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 8h14v-2H7v2zm0-4h14v-2H7v2zm0-6v2h14V7H7z" Style="{StaticResource MenuIconStyle}"/>
+                                        <TextBlock Text="كشف مزرعة" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Factory Report Button -->
+                                <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_FactoryReport">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="M4 6h18v2H4V6zm0 6h18v2H4v-2zm0 6h18v2H4v-2z" Style="{StaticResource MenuIconStyle}"/>
+                                        <TextBlock Text="كشف مصنع" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Right Side: Branding -->
+                    <StackPanel x:Name="BrandPanel" Grid.Column="2" 
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
                         <!-- Logo Container -->
                         <Border Style="{StaticResource ImageContainerStyle}">
                             <Image x:Name="LogoImage"
@@ -280,76 +396,6 @@
                                 <TextBlock Text="Database: Connected" Style="{StaticResource StatusText}"/>
                             </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-
-                    <!-- Right Side: Menu Buttons -->
-                    <StackPanel x:Name="MenuPanel" Grid.Column="2" 
-                                HorizontalAlignment="Right" VerticalAlignment="Center"
-                                Margin="40,0,0,0">
-                        <TextBlock Text="القائمة الرئسية" Style="{StaticResource TitleText}"/>
-
-                        <!-- Sales Button -->
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" 
-                                      Style="{StaticResource MenuIconStyle}"/>
-                                <TextBlock Text="صفحة تسجيل عملية التوريد" FontSize="18" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Inventory Button -->
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_1">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4l16-.02V7z" 
-                                      Style="{StaticResource MenuIconStyle}"/>
-                                <TextBlock Text="صفحة عرض كل التوريدات" FontSize="18" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Reports Button -->
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_2">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" 
-                                      Style="{StaticResource MenuIconStyle}"/>
-                                <TextBlock Text="صفحة التوريدات المفقودة أو بها أخطاء" FontSize="18" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Production Reports Button -->
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_3">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" 
-                                      Style="{StaticResource MenuIconStyle}"/>
-                                <TextBlock Text="تقارير الإنتاج والتوزيع" FontSize="18" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Settings Button -->
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_5">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" 
-                                      Style="{StaticResource MenuIconStyle}"/>
-                                <TextBlock Text="صفحة هامش الربح الإجمالي" FontSize="18" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Cash Receipt Page Button -->
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_CashReceipt">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z" 
-                                      Style="{StaticResource MenuIconStyle}"/>
-                                <TextBlock Text="صفحة استلام نقدية" FontSize="18" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Navigation Button 4: Production Reports -->
-                        <Button Style="{StaticResource MenuButtonStyle}" Click="Button_Click_4">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm1.31-7.9l-.95.95C12.9 12.45 12 13.5 12 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.69 1.9z"
-                                      Style="{StaticResource MenuIconStyle}"/>
-                                <TextBlock Text="تسجيل صرف نقدي" FontSize="18" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
                     </StackPanel>
                 </Grid>
             </Grid>
