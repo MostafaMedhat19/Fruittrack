@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Fruittrack.Models;
 
 namespace Fruittrack
@@ -12,7 +12,7 @@ namespace Fruittrack
         public DbSet<FinancialSettlement> FinancialSettlements { get; set; }
         public DbSet<CashReceiptTransaction> CashReceiptTransactions { get; set; }
         public DbSet<CashDisbursementTransaction> CashDisbursementTransactions { get; set; }
-
+        public DbSet<Contractor> Contractors { get; set; }
         public FruitTrackDbContext(DbContextOptions<FruitTrackDbContext> options)
             : base(options)
         {
@@ -91,6 +91,14 @@ namespace Fruittrack
                 entity.Property(e => e.ReceivedAmount).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
                 entity.Property(e => e.Notes).HasDefaultValue(string.Empty);
+            });
+            modelBuilder.Entity<Contractor>(entity =>
+            {
+                entity.HasKey(e => e.ContractorId);
+                entity.Property(e => e.ContractorName).IsRequired();
+                entity.Property(e => e.ContractorCache).IsRequired(false);
+                entity.Property(e=>e.RelatedFactoryName).IsRequired(false);
+                entity.Property(e => e.RelatedFramName).IsRequired(false);
             });
 
             // CashDisbursementTransaction

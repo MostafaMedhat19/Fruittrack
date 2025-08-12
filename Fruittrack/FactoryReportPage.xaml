@@ -14,17 +14,30 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Filters -->
+        <!-- Filters & Actions -->
         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
             <TextBlock Text="من" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <DatePicker SelectedDate="{Binding FromDate}" Width="150"/>
             <TextBlock Text="إلى" VerticalAlignment="Center" Margin="20,0,5,0"/>
             <DatePicker SelectedDate="{Binding ToDate}" Width="150"/>
             <Button Content="تحديث" Command="{Binding RefreshCommand}" Margin="20,0,0,0"/>
+
+            <!-- Search by Factory Name -->
+            <TextBlock Text="اسم المصنع" VerticalAlignment="Center" Margin="20,0,5,0"/>
+            <TextBox Width="200"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     ToolTip="ابحث باسم المصنع"
+                     Margin="0,0,10,0"/>
+
+            <!-- Export / Print Buttons -->
+            <Button Content="طباعة" Click="PrintButton_Click" Margin="10,0,0,0"/>
+            <Button Content="PDF" Click="PdfButton_Click" Margin="10,0,0,0"/>
+            <Button Content="Excel" Click="ExcelButton_Click" Margin="10,0,0,0"/>
         </StackPanel>
 
         <!-- Grid -->
         <DataGrid Grid.Row="1"
+                  x:Name="FactoryDataGrid"
                   ItemsSource="{Binding Rows}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
@@ -39,6 +52,7 @@
                 <DataGridTextColumn Header="الوزن الفعلي" Binding="{Binding AllowedWeight, StringFormat=N2}" Width="140"/>
                 <DataGridTextColumn Header="السعر لكل كيلو" Binding="{Binding PricePerKilo, StringFormat=N2}" Width="140"/>
                 <DataGridTextColumn Header="إجمالي المصنع" Binding="{Binding FactoryTotal, StringFormat=N2}" Width="160"/>
+                <DataGridTextColumn Header="اسم المقاول" Binding="{Binding TransportContractorName}" Width="160"/>
             </DataGrid.Columns>
         </DataGrid>
 

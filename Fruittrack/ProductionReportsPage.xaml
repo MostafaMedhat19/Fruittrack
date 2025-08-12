@@ -83,31 +83,10 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Total Gross Weight Card -->
-                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="0,0,5,0" 
-                        Effect="{StaticResource CardShadow}" BorderThickness="1" BorderBrush="#E5E7EB">
-                    <StackPanel>
-                        <TextBlock Text="إجمالي الوزن الإجمالي" FontWeight="SemiBold" FontSize="12" Foreground="#1F2937" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                        <TextBlock x:Name="TotalGrossWeightText" Text="0 كجم" FontSize="20" FontWeight="Bold" 
-                                   Foreground="#10B981" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Total Net Weight Card -->
-                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15" Margin="5,0,5,0" 
-                        Effect="{StaticResource CardShadow}" BorderThickness="1" BorderBrush="#E5E7EB">
-                    <StackPanel>
-                        <TextBlock Text="إجمالي الوزن الصافي" FontWeight="SemiBold" FontSize="12" Foreground="#1F2937" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                        <TextBlock x:Name="TotalNetWeightText" Text="0 كجم" FontSize="20" FontWeight="Bold" 
-                                   Foreground="#3B82F6" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                </Border>
-
                 <!-- Total Profit/Loss Card -->
-                <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="15" Margin="5,0,5,0" 
+                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="0,0,5,0" 
                         Effect="{StaticResource CardShadow}" BorderThickness="1" BorderBrush="#E5E7EB">
                     <StackPanel>
                         <TextBlock Text="إجمالي الربح/الخسارة" FontWeight="SemiBold" FontSize="12" Foreground="#1F2937" HorizontalAlignment="Center" TextWrapping="Wrap"/>
@@ -117,7 +96,7 @@
                 </Border>
 
                 <!-- Best Supplier Card -->
-                <Border Grid.Column="3" Background="White" CornerRadius="8" Padding="15" Margin="5,0,0,0" 
+                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15" Margin="5,0,5,0" 
                         Effect="{StaticResource CardShadow}" BorderThickness="1" BorderBrush="#E5E7EB">
                     <StackPanel>
                         <TextBlock Text="أعلى مورد ربحاً" FontWeight="SemiBold" FontSize="12" Foreground="#1F2937" HorizontalAlignment="Center" TextWrapping="Wrap"/>
@@ -125,6 +104,16 @@
                                    Foreground="#F59E0B" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="Wrap"/>
                         <TextBlock x:Name="BestSupplierProfitText" Text="0 جنيه" FontSize="12" 
                                    Foreground="#6B7280" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Placeholder for future KPI -->
+                <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="15" Margin="5,0,0,0" 
+                        Effect="{StaticResource CardShadow}" BorderThickness="1" BorderBrush="#E5E7EB">
+                    <StackPanel>
+                        <TextBlock Text="مؤشر" FontWeight="SemiBold" FontSize="12" Foreground="#1F2937" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="IndicatorText" Text="0%" FontSize="20" FontWeight="Bold" 
+                                   Foreground="#6B7280" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -261,29 +250,21 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <!-- Farm Weight (Gross) -->
-                        <DataGridTextColumn Header="الوزن الإجمالي (كجم)" Binding="{Binding FarmWeight, StringFormat={}{0:N1}}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="0,0,5,0"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
+                        <!-- Farm Total -->
+                        <DataGridTextColumn Header="إجمالي المزرعة" Binding="{Binding TotalFarmCost, StringFormat={}{0:N2}}"
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
-                        <!-- Factory Weight (Net) -->
-                        <DataGridTextColumn Header="الوزن الصافي (كجم)" Binding="{Binding FactoryWeight, StringFormat={}{0:N1}}" 
-                                   Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="0,0,5,0"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
+                        <!-- Factory Total -->
+                        <DataGridTextColumn Header="إجمالي المصنع" Binding="{Binding TotalFactoryRevenue, StringFormat={}{0:N2}}"
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
+
+                        <!-- Contractor Name (Truck Owner) -->
+                        <DataGridTextColumn Header="اسم المقاول (صاحب العربية)" Binding="{Binding ContractorName}"
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
+
+                        <!-- Freight Price (Nolon) -->
+                        <DataGridTextColumn Header="سعر النولون" Binding="{Binding FreightPrice, StringFormat={}{0:N2}}"
+                                           Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                         <!-- Farm Price -->
                         <DataGridTextColumn Header="سعر المزرعة (جنيه/كجم)" Binding="{Binding FarmPricePerKilo, StringFormat={}{0:N3}}" 
@@ -309,6 +290,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
+                        
                         <!-- Profit/Loss -->
                         <DataGridTemplateColumn Header="الربح/الخسارة (جنيه)" Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTemplateColumn.CellTemplate>

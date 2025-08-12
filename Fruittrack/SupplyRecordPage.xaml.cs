@@ -408,6 +408,7 @@ namespace Fruittrack
                     else
                     {
                         ViewModel.SelectedFarm = existingFarm;
+
                     }
                 }
                 else
@@ -590,12 +591,20 @@ namespace Fruittrack
                 // Keep: optional auto disbursement for transport contractor (if provided)
                 if (!string.IsNullOrWhiteSpace(ViewModel.TransportContractorName) && ViewModel.TransportPrice.HasValue && ViewModel.TransportPrice.Value > 0)
                 {
+                    var cons = new Contractor
+                    {
+                        ContractorName = ViewModel.TransportContractorName.Trim(),
+                        RelatedFramName = ViewModel.SelectedFarm?.FarmName ?? string.Empty,
+                        RelatedFactoryName = ViewModel.SelectedFactory?.FactoryName ?? string.Empty 
+
+                    };
                     var disb = new CashDisbursementTransaction
                     {
                         EntityName = ViewModel.TransportContractorName.Trim(),
                         TransactionDate = ViewModel.Date ?? DateTime.Today,
                         Amount = ViewModel.TransportPrice.Value
                     };
+                    context.Contractors.Add(cons);
                     context.CashDisbursementTransactions.Add(disb);
                     context.SaveChanges();
                 }

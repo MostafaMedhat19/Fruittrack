@@ -111,12 +111,14 @@
                     <StackPanel Grid.Column="0" Grid.Row="0">
                         <TextBlock Text="الجهة" Style="{StaticResource HeaderText}"/>
                         <ComboBox x:Name="cmbSourceName"
-                                 ItemsSource="{Binding SourceNames}"
-                                 SelectedItem="{Binding SelectedSourceName, Mode=TwoWay}"
-                                 IsEditable="True"
-                                 Text="{Binding SourceName, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="اختر أو اكتب اسم الجهة"
-                                 Style="{StaticResource InputControl}"/>
+          ItemsSource="{Binding SourceNames}"
+          Text="{Binding SourceName, UpdateSourceTrigger=PropertyChanged}"
+          SelectedItem="{Binding SelectedSourceName, Mode=TwoWay}"
+          IsEditable="True"
+          IsTextSearchEnabled="True"
+          IsTextSearchCaseSensitive="False"
+          ToolTip="اختر أو اكتب اسم الجهة"
+          Style="{StaticResource InputControl}"/>
                     </StackPanel>
 
                     <!-- Received Amount -->

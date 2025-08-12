@@ -24,6 +24,8 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using A = DocumentFormat.OpenXml.Drawing;
 using Wp = DocumentFormat.OpenXml.Wordprocessing;
+using MediaColor = System.Windows.Media.Color;
+
 // Add draw for line separator
 using iTextSharp.text.pdf.draw;
 
@@ -31,6 +33,13 @@ namespace Fruittrack.Utilities
 {
     public static class ExportUtilities
     {
+        public static string DefaultCompanyName { get; set; } = "شركة فيوتشر لتوريدات الفاكهة ";
+        public class ContactInfo { public string Name { get; set; } = string.Empty; public string Phone { get; set; } = string.Empty; }
+        public static List<ContactInfo> DefaultContacts { get; set; } = new() {
+            new ContactInfo { Name = " محمود شكري", Phone = "01112960235" },
+            new ContactInfo { Name = "اسامه خالد ", Phone = "01149008698" },
+             new ContactInfo { Name = " محمد خطاب ", Phone = "01095552345" }
+        };
         public static void PrintPage(FrameworkElement element, string title = "طباعة")
         {
             try
@@ -91,7 +100,7 @@ namespace Fruittrack.Utilities
                     document.Open();
 
                     // 1) Build an Arabic-correct header as a WPF visual and add as image
-                    var header = BuildHeaderVisual(companyName, title, logoPath);
+                    var header = BuildHeaderVisual(string.IsNullOrWhiteSpace(companyName) ? DefaultCompanyName : companyName, title, logoPath);
                     var headerBitmap = RenderOffscreenElementToBitmap(header);
                     using (var headerStream = new MemoryStream())
                     {
@@ -812,7 +821,7 @@ namespace Fruittrack.Utilities
             return headerTable;
         }
 
-        // Build a WPF visual header (Arabic-correct) to render as image
+        // Build a WPF visual header (Arabic-correct) to render as image: Right = company+date, Left = names+phones
         private static FrameworkElement BuildHeaderVisual(string companyName, string title, string logoPath)
         {
             var grid = new Grid
@@ -824,78 +833,26 @@ namespace Fruittrack.Utilities
             };
 
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-            // Logo (right in RTL)
-            var img = new System.Windows.Controls.Image
+            // Right block: Company + Title + Date
+            var rightStack = new StackPanel { Orientation = Orientation.Vertical, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8) };
+            rightStack.Children.Add(new TextBlock { Text = string.IsNullOrWhiteSpace(companyName) ? DefaultCompanyName : companyName, FontSize = 20, FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(MediaColor.FromRgb(16, 185, 129))
+            });
+            rightStack.Children.Add(new TextBlock { Text = title, FontSize = 18, FontWeight = FontWeights.Bold, Foreground = Brushes.Black });
+            rightStack.Children.Add(new TextBlock { Text = $"{DateTime.Now:dd/MM/yyyy}", FontSize = 13, Foreground = Brushes.Gray });
+            Grid.SetColumn(rightStack, 0);
+            grid.Children.Add(rightStack);
+
+            // Left block: names + phones
+            var leftStack = new StackPanel { Orientation = Orientation.Vertical, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8) };
+            foreach (var c in DefaultContacts)
             {
-                Width = 60,
-                Height = 60,
-                Margin = new Thickness(8),
-                Stretch = Stretch.Uniform
-            };
-            var logo = TryLoadLogo(logoPath);
-            if (logo != null)
-            {
-                // Convert iText image source file into BitmapImage for WPF
-                try
-                {
-                    var bmp = new BitmapImage();
-                    bmp.BeginInit();
-                    bmp.CacheOption = BitmapCacheOption.OnLoad;
-                    // Try fallback paths again for WPF image
-                    string[] candidates = new[]
-                    {
-                        logoPath,
-                        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "support-icon.jpg"),
-                        Path.Combine(Directory.GetCurrentDirectory(), "Fruittrack", "Images", "support-icon.jpg"),
-                        Path.Combine(Directory.GetCurrentDirectory(), "Images", "support-icon.jpg")
-                    };
-                    var found = candidates.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p) && File.Exists(p));
-                    if (!string.IsNullOrEmpty(found))
-                    {
-                        bmp.UriSource = new Uri(found, UriKind.Absolute);
-                        bmp.EndInit();
-                        img.Source = bmp;
-                    }
-                }
-                catch { }
+                leftStack.Children.Add(new TextBlock { Text = string.IsNullOrWhiteSpace(c.Phone) ? c.Name : $"{c.Name} - {c.Phone}", FontSize = 13, Foreground = Brushes.Black });
             }
-            Grid.SetColumn(img, 0);
-            grid.Children.Add(img);
-
-            // Texts
-            var stack = new StackPanel
-            {
-                Orientation = Orientation.Vertical,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(8)
-            };
-            var companyText = new TextBlock
-            {
-                Text = companyName,
-                FontSize = 20,
-                FontWeight = FontWeights.Bold,
-                Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(16, 185, 129))
-            };
-            var titleText = new TextBlock
-            {
-                Text = title,
-                FontSize = 18,
-                FontWeight = FontWeights.Bold,
-                Foreground = Brushes.Black
-            };
-            var dateText = new TextBlock
-            {
-                Text = $"تاريخ التصدير: {DateTime.Now:dd/MM/yyyy HH:mm}",
-                FontSize = 13,
-                Foreground = Brushes.Gray
-            };
-            stack.Children.Add(companyText);
-            stack.Children.Add(titleText);
-            stack.Children.Add(dateText);
-            Grid.SetColumn(stack, 1);
-            grid.Children.Add(stack);
+            Grid.SetColumn(leftStack, 1);
+            grid.Children.Add(leftStack);
 
             return grid;
         }

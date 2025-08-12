@@ -4,6 +4,7 @@ using Fruittrack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fruittrack.Migrations
 {
     [DbContext(typeof(FruitTrackDbContext))]
-    partial class FruitTrackDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250812190558_AddContractorTable")]
+    partial class AddContractorTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,12 +93,6 @@ namespace Fruittrack.Migrations
 
                     b.Property<string>("ContractorName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RelatedFactoryName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RelatedFramName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ContractorId");

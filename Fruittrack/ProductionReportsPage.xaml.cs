@@ -158,10 +158,29 @@ namespace Fruittrack
                         FactoryPricePerKilo = supply.FactoryPricePerKilo ?? 0
                     };
 
-                    // Calculate totals and profit/loss
-                    reportItem.TotalFarmCost = reportItem.FarmWeight * reportItem.FarmPricePerKilo;
-                    reportItem.TotalFactoryRevenue = reportItem.FactoryWeight * reportItem.FactoryPricePerKilo;
-                    reportItem.ProfitLoss = reportItem.TotalFactoryRevenue - reportItem.TotalFarmCost;
+                    // Calculate totals and profit/loss based on SupplyRecordPage logic (apply discount to allowed weights)
+                    var farmDiscount = supply.FarmDiscountRate ?? 0m;
+                    var factoryDiscount = supply.FactoryDiscountRate ?? 0m;
+                    var farmAllowed = reportItem.FarmWeight * (1 - (farmDiscount / 100m));
+                    var factoryAllowed = reportItem.FactoryWeight * (1 - (factoryDiscount / 100m));
+                    reportItem.TotalFarmCost = farmAllowed * reportItem.FarmPricePerKilo;
+                    reportItem.TotalFactoryRevenue = factoryAllowed * reportItem.FactoryPricePerKilo;
+
+                    // Fetch Freight (nolon) and Contractor from Contractor table
+                    reportItem.FreightPrice = supply.FreightCost ?? 0m;
+                    
+                    // Get contractor name from Contractor table based on farm name relationship
+                    string contractorName = string.Empty;
+                    if (!string.IsNullOrEmpty(supply.Farm?.FarmName))
+                    {
+                        var contractor = _context.Contractors
+                            .Where(c => c.RelatedFramName == supply.Farm.FarmName)
+                            .Select(c => c.ContractorName)
+                            .FirstOrDefault();
+                        contractorName = contractor ?? string.Empty;
+                    }
+                    reportItem.ContractorName = contractorName;
+                    reportItem.ProfitLoss = reportItem.TotalFactoryRevenue - (reportItem.TotalFarmCost + reportItem.FreightPrice);
 
                     // Calculate profit margin percentage
                     if (reportItem.TotalFarmCost > 0)
@@ -204,9 +223,29 @@ namespace Fruittrack
                 var totalNetWeight = FilteredReports.Sum(r => r.FactoryWeight);
                 var totalProfitLoss = FilteredReports.Sum(r => r.ProfitLoss);
 
-                TotalGrossWeightText.Text = $"{totalGrossWeight:N1} كجم";
-                TotalNetWeightText.Text = $"{totalNetWeight:N1} كجم";
+                //TotalGrossWeightText.Text = $"{totalGrossWeight:N1} كجم";
+                //TotalNetWeightText.Text = $"{totalNetWeight:N1} كجم";
                 TotalProfitLossText.Text = $"{totalProfitLoss:N0} جنيه";
+
+                // مؤشر: نسبة الربح إلى إجمالي إيرادات المصنع لجميع السجلات المعروضة
+                decimal totalFactoryRevenue = FilteredReports.Sum(r => r.TotalFactoryRevenue);
+                decimal indicatorPercent = totalFactoryRevenue > 0 ? (totalProfitLoss / totalFactoryRevenue) * 100m : 0m;
+                if (IndicatorText != null)
+                {
+                    IndicatorText.Text = $"{indicatorPercent:N1}%";
+                    if (indicatorPercent > 0)
+                    {
+                        IndicatorText.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(16, 185, 129));
+                    }
+                    else if (indicatorPercent < 0)
+                    {
+                        IndicatorText.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(239, 68, 68));
+                    }
+                    else
+                    {
+                        IndicatorText.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(107, 114, 128));
+                    }
+                }
 
                 // Find best supplier (highest profit)
                 var bestSupplier = FilteredReports
@@ -470,6 +509,8 @@ namespace Fruittrack
         private int _profitLossStatus;
         private decimal _totalFarmCost;
         private decimal _totalFactoryRevenue;
+        private string _contractorName;
+        private decimal _freightPrice;
 
         public int SupplyEntryId
         {
@@ -553,6 +594,18 @@ namespace Fruittrack
         {
             get => _totalFactoryRevenue;
             set { _totalFactoryRevenue = value; OnPropertyChanged(); }
+        }
+
+        public string ContractorName
+        {
+            get => _contractorName;
+            set { _contractorName = value; OnPropertyChanged(); }
+        }
+
+        public decimal FreightPrice
+        {
+            get => _freightPrice;
+            set { _freightPrice = value; OnPropertyChanged(); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

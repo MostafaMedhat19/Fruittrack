@@ -36,17 +36,6 @@ namespace Fruittrack.ViewModels
             DeleteTransactionCommand = new RelayCommand<CashReceiptTransaction>(DeleteTransaction);
         }
 
-        private async void LoadSourceNames()
-        {
-            // تجيب الأسماء الفريدة من قاعدة البيانات
-            var names = await _dbContext.CashReceiptTransactions
-                .Select(t => t.SourceName)
-                .Distinct()
-                .ToListAsync();
-
-            SourceNames = new ObservableCollection<string>(names);
-        }
-
         private ObservableCollection<string> _sourceNames = new();
         public ObservableCollection<string> SourceNames
         {
@@ -58,12 +47,82 @@ namespace Fruittrack.ViewModels
             }
         }
 
-        // Form fields
         private string _sourceName = string.Empty;
         public string SourceName
         {
             get => _sourceName;
-            set { _sourceName = value; OnPropertyChanged(nameof(SourceName)); }
+            set
+            {
+                if (_sourceName != value)
+                {
+                    _sourceName = value;
+                    OnPropertyChanged(nameof(SourceName));
+
+                    // Load suggestions when text changes (with slight delay for performance)
+                    if (!string.IsNullOrWhiteSpace(value) && value.Length > 0)
+                    {
+                        LoadSuggestedNames(value);
+                    }
+                    else
+                    {
+                        // If empty, load all unique names
+                        LoadSourceNames();
+                    }
+                }
+            }
+        }
+
+        private async void LoadSourceNames()
+        {
+              // Load factory names
+                var factoryNames = await _dbContext.Factories
+                    .Select(f => f.FactoryName)
+                    .OrderBy(name => name)
+                    .ToListAsync();
+
+                // Also load existing transaction source names (optional - if you want both)
+                var transactionNames = await _dbContext.CashReceiptTransactions
+                    .Select(t => t.SourceName)
+                    .Distinct()
+                    .OrderBy(name => name)
+                    .ToListAsync();
+
+                // Combine and remove duplicates
+                var allNames = factoryNames.Union(transactionNames).OrderBy(name => name).ToList();
+
+                SourceNames = new ObservableCollection<string>(allNames);
+            
+            
+        }
+
+        private async void LoadSuggestedNames(string searchText)
+        {
+            
+                // Search in factory names
+                var factoryNames = await _dbContext.Factories
+                    .Where(f => f.FactoryName.Contains(searchText))
+                    .Select(f => f.FactoryName)
+                    .OrderBy(name => name)
+                    .ToListAsync();
+
+                // Also search in transaction source names (optional)
+                var transactionNames = await _dbContext.CashReceiptTransactions
+                    .Where(t => t.SourceName.Contains(searchText))
+                    .Select(t => t.SourceName)
+                    .Distinct()
+                    .OrderBy(name => name)
+                    .ToListAsync();
+
+                // Combine and remove duplicates
+                var allNames = factoryNames.Union(transactionNames).OrderBy(name => name).ToList();
+
+                // Update the collection on the UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SourceNames = new ObservableCollection<string>(allNames);
+                });
+            
+          
         }
 
         private decimal _receivedAmount;
