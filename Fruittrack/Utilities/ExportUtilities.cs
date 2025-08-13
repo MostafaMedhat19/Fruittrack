@@ -85,7 +85,7 @@ namespace Fruittrack.Utilities
             FrameworkElement element,
             string filePath,
             string title = "تقرير",
-            string companyName = "شركة فروت تراك",
+            string companyName = "شركة   فيوتشر لتوريدات الفاكهة",
             string logoPath = null,
             bool showSuccessMessage = true)
         {
@@ -286,7 +286,7 @@ namespace Fruittrack.Utilities
         public static void ExportToTemporaryPdfAndOpen(
             FrameworkElement element,
             string title = "تقرير",
-            string companyName = "شركة فروت تراك",
+            string companyName = "شركة: فيوتشر لتوريدات الفاكهة",
             string logoPath = null)
         {
             try
