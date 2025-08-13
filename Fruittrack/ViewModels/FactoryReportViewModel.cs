@@ -161,6 +161,9 @@ namespace Fruittrack.ViewModels
             if (Rows == null)
                 return;
 
+            var from = FromDate.Date;
+            var to = ToDate.Date.AddDays(1).AddTicks(-1);
+
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
                 var filtered = Rows.Where(r => !string.IsNullOrEmpty(r.FactoryName) && r.FactoryName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -174,12 +177,22 @@ namespace Fruittrack.ViewModels
                 TotalWeight = Rows.Sum(r => r.Weight);
                 TotalAllowedWeight = Rows.Sum(r => r.AllowedWeight);
                 TotalFactoryAmount = Rows.Sum(r => r.FactoryTotal);
+
+                // Filter cash receipts by the searched factory name (اجمالي المستلم for specific factory)
+                var filteredFactoryNames = Rows.Select(r => r.FactoryName).Distinct().ToList();
+                var allReceipts = _dbContext.CashReceiptTransactions
+                    .Where(r => r.Date >= from && r.Date <= to)
+                    .ToList(); // Load to client side first
+                
+                TotalReceived = allReceipts
+                    .Where(r => filteredFactoryNames.Any(factoryName => 
+                        !string.IsNullOrEmpty(r.SourceName) && 
+                        r.SourceName.Contains(factoryName, StringComparison.OrdinalIgnoreCase)))
+                    .Sum(r => r.ReceivedAmount);
             }
             else
             {
                 // Reload current date range to restore list
-                var from = FromDate.Date;
-                var to = ToDate.Date.AddDays(1).AddTicks(-1);
                 var entries = _dbContext.SupplyEntries
                     .Include(e => e.Truck)
                     .Include(e => e.Factory)
@@ -224,6 +237,12 @@ namespace Fruittrack.ViewModels
                 TotalWeight = Rows.Sum(r => r.Weight);
                 TotalAllowedWeight = Rows.Sum(r => r.AllowedWeight);
                 TotalFactoryAmount = Rows.Sum(r => r.FactoryTotal);
+
+                // Show all cash receipts when no search filter applied
+                TotalReceived = _dbContext.CashReceiptTransactions
+                    .Where(r => r.Date >= from && r.Date <= to)
+                    .Select(r => (decimal?)r.ReceivedAmount)
+                    .Sum() ?? 0m;
             }
         }
 

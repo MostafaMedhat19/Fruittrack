@@ -598,14 +598,7 @@ namespace Fruittrack
                         RelatedFactoryName = ViewModel.SelectedFactory?.FactoryName ?? string.Empty 
 
                     };
-                    var disb = new CashDisbursementTransaction
-                    {
-                        EntityName = ViewModel.TransportContractorName.Trim(),
-                        TransactionDate = ViewModel.Date ?? DateTime.Today,
-                        Amount = ViewModel.TransportPrice.Value
-                    };
                     context.Contractors.Add(cons);
-                    context.CashDisbursementTransactions.Add(disb);
                     context.SaveChanges();
                 }
                 

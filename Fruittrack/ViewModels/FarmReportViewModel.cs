@@ -162,6 +162,9 @@ namespace Fruittrack.ViewModels
             if (Rows == null)
                 return;
 
+            var from = FromDate.Date;
+            var to = ToDate.Date.AddDays(1).AddTicks(-1);
+
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
                 var filtered = Rows.Where(r => !string.IsNullOrEmpty(r.FarmName) && r.FarmName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -175,12 +178,22 @@ namespace Fruittrack.ViewModels
                 TotalWeight = Rows.Sum(r => r.Weight);
                 TotalAllowedWeight = Rows.Sum(r => r.AllowedWeight);
                 TotalFarmAmount = Rows.Sum(r => r.FarmTotal);
+
+                // Filter disbursements by the searched farm name (اجمالي المصروف for specific farm)
+                var filteredFarmNames = Rows.Select(r => r.FarmName).Distinct().ToList();
+                var allDisbursements = _dbContext.CashDisbursementTransactions
+                    .Where(d => d.TransactionDate >= from && d.TransactionDate <= to)
+                    .ToList(); // Load to client side first
+                
+                TotalDisbursed = allDisbursements
+                    .Where(d => filteredFarmNames.Any(farmName => 
+                        !string.IsNullOrEmpty(d.EntityName) && 
+                        d.EntityName.Contains(farmName, StringComparison.OrdinalIgnoreCase)))
+                    .Sum(d => d.Amount);
             }
             else
             {
                 // Reload current date range to restore list
-                var from = FromDate.Date;
-                var to = ToDate.Date.AddDays(1).AddTicks(-1);
                 var entries = _dbContext.SupplyEntries
                     .Include(e => e.Truck)
                     .Include(e => e.Farm)
@@ -225,6 +238,12 @@ namespace Fruittrack.ViewModels
                 TotalWeight = Rows.Sum(r => r.Weight);
                 TotalAllowedWeight = Rows.Sum(r => r.AllowedWeight);
                 TotalFarmAmount = Rows.Sum(r => r.FarmTotal);
+
+                // Show all disbursements when no search filter applied
+                TotalDisbursed = _dbContext.CashDisbursementTransactions
+                    .Where(d => d.TransactionDate >= from && d.TransactionDate <= to)
+                    .Select(d => (decimal?)d.Amount)
+                    .Sum() ?? 0m;
             }
         }
 
