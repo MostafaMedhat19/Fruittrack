@@ -93,8 +93,8 @@ namespace Fruittrack
             private string _transportContractorName = string.Empty;
 
             // Farm Special Data Number (for cash disbursement validation)
-            public string FarmSpecialDataNumber { get => _farmSpecialDataNumber; set { _farmSpecialDataNumber = value; OnPropertyChanged(nameof(FarmSpecialDataNumber)); ValidateFarmSpecialData(); } }
-            private string _farmSpecialDataNumber = string.Empty;
+            public decimal? FarmSpecialDataNumber { get => _farmSpecialDataNumber; set { _farmSpecialDataNumber = value; OnPropertyChanged(nameof(FarmSpecialDataNumber)); ValidateFarmSpecialData(); } }
+            private decimal? _farmSpecialDataNumber;
 
             // Error message properties
             public string TruckNumberError { get => _truckNumberError; set { _truckNumberError = value; OnPropertyChanged(nameof(TruckNumberError)); OnPropertyChanged(nameof(HasTruckNumberError)); } }
@@ -424,16 +424,44 @@ namespace Fruittrack
         // Event handler for numeric-only input validation
         private void NumericOnly_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            // Allow only digits and decimal point
+            var textBox = sender as TextBox;
+            if (textBox == null) return;
+
+            // Get current text and the position where new text will be inserted
+            string currentText = textBox.Text;
+            int selectionStart = textBox.SelectionStart;
+            int selectionLength = textBox.SelectionLength;
+
+            // Simulate what the text would be after the input
+            string newText = currentText.Remove(selectionStart, selectionLength).Insert(selectionStart, e.Text);
+
+            // Allow only digits and one decimal separator (. or ,)
             bool isValidInput = true;
-            
-            foreach (char c in e.Text)
+            bool hasDecimalSeparator = false;
+
+            foreach (char c in newText)
             {
-                if (!char.IsDigit(c) && c != '.' && c != ',')
+                if (char.IsDigit(c))
+                {
+                    continue;
+                }
+                else if ((c == '.' || c == ',') && !hasDecimalSeparator)
+                {
+                    hasDecimalSeparator = true;
+                }
+                else
                 {
                     isValidInput = false;
                     break;
                 }
+            }
+
+            // Also validate that it can be parsed as decimal
+            if (isValidInput && !string.IsNullOrEmpty(newText))
+            {
+                // Replace comma with dot for parsing
+                string testText = newText.Replace(',', '.');
+                isValidInput = decimal.TryParse(testText, out _);
             }
 
             e.Handled = !isValidInput;
@@ -569,22 +597,17 @@ namespace Fruittrack
                     }
 
                     // Only create cash disbursement if cash disbursement amount is provided
-                    if (!string.IsNullOrWhiteSpace(ViewModel.FarmSpecialDataNumber))
+                    if (ViewModel.FarmSpecialDataNumber.HasValue && ViewModel.FarmSpecialDataNumber.Value > 0)
                     {
-                        // Parse the cash disbursement amount and use it directly
-                        decimal cashDisbursementAmount = 0m;
-                        if (decimal.TryParse(ViewModel.FarmSpecialDataNumber, out cashDisbursementAmount) && cashDisbursementAmount > 0)
+                        // Create cash disbursement with the specified amount
+                        var disbFarm = new CashDisbursementTransaction
                         {
-                            // Create cash disbursement with the specified amount only
-                            var disbFarm = new CashDisbursementTransaction
-                            {
-                                EntityName = selectedFarm.FarmName,
-                                TransactionDate = ViewModel.Date ?? DateTime.Today,
-                                Amount = cashDisbursementAmount
-                            };
-                            context.CashDisbursementTransactions.Add(disbFarm);
-                            context.SaveChanges();
-                        }
+                            EntityName = selectedFarm.FarmName,
+                            TransactionDate = ViewModel.Date ?? DateTime.Today,
+                            Amount = ViewModel.FarmSpecialDataNumber.Value
+                        };
+                        context.CashDisbursementTransactions.Add(disbFarm);
+                        context.SaveChanges();
                     }
                 }
 
@@ -639,7 +662,7 @@ namespace Fruittrack
             ViewModel.FactoryTotal = null;
             ViewModel.ProfitMargin = null;
             ViewModel.Notes = string.Empty;
-            ViewModel.FarmSpecialDataNumber = string.Empty;
+            ViewModel.FarmSpecialDataNumber = null;
 
             ViewModel.TruckNumberError = string.Empty;
             ViewModel.TransportPriceError = string.Empty;

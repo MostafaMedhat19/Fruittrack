@@ -36,9 +36,8 @@ namespace Fruittrack.Utilities
         public static string DefaultCompanyName { get; set; } = "شركة فيوتشر لتوريدات الفاكهة ";
         public class ContactInfo { public string Name { get; set; } = string.Empty; public string Phone { get; set; } = string.Empty; }
         public static List<ContactInfo> DefaultContacts { get; set; } = new() {
-
-              new ContactInfo { Name = " محمد خطاب ", Phone = "01095552345" },
             new ContactInfo { Name = " محمود شكري", Phone = "01112960235" },
+              new ContactInfo { Name = " محمد خطاب ", Phone = "01095552345" },
             new ContactInfo { Name = "اسامه خالد ", Phone = "01149008698" },
             
         };

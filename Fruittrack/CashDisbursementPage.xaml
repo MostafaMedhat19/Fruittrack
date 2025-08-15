@@ -124,7 +124,7 @@
                     <!-- Amount -->
                     <StackPanel Grid.Column="0" Grid.Row="2">
                         <TextBlock Text="المبلغ" Style="{StaticResource HeaderText}"/>
-                        <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
+                        <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, StringFormat=N2}" 
               ToolTip="ادخل المبلغ المصروف"
               Style="{StaticResource InputControl}"/>
                     </StackPanel>
