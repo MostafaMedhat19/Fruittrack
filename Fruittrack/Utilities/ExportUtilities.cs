@@ -36,9 +36,11 @@ namespace Fruittrack.Utilities
         public static string DefaultCompanyName { get; set; } = "شركة فيوتشر لتوريدات الفاكهة ";
         public class ContactInfo { public string Name { get; set; } = string.Empty; public string Phone { get; set; } = string.Empty; }
         public static List<ContactInfo> DefaultContacts { get; set; } = new() {
+
+              new ContactInfo { Name = " محمد خطاب ", Phone = "01095552345" },
             new ContactInfo { Name = " محمود شكري", Phone = "01112960235" },
             new ContactInfo { Name = "اسامه خالد ", Phone = "01149008698" },
-             new ContactInfo { Name = " محمد خطاب ", Phone = "01095552345" }
+            
         };
         public static void PrintPage(FrameworkElement element, string title = "طباعة")
         {
@@ -109,12 +111,13 @@ namespace Fruittrack.Utilities
                         headerEncoder.Save(headerStream);
                         headerStream.Position = 0;
                         var headerImg = iTextSharp.text.Image.GetInstance(headerStream.ToArray());
-                        headerImg.ScaleToFit((float)(document.PageSize.Width - document.LeftMargin - document.RightMargin), 120f);
+                        headerImg.ScaleToFit((float)(document.PageSize.Width - document.LeftMargin - document.RightMargin), 200f);
                         headerImg.Alignment = Element.ALIGN_CENTER;
                         document.Add(headerImg);
                     }
 
                     document.Add(new Chunk(new LineSeparator(0.5f, 100f, BaseColor.LIGHT_GRAY, Element.ALIGN_CENTER, -2)));
+                    document.Add(Chunk.NEWLINE);
                     document.Add(Chunk.NEWLINE);
 
                     // 2) If there is a DataGrid inside the element, try to export as real PDF table (Arabic-safe)
@@ -157,7 +160,7 @@ namespace Fruittrack.Utilities
                                 var headerCell = new PdfPCell(new Phrase(col.ColumnName, fontHeader))
                                 {
                                     BackgroundColor = new BaseColor(23, 42, 58), // dark header
-                                    HorizontalAlignment = Element.ALIGN_CENTER,
+                                    HorizontalAlignment = Element.ALIGN_LEFT,
                                     VerticalAlignment = Element.ALIGN_MIDDLE,
                                     PaddingTop = 6f,
                                     PaddingBottom = 6f
@@ -177,7 +180,7 @@ namespace Fruittrack.Utilities
                                     var cell = new PdfPCell(new Phrase(text, fontCell))
                                     {
                                         BackgroundColor = odd ? new BaseColor(247, 250, 252) : BaseColor.WHITE,
-                                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                                        HorizontalAlignment = Element.ALIGN_LEFT,
                                         VerticalAlignment = Element.ALIGN_MIDDLE,
                                         PaddingTop = 4f,
                                         PaddingBottom = 4f,
@@ -190,6 +193,10 @@ namespace Fruittrack.Utilities
                             }
 
                             document.Add(pdfTable);
+                            
+                            // Add totals section if this is a Farm or Factory report
+                            AddTotalsToPdf(document, dataGrid, bf);
+                            
                             tableAdded = true;
                         }
                     }
@@ -209,7 +216,7 @@ namespace Fruittrack.Utilities
 
                         // Available content area in points
                         double contentWidthPt = document.PageSize.Width - document.LeftMargin - document.RightMargin;
-                        double contentHeightPt = document.PageSize.Height - document.TopMargin - document.BottomMargin - 140; // leave space for header
+                        double contentHeightPt = document.PageSize.Height - document.TopMargin - document.BottomMargin - 220; // leave space for header (increased from 180 to 220)
                         // Convert to pixels at 96 DPI (1pt = 1/72 inch)
                         int pageWidthPx = (int)Math.Max(1, Math.Round(contentWidthPt / 72.0 * 96.0));
 
@@ -229,10 +236,13 @@ namespace Fruittrack.Utilities
                                     headerEncoder2.Save(headerStream2);
                                     headerStream2.Position = 0;
                                     var headerImg2 = iTextSharp.text.Image.GetInstance(headerStream2.ToArray());
-                                    headerImg2.ScaleToFit((float)contentWidthPt, 120f);
+                                    headerImg2.ScaleToFit((float)contentWidthPt, 200f);
                                     headerImg2.Alignment = Element.ALIGN_CENTER;
                                     document.Add(headerImg2);
+                                    document.Add(Chunk.NEWLINE);
+                                    document.Add(Chunk.NEWLINE);
                                     document.Add(new Chunk(new LineSeparator(0.5f, 100f, BaseColor.LIGHT_GRAY, Element.ALIGN_CENTER, -2)));
+                                    document.Add(Chunk.NEWLINE);
                                     document.Add(Chunk.NEWLINE);
                                 }
                             }
@@ -749,7 +759,7 @@ namespace Fruittrack.Utilities
         {
             // Default size
             double width = element.Width > 0 ? element.Width : 800;
-            double height = element.Height > 0 ? element.Height : 120;
+            double height = element.Height > 0 ? element.Height : 200; // Updated from 120 to 200 to match new header height
             element.Measure(new Size(width, height));
             element.Arrange(new Rect(0, 0, width, height));
             element.UpdateLayout();
@@ -780,23 +790,31 @@ namespace Fruittrack.Utilities
             headerTable.SetWidths(new float[] { 1f, 5f });
 
             // Try to load logo image
+            // Try to load logo image
             var logoImg = TryLoadLogo(logoPath);
             PdfPCell logoCell;
+
             if (logoImg != null)
             {
-                logoImg.ScaleToFit(60f, 60f);
-                logoCell = new PdfPCell(logoImg)
-                {
-                    Border = Rectangle.NO_BORDER,
-                    HorizontalAlignment = Element.ALIGN_LEFT,
-                    VerticalAlignment = Element.ALIGN_MIDDLE,
-                    Padding = 4f
-                };
+               logoImg.ScaleToFit(450f, 180f);
+    logoCell = new PdfPCell(logoImg)
+    {
+        Border = Rectangle.NO_BORDER,
+        HorizontalAlignment = Element.ALIGN_LEFT,
+        VerticalAlignment = Element.ALIGN_MIDDLE,
+        Padding = 4f,
+        PaddingLeft = 0f
+    };
             }
             else
             {
-                logoCell = new PdfPCell(new Phrase("")) { Border = Rectangle.NO_BORDER };
+                logoCell = new PdfPCell(new Phrase(""))
+                {
+                    Border = Rectangle.NO_BORDER,
+                    HorizontalAlignment = Element.ALIGN_LEFT // محاذاة النص أيضًا لليسار إذا لم يتم تحميل الصورة
+                };
             }
+
             headerTable.AddCell(logoCell);
 
             // Right cell with company, title and date
@@ -827,13 +845,30 @@ namespace Fruittrack.Utilities
             var grid = new Grid
             {
                 Width = 800,
-                Height = 120,
+                Height = 200, // Increased height from 160 to 200 to accommodate larger logo
                 Background = Brushes.Transparent,
                 FlowDirection = FlowDirection.RightToLeft
             };
 
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(100, GridUnitType.Pixel) }); // Logo row increased from 70 to 100
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(100, GridUnitType.Pixel) }); // Content row increased from 90 to 100
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            // Logo row - centered across both columns with more space
+            var logoImage = new System.Windows.Controls.Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/Images/support-icon.jpg")),
+                MaxWidth = 800, // Increased from 450 to 600 for larger logo
+                MaxHeight = 400, // Increased from 180 to 250 for larger logo
+                Stretch = Stretch.Uniform,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(10, 15, 10, 15) // Increased top and bottom margins for better spacing
+            };
+            Grid.SetRow(logoImage, 0);
+            Grid.SetColumnSpan(logoImage, 2);
+            grid.Children.Add(logoImage);
 
             // Right block: Company + Title + Date
             var rightStack = new StackPanel { Orientation = Orientation.Vertical, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8) };
@@ -842,15 +877,32 @@ namespace Fruittrack.Utilities
             });
             rightStack.Children.Add(new TextBlock { Text = title, FontSize = 18, FontWeight = FontWeights.Bold, Foreground = Brushes.Black });
             rightStack.Children.Add(new TextBlock { Text = $"{DateTime.Now:dd/MM/yyyy}", FontSize = 13, Foreground = Brushes.Gray });
+            Grid.SetRow(rightStack, 1);
             Grid.SetColumn(rightStack, 0);
             grid.Children.Add(rightStack);
 
             // Left block: names + phones
-            var leftStack = new StackPanel { Orientation = Orientation.Vertical, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8) };
+            // Left block: names + phones
+            var leftStack = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right, // تغيير إلى Right لتكون في أقصى اليسار (في RTL)
+                Margin = new Thickness(8)
+            };
+
             foreach (var c in DefaultContacts)
             {
-                leftStack.Children.Add(new TextBlock { Text = string.IsNullOrWhiteSpace(c.Phone) ? c.Name : $"{c.Name} - {c.Phone}", FontSize = 13, Foreground = Brushes.Black });
+                leftStack.Children.Add(new TextBlock
+                {
+                    Text = string.IsNullOrWhiteSpace(c.Phone) ? c.Name : $"{c.Name} - {c.Phone}",
+                    FontSize = 13,
+                    Foreground = Brushes.Black,
+                    HorizontalAlignment = HorizontalAlignment.Right // توسيط النص داخل الـ TextBlock نفسه
+                });
             }
+
+            Grid.SetRow(leftStack, 1);
             Grid.SetColumn(leftStack, 1);
             grid.Children.Add(leftStack);
 
@@ -948,6 +1000,159 @@ namespace Fruittrack.Utilities
             var invalid = Path.GetInvalidFileNameChars();
             var safe = new string(name.Select(ch => invalid.Contains(ch) ? '_' : ch).ToArray());
             return string.IsNullOrWhiteSpace(safe) ? "تقرير" : safe;
+        }
+
+        // Add totals section to PDF for Farm and Factory reportsl
+        private static void AddTotalsToPdf(iTextSharp.text.Document document, DataGrid dataGrid, BaseFont baseFont)
+        {
+            try
+            {
+                // Check if this is a Farm or Factory report by looking at the DataGrid name
+                if (dataGrid?.Name == null) return;
+
+                var fontNormal = new iTextSharp.text.Font(baseFont, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
+                var fontBold = new iTextSharp.text.Font(baseFont, 11, iTextSharp.text.Font.BOLD, BaseColor.BLACK);
+                var fontTitle = new iTextSharp.text.Font(baseFont, 14, iTextSharp.text.Font.BOLD, BaseColor.BLACK);
+
+                // Add more spacing before totals section
+                document.Add(Chunk.NEWLINE);
+                document.Add(Chunk.NEWLINE);
+                document.Add(new Chunk(new LineSeparator(1f, 100f, BaseColor.DARK_GRAY, Element.ALIGN_CENTER, -2)));
+                document.Add(Chunk.NEWLINE);
+
+                // Add totals title
+                var totalsTitle = new iTextSharp.text.Paragraph( )
+                {
+                    Alignment = iTextSharp.text.Element.ALIGN_CENTER,
+                    SpacingAfter = 15f
+                };
+
+                document.Add(totalsTitle);
+
+                // Create totals table with better organization
+                var totalsTable = new PdfPTable(2)
+                {
+                    WidthPercentage = 80, // Make table narrower for better appearance
+                    SpacingBefore = 10f,
+                    SpacingAfter = 15f
+                };
+                totalsTable.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                // Get totals from the DataGrid's DataContext
+                var dataContext = dataGrid.DataContext;
+                if (dataContext != null)
+                {
+                    var totals = new List<(string label, string value, bool isMainTotal)>();
+
+                  
+              
+                    if (dataGrid.Name == "FarmDataGrid")
+                    {
+                        var totalFarmAmount = GetPropertyValue(dataContext, "FormattedTotalFarmAmount");
+                      
+                  
+                        totals.Add(("", "", false)); // Empty row for spacing
+                        totals.Add(("إجمالي حساب المزرعة:", totalFarmAmount ?? "0", true));
+                      
+                        totals.Add(("", "", false)); // Empty row for spacing
+                    
+                    }
+                    else if (dataGrid.Name == "FactoryDataGrid")
+                    {
+                        var totalFactoryAmount = GetPropertyValue(dataContext, "FormattedTotalFactoryAmount");
+                        var totalReceived = GetPropertyValue(dataContext, "FormattedTotalReceived");
+                        var netAmount = GetPropertyValue(dataContext, "FormattedNetAmount");
+
+                        totals.Add(("", "", false)); // Empty row for spacing
+                        totals.Add(("إجمالي حساب المصنع:", totalFactoryAmount ?? "0", true));
+                     
+                        totals.Add(("", "", false)); // Empty row for spacing
+                   
+                    }
+
+                    // Add totals to the table with better styling
+                    foreach (var (label, value, isMainTotal) in totals)
+                    {
+                        if (string.IsNullOrEmpty(label) && string.IsNullOrEmpty(value))
+                        {
+                            // Add empty row for spacing
+                            var emptyCell1 = new PdfPCell(new Phrase("", fontNormal))
+                            {
+                                BackgroundColor = BaseColor.WHITE,
+                                Border = 0,
+                                FixedHeight = 8f
+                            };
+                            var emptyCell2 = new PdfPCell(new Phrase("", fontNormal))
+                            {
+                                BackgroundColor = BaseColor.WHITE,
+                                Border = 0,
+                                FixedHeight = 8f
+                            };
+                            totalsTable.AddCell(emptyCell1);
+                            totalsTable.AddCell(emptyCell2);
+                        }
+                        else
+                        {
+                            var labelCell = new PdfPCell(new Phrase(label, isMainTotal ? fontBold : fontNormal))
+                            {
+                                BackgroundColor = isMainTotal ? new BaseColor(220, 240, 250) : new BaseColor(248, 249, 250),
+                                HorizontalAlignment = Element.ALIGN_LEFT,
+                                VerticalAlignment = Element.ALIGN_MIDDLE,
+                                PaddingTop = 8f,
+                                PaddingBottom = 8f,
+                                PaddingLeft = 12f,
+                                PaddingRight = 8f,
+                                Border = isMainTotal ? 1 : 0,
+                                BorderColor = isMainTotal ? BaseColor.DARK_GRAY : BaseColor.WHITE
+                            };
+                            labelCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                            var valueCell = new PdfPCell(new Phrase(value, isMainTotal ? fontBold : fontNormal))
+                            {
+                                BackgroundColor = isMainTotal ? new BaseColor(220, 240, 250) : BaseColor.WHITE,
+                                HorizontalAlignment = Element.ALIGN_LEFT,
+                                VerticalAlignment = Element.ALIGN_MIDDLE,
+                                PaddingTop = 8f,
+                                PaddingBottom = 8f,
+                                PaddingLeft = 8f,
+                                PaddingRight = 12f,
+                                Border = isMainTotal ? 1 : 0,
+                                BorderColor = isMainTotal ? BaseColor.DARK_GRAY : BaseColor.WHITE
+                            };
+                            valueCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                            totalsTable.AddCell(labelCell);
+                            totalsTable.AddCell(valueCell);
+                        }
+                    }
+
+                    document.Add(totalsTable);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't fail the PDF generation
+                System.Diagnostics.Debug.WriteLine($"Error adding totals to PDF: {ex.Message}");
+            }
+        }
+
+        // Helper method to get property values using reflection
+        private static string GetPropertyValue(object obj, string propertyName)
+        {
+            try
+            {
+                var property = obj.GetType().GetProperty(propertyName);
+                if (property != null)
+                {
+                    var value = property.GetValue(obj);
+                    return value?.ToString();
+                }
+            }
+            catch
+            {
+                // Ignore reflection errors
+            }
+            return null;
         }
     }
 } 
