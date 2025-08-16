@@ -251,11 +251,11 @@
                         </DataGridTextColumn>
 
                         <!-- Farm Total -->
-                        <DataGridTextColumn Header="إجمالي المزرعة" Binding="{Binding TotalFarmCost, StringFormat={}{0:N2}}"
+                        <DataGridTextColumn Header="إجمالي المزرعة" Binding="{Binding TotalFarmCost, StringFormat={}{0:N0}}"
                                            Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                         <!-- Factory Total -->
-                        <DataGridTextColumn Header="إجمالي المصنع" Binding="{Binding TotalFactoryRevenue, StringFormat={}{0:N2}}"
+                        <DataGridTextColumn Header="إجمالي المصنع" Binding="{Binding TotalFactoryRevenue, StringFormat={}{0:N0}}"
                                            Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                         <!-- Contractor Name (Truck Owner) -->
@@ -263,11 +263,11 @@
                                            Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                         <!-- Freight Price (Nolon) -->
-                        <DataGridTextColumn Header="سعر النولون" Binding="{Binding FreightPrice, StringFormat={}{0:N2}}"
+                        <DataGridTextColumn Header="سعر النولون" Binding="{Binding FreightPrice, StringFormat={}{0:N0}}"
                                            Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                         <!-- Farm Price -->
-                        <DataGridTextColumn Header="سعر المزرعة (جنيه/كجم)" Binding="{Binding FarmPricePerKilo, StringFormat={}{0:N3}}" 
+                        <DataGridTextColumn Header="سعر المزرعة (جنيه/كجم)" Binding="{Binding FarmPricePerKilo, StringFormat={}{0:N0}}" 
                                    Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -279,7 +279,7 @@
                         </DataGridTextColumn>
 
                         <!-- Factory Price -->
-                        <DataGridTextColumn Header="سعر المصنع (جنيه/كجم)" Binding="{Binding FactoryPricePerKilo, StringFormat={}{0:N3}}" 
+                        <DataGridTextColumn Header="سعر المصنع (جنيه/كجم)" Binding="{Binding FactoryPricePerKilo, StringFormat={}{0:N0}}" 
                                    Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -295,7 +295,7 @@
                         <DataGridTemplateColumn Header="الربح/الخسارة (جنيه)" Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding ProfitLoss, StringFormat={}{0:N2}}" 
+                                    <TextBlock Text="{Binding ProfitLoss, StringFormat={}{0:N0}}" 
                                                HorizontalAlignment="Right" 
                                                VerticalAlignment="Center" 
                                                Padding="0,0,5,0">
@@ -323,7 +323,7 @@
                         </DataGridTemplateColumn>
 
                         <!-- Profit Margin % -->
-                        <DataGridTextColumn Header="هامش الربح %" Binding="{Binding ProfitMargin, StringFormat={}{0:N1}%}" 
+                        <DataGridTextColumn Header="هامش الربح %" Binding="{Binding ProfitMargin, StringFormat={}{0:N0}%}" 
                                    Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">

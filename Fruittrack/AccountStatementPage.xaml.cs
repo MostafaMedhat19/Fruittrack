@@ -2,6 +2,8 @@ using System.Windows.Controls;
 using Fruittrack.Models;
 using Fruittrack.ViewModels;
 using Fruittrack.Utilities;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace Fruittrack
 {
@@ -18,15 +20,47 @@ namespace Fruittrack
 
         private void PrintButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            ExportUtilities.ExportToTemporaryPdfAndOpen(this, "كشف حساب");
+            var viewModel = DataContext as AccountStatementViewModel;
+            if (viewModel != null)
+            {
+                var summaryData = new Dictionary<string, string>
+                {
+                    { "إجمالي المستلم", viewModel.FormattedTotalReceivedAll },
+                    { "إجمالي المصروف", viewModel.FormattedTotalDisbursedAll },
+                    { "صافي الخزينة", viewModel.FormattedTreasuryNet },
+                 
+                };
+
+                ExportUtilities.ExportToTemporaryPdfWithSummaryAndOpen(this, "كشف حساب", summaryData: summaryData);
+            }
+            else
+            {
+                ExportUtilities.ExportToTemporaryPdfAndOpen(this, "كشف حساب");
+            }
         }
 
-        private void PdfButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void PdfButton_Click(object sender, RoutedEventArgs e)
         {
             var filePath = ExportUtilities.GetSaveFilePath("كشف_حساب.pdf", "PDF files (*.pdf)|*.pdf");
             if (!string.IsNullOrEmpty(filePath))
             {
-                ExportUtilities.ExportToPdf(this, filePath, "كشف حساب");
+                var viewModel = DataContext as AccountStatementViewModel;
+                if (viewModel != null)
+                {
+                    var summaryData = new Dictionary<string, string>
+                    {
+                        { "إجمالي المستلم", viewModel.FormattedTotalReceivedAll },
+                        { "إجمالي المصروف", viewModel.FormattedTotalDisbursedAll },
+                        { "صافي الخزينة", viewModel.FormattedTreasuryNet },
+                      
+                    };
+
+                    ExportUtilities.ExportToPdfWithSummary(this, filePath, "كشف حساب", summaryData: summaryData);
+                }
+                else
+                {
+                    ExportUtilities.ExportToPdf(this, filePath, "كشف حساب");
+                }
             }
         }
 

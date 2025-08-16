@@ -47,11 +47,11 @@
                 <DataGridTextColumn Header="التاريخ" Binding="{Binding Date, StringFormat=d}" Width="120"/>
                 <DataGridTextColumn Header="رقم العربية" Binding="{Binding TruckNumber}" Width="120"/>
                 <DataGridTextColumn Header="اسم المصنع" Binding="{Binding FactoryName}" Width="*"/>
-                <DataGridTextColumn Header="الوزن" Binding="{Binding Weight, StringFormat=N2}" Width="120"/>
-                <DataGridTextColumn Header="نسبة الخصم" Binding="{Binding DiscountPercent, StringFormat=N2}" Width="120"/>
-                <DataGridTextColumn Header="الوزن الفعلي" Binding="{Binding AllowedWeight, StringFormat=N2}" Width="140"/>
-                <DataGridTextColumn Header="السعر لكل كيلو" Binding="{Binding PricePerKilo, StringFormat=N2}" Width="140"/>
-                <DataGridTextColumn Header="إجمالي المصنع" Binding="{Binding FactoryTotal, StringFormat=N2}" Width="160"/>
+                <DataGridTextColumn Header="الوزن" Binding="{Binding Weight, StringFormat=N0}" Width="120"/>
+                <DataGridTextColumn Header="نسبة الخصم" Binding="{Binding DiscountPercent, StringFormat=N0}" Width="120"/>
+                <DataGridTextColumn Header="الوزن الفعلي" Binding="{Binding AllowedWeight, StringFormat=N0}" Width="140"/>
+                <DataGridTextColumn Header="السعر لكل كيلو" Binding="{Binding PricePerKilo, StringFormat=N0}" Width="140"/>
+                <DataGridTextColumn Header="إجمالي المصنع" Binding="{Binding FactoryTotal, StringFormat=N0}" Width="160"/>
                 <DataGridTextColumn Header="اسم المقاول" Binding="{Binding TransportContractorName}" Width="160"/>
             </DataGrid.Columns>
         </DataGrid>

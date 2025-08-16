@@ -291,6 +291,214 @@ namespace Fruittrack.Utilities
             }
         }
 
+        public static void ExportToPdfWithSummary(
+            FrameworkElement element,
+            string filePath,
+            string title = "تقرير",
+            string companyName = "شركة   فيوتشر لتوريدات الفاكهة",
+            string logoPath = null,
+            Dictionary<string, string> summaryData = null,
+            bool showSuccessMessage = true)
+        {
+            try
+            {
+                using (var document = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4, 36, 36, 48, 48))
+                using (var fs = new FileStream(filePath, FileMode.Create))
+                {
+                    var writer = PdfWriter.GetInstance(document, fs);
+                    writer.PageEvent = new SimpleFooterEvent();
+
+                    document.Open();
+
+                    // 1) Build an Arabic-correct header as a WPF visual and add as image
+                    var header = BuildHeaderVisual(string.IsNullOrWhiteSpace(companyName) ? DefaultCompanyName : companyName, title, logoPath);
+                    var headerBitmap = RenderOffscreenElementToBitmap(header);
+                    using (var headerStream = new MemoryStream())
+                    {
+                        var headerEncoder = new PngBitmapEncoder();
+                        headerEncoder.Frames.Add(BitmapFrame.Create(headerBitmap));
+                        headerEncoder.Save(headerStream);
+                        headerStream.Position = 0;
+                        var headerImg = iTextSharp.text.Image.GetInstance(headerStream.ToArray());
+                        headerImg.ScaleToFit((float)(document.PageSize.Width - document.LeftMargin - document.RightMargin), 200f);
+                        headerImg.Alignment = Element.ALIGN_CENTER;
+                        document.Add(headerImg);
+                    }
+
+                    document.Add(new Chunk(new LineSeparator(0.5f, 100f, BaseColor.LIGHT_GRAY, Element.ALIGN_CENTER, -2)));
+                    document.Add(Chunk.NEWLINE);
+                    document.Add(Chunk.NEWLINE);
+
+                    // 2) If there is a DataGrid inside the element, try to export as real PDF table (Arabic-safe)
+                    var dataGrid = FindVisualChild<DataGrid>(element);
+                    List<(DataGridColumn column, Visibility originalVisibility)> modifiedColumns = new List<(DataGridColumn, Visibility)>();
+                    if (dataGrid != null)
+                    {
+                        foreach (var col in dataGrid.Columns)
+                        {
+                            var headerText = col.Header != null ? col.Header.ToString() : string.Empty;
+                            if (!string.IsNullOrWhiteSpace(headerText) && headerText.Trim() == "الإجراءات")
+                            {
+                                modifiedColumns.Add((col, col.Visibility));
+                                col.Visibility = Visibility.Collapsed;
+                            }
+                        }
+                        dataGrid.UpdateLayout();
+                    }
+
+                    // 3) Prefer real table export with Arabic font; fallback to image capture if extraction fails
+                    bool tableAdded = false;
+                    if (dataGrid != null)
+                    {
+                        var dataTable = ExtractDataFromElement(dataGrid);
+                        if (dataTable != null && dataTable.Columns.Count > 0)
+                        {
+                            var bf = TryLoadArabicBaseFont();
+                            var fontHeader = new iTextSharp.text.Font(bf, 11, iTextSharp.text.Font.BOLD, BaseColor.WHITE);
+                            var fontCell = new iTextSharp.text.Font(bf, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
+
+                            var pdfTable = new PdfPTable(dataTable.Columns.Count)
+                            {
+                                WidthPercentage = 100
+                            };
+                            pdfTable.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                            // Headers
+                            foreach (DataColumn col in dataTable.Columns)
+                            {
+                                var headerCell = new PdfPCell(new Phrase(col.ColumnName, fontHeader))
+                                {
+                                    BackgroundColor = new BaseColor(23, 42, 58), // dark header
+                                    HorizontalAlignment = Element.ALIGN_LEFT,
+                                    VerticalAlignment = Element.ALIGN_MIDDLE,
+                                    PaddingTop = 6f,
+                                    PaddingBottom = 6f
+                                };
+                                headerCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+                                pdfTable.AddCell(headerCell);
+                            }
+
+                            // Rows
+                            bool odd = false;
+                            foreach (DataRow row in dataTable.Rows)
+                            {
+                                odd = !odd;
+                                for (int i = 0; i < dataTable.Columns.Count; i++)
+                                {
+                                    string text = row[i] != null ? row[i].ToString() : string.Empty;
+                                    var cell = new PdfPCell(new Phrase(text, fontCell))
+                                    {
+                                        BackgroundColor = odd ? BaseColor.WHITE : new BaseColor(245, 245, 245),
+                                        HorizontalAlignment = Element.ALIGN_LEFT,
+                                        VerticalAlignment = Element.ALIGN_MIDDLE,
+                                        PaddingTop = 4f,
+                                        PaddingBottom = 4f
+                                    };
+                                    cell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+                                    pdfTable.AddCell(cell);
+                                }
+                            }
+
+                            document.Add(pdfTable);
+                            tableAdded = true;
+                        }
+
+                        // Restore column visibility
+                        foreach (var (col, visibility) in modifiedColumns)
+                        {
+                            col.Visibility = visibility;
+                        }
+                        dataGrid.UpdateLayout();
+                    }
+
+                    // 4) Add summary section if provided
+                    if (summaryData != null && summaryData.Count > 0)
+                    {
+                        document.Add(Chunk.NEWLINE);
+                        document.Add(new Chunk(new LineSeparator(0.5f, 100f, BaseColor.LIGHT_GRAY, Element.ALIGN_CENTER, -2)));
+                        document.Add(Chunk.NEWLINE);
+
+                        var bf = TryLoadArabicBaseFont();
+                        var fontSummaryHeader = new iTextSharp.text.Font(bf, 12, iTextSharp.text.Font.BOLD, BaseColor.BLACK);
+                        var fontSummaryValue = new iTextSharp.text.Font(bf, 11, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
+
+                        // Add summary title
+                        var summaryTitle = new iTextSharp.text.Paragraph();
+                        summaryTitle.Alignment = Element.ALIGN_CENTER;
+                        document.Add(summaryTitle);
+                        document.Add(Chunk.NEWLINE);
+
+                        // Create summary table
+                        var summaryTable = new PdfPTable(2)
+                        {
+                            WidthPercentage = 80
+                        };
+                        summaryTable.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                        foreach (var kvp in summaryData)
+                        {
+                            // Label cell
+                            var labelCell = new PdfPCell(new Phrase(kvp.Key, fontSummaryHeader))
+                            {
+                                BackgroundColor = new BaseColor(240, 240, 240),
+                                HorizontalAlignment = Element.ALIGN_LEFT,
+                                VerticalAlignment = Element.ALIGN_MIDDLE,
+                                PaddingTop = 6f,
+                                PaddingBottom = 6f,
+                                BorderWidth = 0.5f
+                            };
+                            labelCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+                            summaryTable.AddCell(labelCell);
+
+                            // Value cell
+                            var valueCell = new PdfPCell(new Phrase(kvp.Value, fontSummaryValue))
+                            {
+                                BackgroundColor = BaseColor.WHITE,
+                                HorizontalAlignment = Element.ALIGN_LEFT,
+                                VerticalAlignment = Element.ALIGN_MIDDLE,
+                                PaddingTop = 6f,
+                                PaddingBottom = 6f,
+                                BorderWidth = 0.5f
+                            };
+                            valueCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+                            summaryTable.AddCell(valueCell);
+                        }
+
+                        summaryTable.HorizontalAlignment = Element.ALIGN_CENTER;
+                        document.Add(summaryTable);
+                    }
+
+                    // 5) Fallback to image capture if table export failed
+                    if (!tableAdded)
+                    {
+                        document.Add(Chunk.NEWLINE);
+                        var elementBitmap = RenderOffscreenElementToBitmap(element);
+                        using (var elementStream = new MemoryStream())
+                        {
+                            var elementEncoder = new PngBitmapEncoder();
+                            elementEncoder.Frames.Add(BitmapFrame.Create(elementBitmap));
+                            elementEncoder.Save(elementStream);
+                            elementStream.Position = 0;
+                            var elementImg = iTextSharp.text.Image.GetInstance(elementStream.ToArray());
+                            elementImg.ScaleToFit((float)(document.PageSize.Width - document.LeftMargin - document.RightMargin), 600f);
+                            elementImg.Alignment = Element.ALIGN_CENTER;
+                            document.Add(elementImg);
+                        }
+                    }
+
+                    document.Close();
+                    if (showSuccessMessage)
+                    {
+                        MessageBox.Show($"تم حفظ التقرير بنجاح في:\n{filePath}", "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطأ في حفظ ملف PDF: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         // Create a temporary PDF with the same design and open it in the default PDF viewer (preview)
         public static void ExportToTemporaryPdfAndOpen(
             FrameworkElement element,
@@ -303,6 +511,40 @@ namespace Fruittrack.Utilities
                 var safeTitle = MakeSafeFilename(title);
                 var tempPath = Path.Combine(Path.GetTempPath(), $"{safeTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
                 ExportToPdf(element, tempPath, title, companyName, logoPath, showSuccessMessage: false);
+
+                try
+                {
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = tempPath,
+                        UseShellExecute = true
+                    };
+                    Process.Start(psi);
+                }
+                catch (Exception openEx)
+                {
+                    MessageBox.Show($"تم إنشاء ملف المعاينة في: {tempPath}\nلكن تعذر فتحه تلقائيًا: {openEx.Message}", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطأ في إنشاء ملف PDF للمعاينة: {ex.Message}", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Create a temporary PDF with summary and open it in the default PDF viewer (preview)
+        public static void ExportToTemporaryPdfWithSummaryAndOpen(
+            FrameworkElement element,
+            string title = "تقرير",
+            string companyName = "شركة: فيوتشر لتوريدات الفاكهة",
+            string logoPath = null,
+            Dictionary<string, string> summaryData = null)
+        {
+            try
+            {
+                var safeTitle = MakeSafeFilename(title);
+                var tempPath = Path.Combine(Path.GetTempPath(), $"{safeTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+                ExportToPdfWithSummary(element, tempPath, title, companyName, logoPath, summaryData, showSuccessMessage: false);
 
                 try
                 {

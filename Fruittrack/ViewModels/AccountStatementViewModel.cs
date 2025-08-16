@@ -39,9 +39,9 @@ namespace Fruittrack.ViewModels
                 FormattedPaidBackAmount = SafeFormat(t.FormattedPaidBackAmount),
                 FormattedReceivedAmount = SafeFormat(t.FormattedReceivedAmount),
                 FormattedRemainingAmount = SafeFormat(t.FormattedRemainingAmount),
-                FormattedCredit = t.Credit.ToString("C", new CultureInfo("ar-EG")),
-                FormattedDebit = t.Debit.ToString("C", new CultureInfo("ar-EG")),
-                FormattedBalance = t.Balance.ToString("C", new CultureInfo("ar-EG"))
+                FormattedCredit = t.Credit.ToString("C0", new CultureInfo("ar-EG")),
+                FormattedDebit = t.Debit.ToString("C0", new CultureInfo("ar-EG")),
+                FormattedBalance = t.Balance.ToString("C0", new CultureInfo("ar-EG"))
             }));
 
             LoadAllEntityNames();
@@ -95,11 +95,11 @@ namespace Fruittrack.ViewModels
                 TransactionType = "استلام",
                 Notes = r.Notes,
                 ReceivedAmountValue = r.ReceivedAmount,
-                FormattedReceivedAmount = r.ReceivedAmount.ToString("N2", new CultureInfo("ar-EG")),
-                FormattedDisbursedAmount = 0m.ToString("N2", new CultureInfo("ar-EG")),
-                FormattedCredit = 0m.ToString("N2", new CultureInfo("ar-EG")),
-                FormattedDebit = 0m.ToString("N2", new CultureInfo("ar-EG")),
-                FormattedBalance = 0m.ToString("N2", new CultureInfo("ar-EG")),
+                FormattedReceivedAmount = r.ReceivedAmount.ToString("N0", new CultureInfo("ar-EG")),
+                FormattedDisbursedAmount = 0m.ToString("N0", new CultureInfo("ar-EG")),
+                FormattedCredit = 0m.ToString("N0", new CultureInfo("ar-EG")),
+                FormattedDebit = 0m.ToString("N0", new CultureInfo("ar-EG")),
+                FormattedBalance = 0m.ToString("N0", new CultureInfo("ar-EG")),
             }));
 
             transactions.AddRange(disbursements.Select(d => new TransactionDetail
@@ -109,11 +109,11 @@ namespace Fruittrack.ViewModels
                 TransactionType = "صرف",
                 Notes = string.Empty,
                 DisbursedAmountValue = d.Amount,
-                FormattedReceivedAmount = 0m.ToString("N2", new CultureInfo("ar-EG")),
-                FormattedDisbursedAmount = d.Amount.ToString("N2", new CultureInfo("ar-EG")),
-                FormattedCredit = 0m.ToString("N2", new CultureInfo("ar-EG")),
-                FormattedDebit = 0m.ToString("N2", new CultureInfo("ar-EG")),
-                FormattedBalance = 0m.ToString("N2", new CultureInfo("ar-EG")),
+                FormattedReceivedAmount = 0m.ToString("N0", new CultureInfo("ar-EG")),
+                FormattedDisbursedAmount = d.Amount.ToString("N0", new CultureInfo("ar-EG")),
+                FormattedCredit = 0m.ToString("N0", new CultureInfo("ar-EG")),
+                FormattedDebit = 0m.ToString("N0", new CultureInfo("ar-EG")),
+                FormattedBalance = 0m.ToString("N0", new CultureInfo("ar-EG")),
             }));
 
             // Sort and assign
@@ -144,7 +144,7 @@ namespace Fruittrack.ViewModels
         private static string SafeFormat(string? s)
         {
             var value = TryParseDecimal(s);
-            return value.ToString("C", new CultureInfo("ar-EG"));
+            return value.ToString("C0", new CultureInfo("ar-EG"));
         }
 
         public string EntityName => _accountStatement.EntityName;
@@ -160,22 +160,22 @@ namespace Fruittrack.ViewModels
         public decimal TotalDisbursedCurrent => _totalDisbursedCurrent;
         public decimal TreasuryNet => _totalReceivedCurrent - _totalDisbursedCurrent;
 
-        public string FormattedTotalReceivedAll => _totalReceivedCurrent.ToString("N2", new CultureInfo("ar-EG"));
-        public string FormattedTotalDisbursedAll => _totalDisbursedCurrent.ToString("N2", new CultureInfo("ar-EG"));
-        public string FormattedTreasuryNet => TreasuryNet.ToString("N2", new CultureInfo("ar-EG"));
+        public string FormattedTotalReceivedAll => _totalReceivedCurrent.ToString("N0", new CultureInfo("ar-EG"));
+        public string FormattedTotalDisbursedAll => _totalDisbursedCurrent.ToString("N0", new CultureInfo("ar-EG"));
+        public string FormattedTreasuryNet => TreasuryNet.ToString("N0", new CultureInfo("ar-EG"));
         public decimal PaidBackAmount => _paidBackAmount;
         public decimal ReceivedAmount => _receivedAmount;
         public decimal RemainingAmount => _remainingAmount;
         public decimal TotalRemainingAmount => _totalRemainingAmount;
 
         // Formatted properties for display
-        public string FormattedTotalCredit => TotalCredit.ToString("C", new CultureInfo("ar-EG"));
-        public string FormattedTotalDebit => TotalDebit.ToString("C", new CultureInfo("ar-EG"));
-        public string FormattedFinalBalance => FinalBalance.ToString("C", new CultureInfo("ar-EG"));
-        public string FormattedPaidBackAmount => PaidBackAmount.ToString("C", new CultureInfo("ar-EG"));
-        public string FormattedReceivedAmount => ReceivedAmount.ToString("C", new CultureInfo("ar-EG"));
-        public string FormattedRemainingAmount => RemainingAmount.ToString("C", new CultureInfo("ar-EG"));
-        public string FormattedTotalRemainingAmount => TotalRemainingAmount.ToString("C", new CultureInfo("ar-EG"));
+        public string FormattedTotalCredit => TotalCredit.ToString("C0", new CultureInfo("ar-EG"));
+        public string FormattedTotalDebit => TotalDebit.ToString("C0", new CultureInfo("ar-EG"));
+        public string FormattedFinalBalance => FinalBalance.ToString("C0", new CultureInfo("ar-EG"));
+        public string FormattedPaidBackAmount => PaidBackAmount.ToString("C0", new CultureInfo("ar-EG"));
+        public string FormattedReceivedAmount => ReceivedAmount.ToString("C0", new CultureInfo("ar-EG"));
+        public string FormattedRemainingAmount => RemainingAmount.ToString("C0", new CultureInfo("ar-EG"));
+        public string FormattedTotalRemainingAmount => TotalRemainingAmount.ToString("C0", new CultureInfo("ar-EG"));
         public Brush FinalBalanceColor => FinalBalance > 0 ? Brushes.Green : Brushes.Black;
 
         private ObservableCollection<TransactionDetail> _transactions;

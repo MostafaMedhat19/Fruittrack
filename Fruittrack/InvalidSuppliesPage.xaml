@@ -292,7 +292,7 @@
                                            Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}"/>
 
                                 <!-- Factory Weight -->
-                                <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding FactoryWeight, StringFormat={}{0:N1}}" 
+                                <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding FactoryWeight, StringFormat={}{0:N0}}" 
                                            Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">

@@ -209,7 +209,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="وزن المزرعة (كجم)" Binding="{Binding FarmWeight, StringFormat={}{0:N1}}" 
+                        <DataGridTextColumn Header="وزن المزرعة (كجم)" Binding="{Binding FarmWeight, StringFormat={}{0:N0}}" 
                                    Width="140" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -230,7 +230,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="الوزن المسموح من المزرعة" Binding="{Binding AllowedWeightFromFarm, StringFormat={}{0:N1}}" 
+                        <DataGridTextColumn Header="الوزن المسموح من المزرعة" Binding="{Binding AllowedWeightFromFarm, StringFormat={}{0:N0}}" 
                                    Width="160" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -243,7 +243,7 @@
 
                         <!-- Farm Price Column -->
                         <DataGridTextColumn Header="سعر المزرعة (جنيه/كجم)" 
-                                           Binding="{Binding FarmPrice, StringFormat={}{0:N3}}" 
+                                           Binding="{Binding FarmPrice, StringFormat={}{0:N0}}" 
                                            Width="150" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -265,7 +265,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding FactoryWeight, StringFormat={}{0:N1}}" 
+                        <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding FactoryWeight, StringFormat={}{0:N0}}" 
                                    Width="140" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -286,7 +286,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="الوزن المسموح من المصنع" Binding="{Binding AllowedWeightFromFactory, StringFormat={}{0:N1}}" 
+                        <DataGridTextColumn Header="الوزن المسموح من المصنع" Binding="{Binding AllowedWeightFromFactory, StringFormat={}{0:N0}}" 
                                    Width="160" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -299,7 +299,7 @@
 
                         <!-- Factory Price Column -->
                         <DataGridTextColumn Header="سعر المصنع (جنيه/كجم)" 
-                                           Binding="{Binding FactoryPrice, StringFormat={}{0:N3}}" 
+                                           Binding="{Binding FactoryPrice, StringFormat={}{0:N0}}" 
                                            Width="150" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">

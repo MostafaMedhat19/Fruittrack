@@ -627,7 +627,7 @@
                             <StackPanel Grid.Row="1">
                                 <TextBlock Text="الوزن عند المزرعة (كجم)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFarmWeight" 
-                                         Text="{Binding FarmWeight, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}">
+                                         Text="{Binding FarmWeight, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -675,7 +675,7 @@
                                 <Border Background="#E6F7F0" BorderBrush="{StaticResource AccentBrush}" 
                                         BorderThickness="2" CornerRadius="6" Padding="12,8">
                                     <Grid>
-                                        <TextBlock Text="{Binding FarmAllowedWeight, Mode=OneWay, StringFormat={}{0:N2} كجم}" 
+                                        <TextBlock Text="{Binding FarmAllowedWeight, Mode=OneWay, StringFormat={}{0:N0} كجم}" 
                                                    FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"
                                                    Foreground="{StaticResource AccentBrush}"/>
                                         <Border Background="{StaticResource AccentBrush}" CornerRadius="10" 
@@ -695,7 +695,7 @@
                             <StackPanel Grid.Row="4">
                                 <TextBlock Text="السعر لكل كيلو (جنيه)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFarmPrice" 
-                                        Text="{Binding FarmPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}">
+                                        Text="{Binding FarmPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -716,7 +716,7 @@
                             <StackPanel Grid.Row="5">
                                 <TextBlock Text="مبلغ صرف نقدية" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFarmSpecialDataNumber" 
-                                         Text="{Binding FarmSpecialDataNumber, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"
+                                         Text="{Binding FarmSpecialDataNumber, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}"
                                          Style="{StaticResource ModernTextBox}"
                                          Margin="0,5,0,0"/>
                             </StackPanel>
@@ -768,7 +768,7 @@
                             <StackPanel Grid.Row="1">
                                 <TextBlock Text="الوزن عند المصنع (كجم)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFactoryWeight" 
-                                         Text="{Binding FactoryWeight, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}">
+                                         Text="{Binding FactoryWeight, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -816,7 +816,7 @@
                                 <Border Background="#E6F7F0" BorderBrush="{StaticResource AccentBrush}" 
                                         BorderThickness="2" CornerRadius="6" Padding="12,8">
                                     <Grid>
-                                        <TextBlock Text="{Binding FactoryAllowedWeight, Mode=OneWay, StringFormat={}{0:N2} كجم}" 
+                                        <TextBlock Text="{Binding FactoryAllowedWeight, Mode=OneWay, StringFormat={}{0:N0} كجم}" 
                                                    FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"
                                                    Foreground="{StaticResource AccentBrush}"/>
                                         <Border Background="{StaticResource AccentBrush}" CornerRadius="10" 
@@ -836,7 +836,7 @@
                             <StackPanel Grid.Row="4">
                                 <TextBlock Text="السعر لكل كيلو (جنيه)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFactoryPrice" 
-                                         Text="{Binding FactoryPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}">
+                                         Text="{Binding FactoryPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -896,7 +896,7 @@
                                                FontWeight="SemiBold"/>
                                 </StackPanel>
                                 <TextBlock x:Name="txtFarmTotal" 
-                                           Text="{Binding FarmTotal, Mode=OneWay, StringFormat={}{0:C}}" 
+                                           Text="{Binding FarmTotal, Mode=OneWay, StringFormat={}{0:C0}}" 
                                            Style="{StaticResource ValueTextStyle}"
                                            HorizontalAlignment="Center"
                                            Foreground="{StaticResource SecondaryBrush}"/>
@@ -922,7 +922,7 @@
                                                FontWeight="SemiBold"/>
                                 </StackPanel>
                                 <TextBlock x:Name="txtFactoryTotal" 
-                                           Text="{Binding FactoryTotal, Mode=OneWay, StringFormat={}{0:C}}" 
+                                           Text="{Binding FactoryTotal, Mode=OneWay, StringFormat={}{0:C0}}" 
                                            Style="{StaticResource ValueTextStyle}"
                                            HorizontalAlignment="Center"
                                            Foreground="{StaticResource PrimaryBrush}"/>
@@ -948,7 +948,7 @@
                                                FontWeight="Bold"/>
                                 </StackPanel>
                                 <TextBlock x:Name="txtProfitMargin" 
-                                           Text="{Binding ProfitMargin, Mode=OneWay, StringFormat={}{0:C}}" 
+                                           Text="{Binding ProfitMargin, Mode=OneWay, StringFormat={}{0:C0}}" 
                                            Style="{StaticResource ProfitTextStyle}"
                                            HorizontalAlignment="Center"/>
                                 <TextBlock Text="= إجمالي المصنع - (المزرعة + النولون)" 

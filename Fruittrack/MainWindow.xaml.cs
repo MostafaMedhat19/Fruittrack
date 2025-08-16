@@ -29,9 +29,9 @@ namespace Fruittrack
                     // Add sample data if not exists
                     if (!context.Trucks.Any())
                     {
-                        var truck = new Truck { TruckNumber = "TRK-001" };
-                        var farm = new Farm { FarmName = "Green Farm" };
-                        var factory = new Factory { FactoryName = "Juice Factory" };
+                        var truck = new Truck();
+                        var farm = new Farm(); 
+                        var factory = new Factory ();
                         context.Trucks.Add(truck);
                         context.Farms.Add(farm);
                         context.Factories.Add(factory);

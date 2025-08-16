@@ -70,22 +70,22 @@ namespace Fruittrack.ViewModels
 
         private decimal _totalWeight;
         public decimal TotalWeight { get => _totalWeight; private set { _totalWeight = value; OnPropertyChanged(nameof(TotalWeight)); OnPropertyChanged(nameof(FormattedTotalWeight)); } }
-        public string FormattedTotalWeight => TotalWeight.ToString("N2", new CultureInfo("ar-EG"));
+        public string FormattedTotalWeight => TotalWeight.ToString("N0", new CultureInfo("ar-EG"));
 
         private decimal _totalAllowedWeight;
         public decimal TotalAllowedWeight { get => _totalAllowedWeight; private set { _totalAllowedWeight = value; OnPropertyChanged(nameof(TotalAllowedWeight)); OnPropertyChanged(nameof(FormattedTotalAllowedWeight)); } }
-        public string FormattedTotalAllowedWeight => TotalAllowedWeight.ToString("N2", new CultureInfo("ar-EG"));
+        public string FormattedTotalAllowedWeight => TotalAllowedWeight.ToString("N0", new CultureInfo("ar-EG"));
 
         private decimal _totalFarmAmount;
         public decimal TotalFarmAmount { get => _totalFarmAmount; private set { _totalFarmAmount = value; OnPropertyChanged(nameof(TotalFarmAmount)); OnPropertyChanged(nameof(FormattedTotalFarmAmount)); OnPropertyChanged(nameof(NetAmount)); OnPropertyChanged(nameof(FormattedNetAmount)); } }
-        public string FormattedTotalFarmAmount => TotalFarmAmount.ToString("N2", new CultureInfo("ar-EG"));
+        public string FormattedTotalFarmAmount => TotalFarmAmount.ToString("N0", new CultureInfo("ar-EG"));
 
         private decimal _totalDisbursed;
         public decimal TotalDisbursed { get => _totalDisbursed; private set { _totalDisbursed = value; OnPropertyChanged(nameof(TotalDisbursed)); OnPropertyChanged(nameof(FormattedTotalDisbursed)); OnPropertyChanged(nameof(NetAmount)); OnPropertyChanged(nameof(FormattedNetAmount)); } }
-        public string FormattedTotalDisbursed => TotalDisbursed.ToString("N2", new CultureInfo("ar-EG"));
+        public string FormattedTotalDisbursed => TotalDisbursed.ToString("N0", new CultureInfo("ar-EG"));
 
         public decimal NetAmount => TotalFarmAmount - TotalDisbursed;
-        public string FormattedNetAmount => NetAmount.ToString("N2", new CultureInfo("ar-EG"));
+        public string FormattedNetAmount => NetAmount.ToString("N0", new CultureInfo("ar-EG"));
 
         public ICommand RefreshCommand { get; }
 

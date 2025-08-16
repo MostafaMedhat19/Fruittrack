@@ -200,7 +200,7 @@
                VerticalAlignment="Center"/>
 
                                 <TextBlock Grid.Column="1" 
-               Text="{Binding TotalReceivedAmount, StringFormat=N2}" 
+               Text="{Binding TotalReceivedAmount, StringFormat=N0}" 
                FontSize="16"
                FontWeight="Bold"
                Foreground="Green"
@@ -297,7 +297,7 @@
                                     Width="*"/>
 
                             <DataGridTextColumn Header="المبلغ المستلم" 
-                                    Binding="{Binding ReceivedAmount, StringFormat=N2}" 
+                                    Binding="{Binding ReceivedAmount, StringFormat=N0}" 
                                     Width="*"/>
 
                             <DataGridTextColumn Header="التاريخ" 

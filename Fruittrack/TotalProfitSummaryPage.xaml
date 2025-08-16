@@ -263,7 +263,7 @@
                     </DataGridTextColumn>
 
                     <!-- Total Farm Weight -->
-                    <DataGridTextColumn Header="وزن المزرعة (كجم)" Binding="{Binding TotalFarmWeight, StringFormat={}{0:N1}}" 
+                    <DataGridTextColumn Header="وزن المزرعة (كجم)" Binding="{Binding TotalFarmWeight, StringFormat={}{0:N0}}" 
                                Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -275,7 +275,7 @@
                     </DataGridTextColumn>
 
                     <!-- Total Factory Weight -->
-                    <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding TotalFactoryWeight, StringFormat={}{0:N1}}" 
+                    <DataGridTextColumn Header="وزن المصنع (كجم)" Binding="{Binding TotalFactoryWeight, StringFormat={}{0:N0}}" 
                                Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -287,7 +287,7 @@
                     </DataGridTextColumn>
 
                     <!-- Total Freight Cost -->
-                    <DataGridTextColumn Header="إجمالي النولون (جنيه)" Binding="{Binding TotalFreightCost, StringFormat={}{0:N2}}" 
+                    <DataGridTextColumn Header="إجمالي النولون (جنيه)" Binding="{Binding TotalFreightCost, StringFormat={}{0:N0}}" 
                                Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -299,7 +299,7 @@
                     </DataGridTextColumn>
 
                     <!-- Total Farm Cost -->
-                    <DataGridTextColumn Header="إجمالي أسعار المزرعة (جنيه)" Binding="{Binding TotalFarmCost, StringFormat={}{0:N2}}" 
+                    <DataGridTextColumn Header="إجمالي أسعار المزرعة (جنيه)" Binding="{Binding TotalFarmCost, StringFormat={}{0:N0}}" 
                                Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -311,7 +311,7 @@
                     </DataGridTextColumn>
 
                     <!-- Total Factory Revenue -->
-                    <DataGridTextColumn Header="إجمالي أسعار المصنع (جنيه)" Binding="{Binding TotalFactoryRevenue, StringFormat={}{0:N2}}" 
+                    <DataGridTextColumn Header="إجمالي أسعار المصنع (جنيه)" Binding="{Binding TotalFactoryRevenue, StringFormat={}{0:N0}}" 
                                Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -326,7 +326,7 @@
                     <DataGridTemplateColumn Header="الربح/الخسارة (جنيه)" Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding ProfitLoss, StringFormat={}{0:N2}}" 
+                                <TextBlock Text="{Binding ProfitLoss, StringFormat={}{0:N0}}" 
                                            HorizontalAlignment="Right" 
                                            VerticalAlignment="Center" 
                                            Padding="0,0,5,0">
@@ -354,7 +354,7 @@
                     </DataGridTemplateColumn>
 
                     <!-- Profit Margin % -->
-                    <DataGridTextColumn Header="هامش الربح %" Binding="{Binding ProfitMargin, StringFormat={}{0:N1}%}" 
+                    <DataGridTextColumn Header="هامش الربح %" Binding="{Binding ProfitMargin, StringFormat={}{0:N0}%}" 
                                Width="*" HeaderStyle="{StaticResource DarkDataGridColumnHeader}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">

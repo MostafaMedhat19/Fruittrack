@@ -126,9 +126,9 @@ namespace Fruittrack.Views
                     FarmComboBox.SelectedIndex = 0; // Select "-- اختر المزرعة --"
                 }
 
-                FarmWeightTextBox.Text = _supplyEntry.FarmWeight?.ToString("F1", System.Globalization.CultureInfo.InvariantCulture) ?? "";
-                FarmDiscountTextBox.Text = _supplyEntry.FarmDiscountRate?.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) ?? "";
-                FarmPriceTextBox.Text = _supplyEntry.FarmPricePerKilo?.ToString("F3", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+                FarmWeightTextBox.Text = _supplyEntry.FarmWeight?.ToString("F0", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+                FarmDiscountTextBox.Text = _supplyEntry.FarmDiscountRate?.ToString("F0", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+                FarmPriceTextBox.Text = _supplyEntry.FarmPricePerKilo?.ToString("F0", System.Globalization.CultureInfo.InvariantCulture) ?? "";
 
                 // Factory info
                 if (_supplyEntry.FactoryId.HasValue && _supplyEntry.FactoryId.Value > 0)
@@ -140,9 +140,9 @@ namespace Fruittrack.Views
                     FactoryComboBox.SelectedIndex = 0; // Select "-- اختر المصنع --"
                 }
 
-                FactoryWeightTextBox.Text = _supplyEntry.FactoryWeight?.ToString("F1", System.Globalization.CultureInfo.InvariantCulture) ?? "";
-                FactoryDiscountTextBox.Text = _supplyEntry.FactoryDiscountRate?.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) ?? "";
-                FactoryPriceTextBox.Text = _supplyEntry.FactoryPricePerKilo?.ToString("F3", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+                FactoryWeightTextBox.Text = _supplyEntry.FactoryWeight?.ToString("F0", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+                FactoryDiscountTextBox.Text = _supplyEntry.FactoryDiscountRate?.ToString("F0", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+                FactoryPriceTextBox.Text = _supplyEntry.FactoryPricePerKilo?.ToString("F0", System.Globalization.CultureInfo.InvariantCulture) ?? "";
 
                 // Transport and notes
                 FreightCostTextBox.Text = _supplyEntry.FreightCost?.ToString("F0", System.Globalization.CultureInfo.InvariantCulture) ?? "";
