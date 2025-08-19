@@ -37,7 +37,34 @@ namespace Fruittrack
             public string TruckNumber { get => _truckNumber; set { _truckNumber = value; OnPropertyChanged(nameof(TruckNumber)); ValidateTruckNumber(); } }
             private string _truckNumber = string.Empty;
 
-            public decimal? TransportPrice { get => _transportPrice; set { _transportPrice = value; OnPropertyChanged(nameof(TransportPrice)); ValidateTransportPrice(); UpdateProfit(); } }
+            // Text representation to preserve exact user input for transport price
+            public string TransportPriceText
+            {
+                get => _transportPriceText;
+                set
+                {
+                    _transportPriceText = value;
+                    OnPropertyChanged(nameof(TransportPriceText));
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        TransportPrice = null;
+                    }
+                    else if (TryParseDecimalFlexible(value, out var parsed))
+                    {
+                        TransportPrice = parsed;
+                    }
+                    else
+                    {
+                        // Do not change TransportPrice on invalid text; validation will surface
+                        TransportPrice = null;
+                    }
+                    ValidateTransportPrice();
+                    UpdateProfit();
+                }
+            }
+            private string _transportPriceText = string.Empty;
+
+            public decimal? TransportPrice { get => _transportPrice; set { _transportPrice = value; OnPropertyChanged(nameof(TransportPrice)); } }
             private decimal? _transportPrice;
 
             public Farm? SelectedFarm { get => _selectedFarm; set { _selectedFarm = value; OnPropertyChanged(nameof(SelectedFarm)); FarmId = value?.FarmId; ValidateFarmName(); } }
@@ -55,7 +82,33 @@ namespace Fruittrack
             public decimal? FarmAllowedWeight { get => _farmAllowedWeight; set { _farmAllowedWeight = value; OnPropertyChanged(nameof(FarmAllowedWeight)); UpdateFarmTotal(); } }
             private decimal? _farmAllowedWeight;
 
-            public decimal? FarmPrice { get => _farmPricePerKilo; set { _farmPricePerKilo = value; OnPropertyChanged(nameof(FarmPrice)); ValidateFarmPrice(); UpdateFarmTotal(); } }
+            // Text representation to preserve exact user input for farm price
+            public string FarmPriceText
+            {
+                get => _farmPriceText;
+                set
+                {
+                    _farmPriceText = value;
+                    OnPropertyChanged(nameof(FarmPriceText));
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        FarmPrice = null;
+                    }
+                    else if (TryParseDecimalFlexible(value, out var parsed))
+                    {
+                        FarmPrice = parsed;
+                    }
+                    else
+                    {
+                        FarmPrice = null;
+                    }
+                    ValidateFarmPrice();
+                    UpdateFarmTotal();
+                }
+            }
+            private string _farmPriceText = string.Empty;
+
+            public decimal? FarmPrice { get => _farmPricePerKilo; set { _farmPricePerKilo = value; OnPropertyChanged(nameof(FarmPrice)); } }
             private decimal? _farmPricePerKilo;
 
             public decimal? FarmTotal { get => _farmTotal; set { _farmTotal = value; OnPropertyChanged(nameof(FarmTotal)); UpdateProfit(); } }
@@ -76,7 +129,33 @@ namespace Fruittrack
             public decimal? FactoryAllowedWeight { get => _factoryAllowedWeight; set { _factoryAllowedWeight = value; OnPropertyChanged(nameof(FactoryAllowedWeight)); UpdateFactoryTotal(); } }
             private decimal? _factoryAllowedWeight;
 
-            public decimal? FactoryPrice { get => _factoryPricePerKilo; set { _factoryPricePerKilo = value; OnPropertyChanged(nameof(FactoryPrice)); ValidateFactoryPrice(); UpdateFactoryTotal(); } }
+            // Text representation to preserve exact user input for factory price
+            public string FactoryPriceText
+            {
+                get => _factoryPriceText;
+                set
+                {
+                    _factoryPriceText = value;
+                    OnPropertyChanged(nameof(FactoryPriceText));
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        FactoryPrice = null;
+                    }
+                    else if (TryParseDecimalFlexible(value, out var parsed))
+                    {
+                        FactoryPrice = parsed;
+                    }
+                    else
+                    {
+                        FactoryPrice = null;
+                    }
+                    ValidateFactoryPrice();
+                    UpdateFactoryTotal();
+                }
+            }
+            private string _factoryPriceText = string.Empty;
+
+            public decimal? FactoryPrice { get => _factoryPricePerKilo; set { _factoryPricePerKilo = value; OnPropertyChanged(nameof(FactoryPrice)); } }
             private decimal? _factoryPricePerKilo;
 
             public decimal? FactoryTotal { get => _factoryTotal; set { _factoryTotal = value; OnPropertyChanged(nameof(FactoryTotal)); UpdateProfit(); } }
@@ -93,7 +172,31 @@ namespace Fruittrack
             private string _transportContractorName = string.Empty;
 
             // Farm Special Data Number (for cash disbursement validation)
-            public decimal? FarmSpecialDataNumber { get => _farmSpecialDataNumber; set { _farmSpecialDataNumber = value; OnPropertyChanged(nameof(FarmSpecialDataNumber)); ValidateFarmSpecialData(); } }
+            public string FarmSpecialDataNumberText
+            {
+                get => _farmSpecialDataNumberText;
+                set
+                {
+                    _farmSpecialDataNumberText = value;
+                    OnPropertyChanged(nameof(FarmSpecialDataNumberText));
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        FarmSpecialDataNumber = null;
+                    }
+                    else if (TryParseDecimalFlexible(value, out var parsed))
+                    {
+                        FarmSpecialDataNumber = parsed;
+                    }
+                    else
+                    {
+                        FarmSpecialDataNumber = null;
+                    }
+                    ValidateFarmSpecialData();
+                }
+            }
+            private string _farmSpecialDataNumberText = string.Empty;
+
+            public decimal? FarmSpecialDataNumber { get => _farmSpecialDataNumber; set { _farmSpecialDataNumber = value; OnPropertyChanged(nameof(FarmSpecialDataNumber)); } }
             private decimal? _farmSpecialDataNumber;
 
             // Error message properties
@@ -221,7 +324,7 @@ namespace Fruittrack
             private void ValidateTransportPrice()
             {
                 // OPTIONAL FIELD - Only validate format if user entered something
-                if (!TransportPrice.HasValue)
+                if (string.IsNullOrWhiteSpace(TransportPriceText))
                     TransportPriceError = ""; // No error if empty
                 else if (TransportPrice <= 0)
                     TransportPriceError = "سعر النقل يجب أن يكون أكبر من صفر";
@@ -259,7 +362,7 @@ namespace Fruittrack
 
             private void ValidateFarmPrice()
             {
-                if (!FarmPrice.HasValue)
+                if (string.IsNullOrWhiteSpace(FarmPriceText))
                     FarmPriceError = ""; // Optional field, no error
                 else if (FarmPrice <= 0)
                     FarmPriceError = "يجب أن يكون السعر أكبر من صفر";
@@ -269,8 +372,19 @@ namespace Fruittrack
 
             private void ValidateFarmSpecialData()
             {
-                // No validation - clear any errors
-                FarmSpecialDataError = "";
+                // Optional numeric field; ensure positive if provided
+                if (string.IsNullOrWhiteSpace(FarmSpecialDataNumberText))
+                {
+                    FarmSpecialDataError = "";
+                }
+                else if (!FarmSpecialDataNumber.HasValue || FarmSpecialDataNumber.Value <= 0)
+                {
+                    FarmSpecialDataError = "القيمة يجب أن تكون رقمًا أكبر من صفر";
+                }
+                else
+                {
+                    FarmSpecialDataError = "";
+                }
             }
 
             private void ValidateFactoryName()
@@ -302,7 +416,7 @@ namespace Fruittrack
 
             private void ValidateFactoryPrice()
             {
-                if (!FactoryPrice.HasValue)
+                if (string.IsNullOrWhiteSpace(FactoryPriceText))
                     FactoryPriceError = ""; // Optional field, no error
                 else if (FactoryPrice <= 0)
                     FactoryPriceError = "يجب أن يكون السعر أكبر من صفر";
@@ -330,6 +444,22 @@ namespace Fruittrack
                 return !HasTruckNumberError && !HasTransportPriceError && !HasFarmNameError && 
                        !HasFarmWeightError && !HasFarmDiscountError && !HasFarmPriceError &&
                        !HasFactoryNameError && !HasFactoryWeightError && !HasFactoryDiscountError && !HasFactoryPriceError;
+            }
+
+            // Robust decimal parser supporting both comma and dot as decimal separators
+            private static bool TryParseDecimalFlexible(string text, out decimal value)
+            {
+                value = 0m;
+                if (string.IsNullOrWhiteSpace(text)) return false;
+
+                var trimmed = text.Trim();
+                // Try current culture
+                if (decimal.TryParse(trimmed, NumberStyles.Number, CultureInfo.CurrentCulture, out value)) return true;
+                // Try invariant
+                if (decimal.TryParse(trimmed, NumberStyles.Number, CultureInfo.InvariantCulture, out value)) return true;
+                // Replace comma with dot and try invariant
+                var normalized = trimmed.Replace(',', '.');
+                return decimal.TryParse(normalized, NumberStyles.Number, CultureInfo.InvariantCulture, out value);
             }
         }
 
@@ -646,12 +776,14 @@ namespace Fruittrack
             ViewModel.Date = DateTime.Today;
             ViewModel.TruckNumber = string.Empty;
             ViewModel.TransportPrice = null;
+            ViewModel.TransportPriceText = string.Empty;
             ViewModel.SelectedFarm = null;
             ViewModel.FarmId = null;
             ViewModel.FarmWeight = null;
             ViewModel.FarmDiscountPercentage = null;
             ViewModel.FarmAllowedWeight = null;
             ViewModel.FarmPrice = null;
+            ViewModel.FarmPriceText = string.Empty;
             ViewModel.FarmTotal = null;
             ViewModel.SelectedFactory = null;
             ViewModel.FactoryId = null;
@@ -659,6 +791,7 @@ namespace Fruittrack
             ViewModel.FactoryDiscount = null;
             ViewModel.FactoryAllowedWeight = null;
             ViewModel.FactoryPrice = null;
+            ViewModel.FactoryPriceText = string.Empty;
             ViewModel.FactoryTotal = null;
             ViewModel.ProfitMargin = null;
             ViewModel.Notes = string.Empty;
@@ -706,3 +839,4 @@ namespace Fruittrack
      
     }
 }
+

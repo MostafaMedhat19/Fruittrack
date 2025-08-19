@@ -553,7 +553,7 @@
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="سعر النقل النولون"/>
                             <TextBox x:Name="txtTransportPrice" 
-                                     Text="{Binding TransportPrice, UpdateSourceTrigger=PropertyChanged}">
+                                     Text="{Binding TransportPriceText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=False}">
                                 <TextBox.Style>
                                     <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                         <Style.Triggers>
@@ -627,7 +627,7 @@
                             <StackPanel Grid.Row="1">
                                 <TextBlock Text="الوزن عند المزرعة (كجم)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFarmWeight" 
-                                         Text="{Binding FarmWeight, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}">
+                                         Text="{Binding FarmWeight, UpdateSourceTrigger=PropertyChanged}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -695,7 +695,7 @@
                             <StackPanel Grid.Row="4">
                                 <TextBlock Text="السعر لكل كيلو (جنيه)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFarmPrice" 
-                                        Text="{Binding FarmPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}">
+                                        Text="{Binding FarmPriceText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=False}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -716,7 +716,7 @@
                             <StackPanel Grid.Row="5">
                                 <TextBlock Text="مبلغ صرف نقدية" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFarmSpecialDataNumber" 
-                                         Text="{Binding FarmSpecialDataNumber, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}"
+                                         Text="{Binding FarmSpecialDataNumberText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=False}"
                                          Style="{StaticResource ModernTextBox}"
                                          Margin="0,5,0,0"/>
                             </StackPanel>
@@ -768,7 +768,7 @@
                             <StackPanel Grid.Row="1">
                                 <TextBlock Text="الوزن عند المصنع (كجم)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFactoryWeight" 
-                                         Text="{Binding FactoryWeight, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}">
+                                         Text="{Binding FactoryWeight, UpdateSourceTrigger=PropertyChanged}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>
@@ -836,7 +836,7 @@
                             <StackPanel Grid.Row="4">
                                 <TextBlock Text="السعر لكل كيلو (جنيه)" FontWeight="SemiBold"/>
                                 <TextBox x:Name="txtFactoryPrice" 
-                                         Text="{Binding FactoryPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}">
+                                         Text="{Binding FactoryPriceText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=False}">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                             <Style.Triggers>

@@ -169,6 +169,29 @@ namespace Fruittrack.ViewModels
             }
         }
 
+        private string _receivedAmountText = string.Empty;
+        public string ReceivedAmountText
+        {
+            get => _receivedAmountText;
+            set
+            {
+                _receivedAmountText = value;
+                OnPropertyChanged(nameof(ReceivedAmountText));
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    ReceivedAmount = 0m;
+                }
+                else if (TryParseDecimalFlexible(value, out var parsed))
+                {
+                    ReceivedAmount = parsed;
+                }
+                else
+                {
+                    // keep last valid
+                }
+            }
+        }
+
         private decimal _receivedAmount;
         public decimal ReceivedAmount
         {
@@ -250,6 +273,7 @@ namespace Fruittrack.ViewModels
                     // Populate form fields when transaction is selected
                     SourceName = value.SourceName;
                     ReceivedAmount = value.ReceivedAmount;
+                    ReceivedAmountText = value.ReceivedAmount.ToString(System.Globalization.CultureInfo.InvariantCulture);
                     Date = value.Date;
                     Notes = value.Notes;
                 }
@@ -414,6 +438,7 @@ namespace Fruittrack.ViewModels
         {
             SourceName = string.Empty;
             ReceivedAmount = 0;
+            ReceivedAmountText = string.Empty;
             Date = DateTime.Now;
             Notes = string.Empty;
         }
@@ -431,8 +456,8 @@ namespace Fruittrack.ViewModels
                     case nameof(SourceName):
                         if (string.IsNullOrWhiteSpace(SourceName)) return "اسم الجهة مطلوب";
                         break;
-                    case nameof(ReceivedAmount):
-                        if (ReceivedAmount <= 0) return "المبلغ المستلم يجب أن يكون أكبر من صفر";
+                    case nameof(ReceivedAmountText):
+                        if (string.IsNullOrWhiteSpace(ReceivedAmountText) || ReceivedAmount <= 0) return "المبلغ المستلم يجب أن يكون أكبر من صفر";
                         break;
                     case nameof(Date):
                         if (Date == default) return "التاريخ مطلوب";
@@ -440,6 +465,17 @@ namespace Fruittrack.ViewModels
                 }
                 return null;
             }
+        }
+
+        private static bool TryParseDecimalFlexible(string text, out decimal value)
+        {
+            value = 0m;
+            if (string.IsNullOrWhiteSpace(text)) return false;
+            var trimmed = text.Trim();
+            if (decimal.TryParse(trimmed, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.CurrentCulture, out value)) return true;
+            if (decimal.TryParse(trimmed, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out value)) return true;
+            var normalized = trimmed.Replace(',', '.');
+            return decimal.TryParse(normalized, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out value);
         }
     }
 }

@@ -134,15 +134,35 @@ namespace Fruittrack.ViewModels
             }
         }
 
+        // Preserve exact user input text
+        private string _amountText = string.Empty;
+        public string AmountText
+        {
+            get => _amountText;
+            set
+            {
+                _amountText = value;
+                OnPropertyChanged(nameof(AmountText));
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    Amount = 0m;
+                }
+                else if (TryParseDecimalFlexible(value, out var parsed))
+                {
+                    Amount = parsed;
+                }
+                else
+                {
+                    // keep last valid Amount; do not change on invalid text
+                }
+            }
+        }
+
         private decimal _amount;
         public decimal Amount
         {
             get => _amount;
-            set 
-            { 
-                _amount = value; 
-                OnPropertyChanged(nameof(Amount)); 
-            }
+            set { _amount = value; OnPropertyChanged(nameof(Amount)); }
         }
 
         private string _notes = string.Empty;
@@ -272,6 +292,7 @@ namespace Fruittrack.ViewModels
             EntityName = string.Empty;
             SelectedEntityName = string.Empty;
             Amount = 0;
+            AmountText = string.Empty;
             TransactionDate = DateTime.Now;
             Notes = string.Empty;
         }
@@ -290,8 +311,8 @@ namespace Fruittrack.ViewModels
                     case nameof(EntityName):
                         if (string.IsNullOrWhiteSpace(EntityName)) return "اسم الجهة مطلوب";
                         break;
-                    case nameof(Amount):
-                        if (Amount <= 0) return "المبلغ يجب أن يكون أكبر من صفر";
+                    case nameof(AmountText):
+                        if (string.IsNullOrWhiteSpace(AmountText) || Amount <= 0) return "المبلغ يجب أن يكون أكبر من صفر";
                         break;
                     case nameof(TransactionDate):
                         if (TransactionDate == default) return "التاريخ مطلوب";
@@ -302,6 +323,17 @@ namespace Fruittrack.ViewModels
                 }
                 return string.Empty;
             }
+        }
+
+        private static bool TryParseDecimalFlexible(string text, out decimal value)
+        {
+            value = 0m;
+            if (string.IsNullOrWhiteSpace(text)) return false;
+            var trimmed = text.Trim();
+            if (decimal.TryParse(trimmed, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.CurrentCulture, out value)) return true;
+            if (decimal.TryParse(trimmed, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out value)) return true;
+            var normalized = trimmed.Replace(',', '.');
+            return decimal.TryParse(normalized, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out value);
         }
     }
 }

@@ -124,7 +124,7 @@
                     <!-- Amount -->
                     <StackPanel Grid.Column="0" Grid.Row="2">
                         <TextBlock Text="المبلغ" Style="{StaticResource HeaderText}"/>
-                        <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, StringFormat=N0}" 
+                        <TextBox Text="{Binding AmountText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=False}" 
               ToolTip="ادخل المبلغ المصروف"
               Style="{StaticResource InputControl}"/>
                     </StackPanel>
@@ -251,7 +251,7 @@
                                             Binding="{Binding TransactionDate, StringFormat=d}" 
                                             Width="*"/>
                         <DataGridTextColumn Header="المبلغ" 
-                                            Binding="{Binding Amount, StringFormat=N0}" 
+                                            Binding="{Binding Amount}" 
                                             Width="*"/>
                         <DataGridTextColumn Header="الملاحظات" 
                                             Binding="{Binding Notes}" 

@@ -124,7 +124,7 @@
                     <!-- Received Amount -->
                     <StackPanel Grid.Column="2" Grid.Row="0">
                         <TextBlock Text="المبلغ المستلم" Style="{StaticResource HeaderText}"/>
-                        <TextBox Text="{Binding ReceivedAmount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
+                        <TextBox Text="{Binding ReceivedAmountText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=False}"
                                  ToolTip="ادخل المبلغ المستلم"
                                  Style="{StaticResource InputControl}"/>
                     </StackPanel>
@@ -200,7 +200,7 @@
                VerticalAlignment="Center"/>
 
                                 <TextBlock Grid.Column="1" 
-               Text="{Binding TotalReceivedAmount, StringFormat=N0}" 
+               Text="{Binding TotalReceivedAmount}" 
                FontSize="16"
                FontWeight="Bold"
                Foreground="Green"
@@ -297,7 +297,7 @@
                                     Width="*"/>
 
                             <DataGridTextColumn Header="المبلغ المستلم" 
-                                    Binding="{Binding ReceivedAmount, StringFormat=N0}" 
+                                    Binding="{Binding ReceivedAmount}" 
                                     Width="*"/>
 
                             <DataGridTextColumn Header="التاريخ" 
